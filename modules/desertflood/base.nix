@@ -30,34 +30,52 @@ in
 
       environment.systemPackages = defaultPackages pkgs;
 
-      services.openssh = {
-        enable = true;
+      services = {
 
-        settings = {
-          LogLevel = "INFO";
-          PermitRootLogin = "prohibit-password";
-          StrictModes = true;
+        openssh = {
+          enable = true;
+
+          settings = {
+            LogLevel = "INFO";
+            PermitRootLogin = "prohibit-password";
+            StrictModes = true;
+          };
+
+          extraConfig = ''
+            # Authentication
+            LoginGraceTime 2m
+            MaxAuthTries 6
+            MaxSessions 10
+
+            # Environment
+            AcceptEnv COLORTERM
+          '';
         };
-
-        extraConfig = ''
-          # Authentication
-          LoginGraceTime 2m
-          MaxAuthTries 6
-          MaxSessions 10
-
-
-          # Environment
-          AcceptEnv COLORTERM
-        '';
       };
-
-      services.tailscale.enable = true;
 
       security = {
 
         sudo = {
           wheelNeedsPassword = false;
           keepTerminfo = true;
+          extraConfig = ''
+            # "sudo scp" or "sudo rsync" should be able to use your SSH agent.
+            Defaults:%sudo env_keep += "SSH_AGENT_PID SSH_AUTH_SOCK SSH_CONNECTION SSH_CLIENT SSH_TTY"
+
+            # Ditto for GPG agent
+            Defaults:%sudo env_keep += "GPG_AGENT_INFO"
+
+            # Per-user preferences; root won't have sensible values for them.
+            Defaults:%sudo env_keep += "EMAIL DEBEMAIL DEBFULLNAME"
+            Defaults:%sudo env_keep += "GIT_AUTHOR_* GIT_COMMITTER_*"
+
+            # This allows running arbitrary commands, but so does ALL, and it means
+            # different sudoers have their choice of editor respected.
+            Defaults:%sudo env_keep += "EDITOR"
+
+            # Completely harmless preservation of color preferences.
+            Defaults:%sudo env_keep += "GREP_COLOR COLORTERM"
+          '';
         };
 
         pam = {
@@ -73,6 +91,7 @@ in
           };
 
         };
+
       };
 
       nix = {
