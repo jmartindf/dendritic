@@ -3,20 +3,31 @@ let
   myTimezone = "America/Phoenix";
   myLocale = "en_US.UTF-8";
   defaultPackages = pkgs: [
+    pkgs._1password-cli
     pkgs.cacert
     pkgs.curl
+    pkgs.direnv
     pkgs.ghostty.terminfo
+    pkgs.git
     pkgs.gum
+    pkgs.just
     pkgs.vim
     pkgs.wget
   ];
 in
 {
   flake.modules.nixos.base =
-    { pkgs, ... }:
+    { lib, pkgs, ... }:
     {
       time.timeZone = myTimezone;
       i18n.defaultLocale = myLocale;
+
+      nixpkgs.config.allowUnfreePredicate =
+        pkg:
+        builtins.elem (lib.getName pkg) [
+          "1password-cli"
+        ];
+
       environment.systemPackages = defaultPackages pkgs;
 
       services.openssh = {
