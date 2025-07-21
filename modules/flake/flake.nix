@@ -1,9 +1,9 @@
 { inputs, lib, ... }:
 {
   imports = [
+    (inputs.dendrix.vic-vix.filter (lib.hasSuffix "mk-os.nix"))
     inputs.devshell.flakeModule
     inputs.flake-parts.flakeModules.modules
-    (inputs.dendrix.vic-vix.filter (lib.hasSuffix "mk-os.nix"))
     inputs.pkgs-by-name-for-flake-parts.flakeModule
   ];
 
