@@ -2,11 +2,14 @@ _: {
 
   flake.modules.nixos.step-ssh =
     { lib, pkgs, ... }:
+    let
+      p = pkgs.local;
+    in
     {
 
       environment.systemPackages = [
-        pkgs.local.signEm
-        pkgs.local.step
+        p."pki/signEm"
+        p."pki/step"
       ];
 
       services = {
@@ -21,7 +24,7 @@ _: {
 
       };
 
-      security.pki.certificateFiles = [ pkgs.local.pkiRootCert ];
+      security.pki.certificateFiles = [ pkgs.local."pki/rootCert" ];
 
       systemd = {
         services.renew-ssh-certificate = {
@@ -47,11 +50,11 @@ _: {
             ''
               if [[ -f "/etc/ssh/ssh_host_rsa_key-cert.pub" ]];
               then
-                ${lib.getExe pkgs.local.step} ssh renew "/etc/ssh/ssh_host_rsa_key-cert.pub" "/etc/ssh/ssh_host_rsa_key" --force 2> /dev/null
+                ${lib.getExe p."pki/step"} ssh renew "/etc/ssh/ssh_host_rsa_key-cert.pub" "/etc/ssh/ssh_host_rsa_key" --force 2> /dev/null
               fi
               if [[ -f "/etc/ssh/ssh_host_ed25519_key-cert.pub" ]];
               then
-                ${lib.getExe pkgs.local.step} ssh renew "/etc/ssh/ssh_host_ed25519_key-cert.pub" "/etc/ssh/ssh_host_ed25519_key" --force 2> /dev/null
+                ${lib.getExe p."pki/step"} ssh renew "/etc/ssh/ssh_host_ed25519_key-cert.pub" "/etc/ssh/ssh_host_ed25519_key" --force 2> /dev/null
               fi
               exit 0
             '';

@@ -68,6 +68,7 @@
       url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
     };
     nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
+    pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
     systems = {
       url = "github:jmartindf/nix-systems-modern-default";
     };
