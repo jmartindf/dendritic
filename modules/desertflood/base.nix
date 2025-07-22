@@ -12,6 +12,7 @@ let
     pkgs.gum
     pkgs.just
     pkgs.local.fqdn
+    pkgs.nixos-rebuild-ng
     pkgs.vim
     pkgs.wget
   ];
