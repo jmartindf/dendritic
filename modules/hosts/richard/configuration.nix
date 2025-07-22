@@ -14,6 +14,7 @@ in
     imports = [
       inputs.self.modules.nixos.base
       inputs.self.modules.nixos.base-server
+      inputs.self.modules.nixos.remote-builder
       inputs.self.modules.nixos.proxmox-lxc
     ];
 
@@ -36,6 +37,10 @@ in
 
       root = {
         openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+      };
+
+      builder = {
+        openssh.authorizedKeys.keys = [ config.desertflood.builderKeys.builderKeys.psyche.publicKey ];
       };
 
     };

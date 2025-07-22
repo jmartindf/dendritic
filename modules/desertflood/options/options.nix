@@ -11,6 +11,24 @@ let
   userMeta = import ./_meta-users.nix {
     inherit lib;
   };
+  publicKeys =
+    { name, ... }:
+    {
+      options = {
+        label = lib.mkOption {
+          type = types.str;
+          example = "psyche";
+          description = "The user-visible name or description of the SSH public key.";
+        };
+        publicKey = lib.mkOption {
+          type = types.str;
+          description = "The actual public key to use";
+        };
+      };
+      config = {
+        label = lib.mkDefault name;
+      };
+    };
 in
 {
   options.desertflood = {
@@ -28,6 +46,14 @@ in
         type = types.attrsOf (types.submodule hostMeta);
         default = { };
         description = "Details of the various hosts that can be created.";
+      };
+    };
+
+    builderKeys = {
+      builderKeys = lib.mkOption {
+        type = types.attrsOf (types.submodule publicKeys);
+        default = { };
+        description = "Available machines that may want to use a remote Nix builder";
       };
     };
 
