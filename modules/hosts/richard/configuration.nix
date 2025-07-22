@@ -1,39 +1,43 @@
 #  nix build .#.nixosConfigurations.richard.config.system.build.isoImage
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#richard
-{ inputs, ... }:
+{
+  config,
+  inputs,
+  ...
+}:
 let
-  superego-key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW";
+  defaultUser = config.desertflood.users.users.joe;
+  hostInfo = config.desertflood.hosts.hosts.richard;
 in
 {
-  flake.modules.nixos.richard =
-    {
-      modulesPath,
-      config,
-      lib,
-      ...
-    }:
-    {
-      imports = [
-        inputs.self.modules.nixos.base
-        inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.proxmox-lxc
-      ];
+  flake.modules.nixos.richard = {
+    imports = [
+      inputs.self.modules.nixos.base
+      inputs.self.modules.nixos.base-server
+      inputs.self.modules.nixos.proxmox-lxc
+    ];
 
-      nix.settings.trusted-users = [ "nixos" ];
+    desertflood.defaultUser = defaultUser;
+    desertflood.hostInfo = hostInfo;
 
-      users.users = {
-
-        nixos = {
-          isNormalUser = true;
-          extraGroups = [ "wheel" ];
-          openssh.authorizedKeys.keys = [ superego-key ];
-          uid = 1001;
-        };
-
-        root = {
-          openssh.authorizedKeys.keys = [ superego-key ];
-        };
-
-      };
+    networking = {
+      inherit (hostInfo) hostName domain;
     };
+
+    nix.settings.trusted-users = [ "nixos" ];
+
+    users.users = {
+
+      nixos = {
+        isNormalUser = true;
+        extraGroups = [ "wheel" ];
+        openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+      };
+
+      root = {
+        openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+      };
+
+    };
+  };
 }

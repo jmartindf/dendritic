@@ -2,9 +2,13 @@ _: {
 
   flake.modules.nixos.dockeras =
     {
+      config,
       pkgs,
       ...
     }:
+    let
+      inherit (config.desertflood) defaultUser;
+    in
     {
 
       environment.systemPackages = [
@@ -17,9 +21,7 @@ _: {
       users.users.dockeras = {
         isNormalUser = true;
         extraGroups = [ "docker" ];
-        openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
-        ];
+        openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
       };
 
       virtualisation.docker = {
