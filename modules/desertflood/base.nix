@@ -11,13 +11,19 @@ let
     pkgs.git
     pkgs.gum
     pkgs.just
+    pkgs.local.fqdn
     pkgs.vim
     pkgs.wget
   ];
 in
 {
   flake.modules.nixos.base =
-    { lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     {
       time.timeZone = myTimezone;
       i18n.defaultLocale = myLocale;
@@ -29,6 +35,7 @@ in
         ];
 
       environment.systemPackages = defaultPackages pkgs;
+      environment.etc.fqdn.text = "${config.desertflood.hostInfo.fqdn}";
 
       services = {
 
