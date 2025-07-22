@@ -3,6 +3,7 @@ set unstable := true
 build := "nom"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-rav --exclude=\".jj\" --delete --delete-excluded"
+buildFlags := "--no-link"
 
 [private]
 default:
@@ -14,7 +15,7 @@ rsync:
 
 [group("richard")]
 build:
-    {{ build }} build .#.nixosConfigurations.richard.{{ toplevel }}
+    {{ build }} build {{ buildFlags }} .#.nixosConfigurations.richard.{{ toplevel }}
 
 [group("richard")]
 deploy: build rsync
