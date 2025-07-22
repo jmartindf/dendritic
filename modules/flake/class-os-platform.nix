@@ -1,5 +1,4 @@
-{ ... }:
-{
+_: {
   config = {
 
     flake.modules = {
