@@ -26,6 +26,9 @@ in
       ...
     }:
     {
+
+      imports = [ inputs.self.modules.nixos.agenix ];
+
       time.timeZone = myTimezone;
       i18n.defaultLocale = myLocale;
 

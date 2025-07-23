@@ -20,6 +20,25 @@
   };
 
   inputs = {
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs = {
+        darwin.follows = "darwin";
+        home-manager.follows = "home-manager";
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "systems";
+      };
+    };
+    agenix-rekey = {
+      url = "github:oddlama/agenix-rekey";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        devshell.follows = "devshell";
+        flake-parts.follows = "flake-parts";
+        pre-commit-hooks.follows = "pre-commit-hooks";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
     darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -33,6 +52,7 @@
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-compat.url = "github:edolstra/flake-compat";
     flake-file = {
       url = "github:vic/flake-file";
     };
@@ -50,7 +70,9 @@
     lix = {
       url = "https://git.lix.systems/lix-project/lix/archive/2.93.2.tar.gz";
       inputs = {
+        flake-compat.follows = "flake-compat";
         nixpkgs.follows = "nixpkgs";
+        pre-commit-hooks.follows = "pre-commit-hooks";
       };
     };
     lix-module = {
@@ -69,6 +91,13 @@
     };
     nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
     pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
+    pre-commit-hooks = {
+      url = "github:cachix/pre-commit-hooks.nix";
+      inputs = {
+        flake-compat.follows = "flake-compat";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
     systems = {
       url = "github:jmartindf/nix-systems-modern-default";
     };

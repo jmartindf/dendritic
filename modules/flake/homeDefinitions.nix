@@ -1,0 +1,13 @@
+{ inputs, ... }:
+{
+  config = {
+
+    flake = {
+
+      homeConfigurations = { };
+
+    };
+
+  };
+
+}
