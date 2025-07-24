@@ -12,6 +12,11 @@
 
         boot.isContainer = true;
 
+        proxmoxLXC = {
+          manageNetwork = false;
+          manageHostName = true;
+        };
+
         # Suppress systemd units that don't work because of LXC
         systemd.suppressedSystemUnits = [
           "dev-mqueue.mount"
