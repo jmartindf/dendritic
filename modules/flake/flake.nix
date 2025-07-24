@@ -23,10 +23,6 @@
           nativeBuildInputs = [ config.agenix-rekey.package ];
         };
 
-      nixosConfigurations = {
-        richard = inputs.self.lib.mk-os.linux "richard";
       };
-
-    };
   };
 }
