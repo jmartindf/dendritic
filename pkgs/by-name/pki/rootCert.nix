@@ -1,12 +1,10 @@
 {
   fetchurl,
-  writeTextFile,
 }:
-writeTextFile {
-  name = "pkiroots.pem";
-  text = fetchurl {
-    url = "https://pki.desertflood.link/roots.pem";
-    hash = "sha256-tgK+D2q/bJBZCDh+7Cf9ha2wSzIfh7n2HZi5Vif6g1k=";
-    curlOpts = "--insecure";
-  };
+fetchurl {
+  name = "roots.pem";
+  version = "unstable-2025-07-24";
+  url = "https://pki.desertflood.link/roots.pem";
+  hash = "sha256-tgK+D2q/bJBZCDh+7Cf9ha2wSzIfh7n2HZi5Vif6g1k=";
+  curlOpts = "--insecure";
 }
