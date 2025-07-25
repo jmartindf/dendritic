@@ -19,6 +19,6 @@ writeShellApplication {
   name = "step";
   text = # bash
     ''
-      ${lib.getExe step-cli} --config="${stepConfig}" "$@"
+      ${step-cli}/bin/step --config="${stepConfig}" "$@"
     '';
 }
