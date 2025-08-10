@@ -10,7 +10,6 @@ _: {
 
       environment.systemPackages = [
         p."pki/signEm"
-        p."pki/step"
       ];
 
       services = {
@@ -24,8 +23,6 @@ _: {
         };
 
       };
-
-      security.pki.certificateFiles = [ pkgs.local."pki/rootCert" ];
 
       systemd = {
 
