@@ -1,16 +1,13 @@
-_: {
+{ config, ... }:
+let
+  flakeCfg = config;
+in
+{
   flake.modules.nixos.step-ssh =
     { config, pkgs, ... }:
-    let
-      p = pkgs.local;
-    in
     {
 
       age.secrets.provisioner-password.rekeyFile = ./provisioner-password.age;
-
-      environment.systemPackages = [
-        p."pki/signEm"
-      ];
 
       services = {
 
@@ -36,15 +33,22 @@ _: {
             "sshd@" = {
 
               enableStrictShellChecks = true;
+              environment = {
+                STEPPATH = "/etc/step-ca";
+              };
+              path = [
+                pkgs.step-cli
+                pkgs.coreutils
+              ];
               preStart = # bash
                 ''
                   function sign {
-                    ${p."pki/step"}/bin/step ssh certificate \
+                    step ssh certificate \
                       --sign \
-                      --provisioner 'joe@desertflood.com' \
+                      --provisioner '${flakeCfg.desertflood.step-ca.provisioner}' \
                       --provisioner-password-file="${config.age.secrets.provisioner-password.path}" \
                       --host --host-id machine \
-                      "$(${pkgs.coreutils}/bin/cat /etc/fqdn)" \
+                      "$(cat /etc/fqdn)" \
                       "$1"
                   }
 
@@ -82,17 +86,17 @@ _: {
               };
 
               enableStrictShellChecks = true;
-              script =
-                let
-                  mystep = "${p."pki/step"}/bin/step";
-                in
-                # bash
+              environment = {
+                STEPPATH = "/etc/step-ca";
+              };
+              path = [ pkgs.step-cli ];
+              script = # bash
                 ''
                   function renewal_check {
-                    ${mystep} ssh inspect "$1-cert.pub"
+                    step ssh inspect "$1-cert.pub"
 
                     set +o errexit
-                    ${mystep} ssh needs-renewal "$1-cert.pub" \
+                    step ssh needs-renewal "$1-cert.pub" \
                       --expires-in="50%" &>/dev/null
                     status=$?
                     set -o errexit
@@ -101,7 +105,7 @@ _: {
                       echo "$1-cert.pub does not need renewal"
                     elif [ $status -eq 0 ]; then
                       echo "Renewing $1-cert.pub"
-                      ${mystep} ssh renew --force \
+                      step ssh renew --force \
                         "$1-cert.pub" \
                         "$1"
                     else
@@ -136,7 +140,7 @@ _: {
             # Run 5 minutes after system / systemd start
             OnStartupSec = "5min";
 
-            # Run weekly
+            # Run daily
             OnCalendar = "daily";
 
             # Delay the timer by a randomly selected, evenly distributed amount of time between

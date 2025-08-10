@@ -62,6 +62,28 @@ in
       default = { };
       description = "Secrets to use in age";
     };
+    step-ca = {
+      provisioner = lib.mkOption {
+        type = types.str;
+        description = "Which provisioner to use for creating certificates";
+      };
+
+      url = lib.mkOption {
+        type = types.str;
+        description = "What is the URL for the smallstep ca";
+      };
+
+      fingerprint = lib.mkOption {
+        type = types.str;
+        description = "The fingerprint of the smallstep ca’s root certificate";
+      };
+
+      rootCert = lib.mkOption {
+        type = types.attrsOf types.anything;
+        default = { };
+        description = "The necessary info to get the root certificate using `fetchurl`";
+      };
+    };
   };
 
   config = {

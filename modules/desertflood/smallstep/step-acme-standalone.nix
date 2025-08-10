@@ -1,8 +1,11 @@
-_: {
+{ config, ... }:
+let
+  flakeCfg = config;
+in
+{
   flake.modules.nixos.step-acme-standalone =
     { config, ... }:
     let
-      # p = pkgs.local;
       cfg = config;
     in
     {
@@ -14,7 +17,7 @@ _: {
 
           defaults = {
             listenHTTP = ":80";
-            server = "https://pki.desertflood.link/acme/acme/directory";
+            server = "${flakeCfg.desertflood.step-ca.url}/acme/acme/directory";
             renewInterval = "*:0/20"; # every 20 minutes
             inherit (cfg.desertflood.defaultUser.emails.desertflood) email;
           };
