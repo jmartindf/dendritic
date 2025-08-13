@@ -62,6 +62,14 @@ in
       default = { };
       description = "Secrets to use in age";
     };
+
+    networking = {
+      tailscaleDomain = lib.mkOption {
+        type = types.str;
+        description = "The shared tailscale domain name";
+      };
+    };
+
     step-ca = {
       provisioner = lib.mkOption {
         type = types.str;
