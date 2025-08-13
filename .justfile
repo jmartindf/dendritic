@@ -1,5 +1,6 @@
 set unstable := true
 
+defaultHost := "richard"
 build := "nom"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-rav --exclude=\".jj\" --delete --delete-excluded"
@@ -10,13 +11,13 @@ default:
     just --list
 
 [group("richard")]
-rsync:
-    rsync {{ rsyncFlags }} ./ richard:/home/nixos/dendritic/
+rsync host=defaultHost:
+    rsync {{ rsyncFlags }} ./ {{ host }}:/home/nixos/dendritic/
 
 [group("richard")]
-build:
-    {{ build }} build {{ buildFlags }} .#.nixosConfigurations.richard.{{ toplevel }}
+build host=defaultHost:
+    {{ build }} build {{ buildFlags }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
 [group("richard")]
-deploy: build rsync
-    nixos-rebuild-ng switch --flake . --target-host root@richard.home.thosemartins.family
+deploy host=defaultHost: (build host) (rsync host)
+    nixos-rebuild-ng switch --flake . --target-host root@{{ host }}.home.thosemartins.family
