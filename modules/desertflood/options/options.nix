@@ -102,6 +102,18 @@ in
         description = "The necessary info to get the root certificate using `fetchurl`";
       };
     };
+
+    defaultUser = lib.mkOption {
+      type = types.submodule userMeta;
+      default = { };
+      description = "The default user for this host, for flake-parts modules";
+    };
+
+    hostInfo = lib.mkOption {
+      type = types.submodule hostMeta;
+      default = { };
+      description = "Basic facts about this host, for flake-parts modules";
+    };
   };
 
   config = {
@@ -111,13 +123,13 @@ in
       defaultUser = lib.mkOption {
         type = types.submodule userMeta;
         default = { };
-        description = "The default user for this host";
+        description = "The default user for this host, for Nix OS modules";
       };
 
       hostInfo = lib.mkOption {
         type = types.submodule hostMeta;
         default = { };
-        description = "Basic facts about this host";
+        description = "Basic facts about this host, for Nix OS modules";
       };
 
     };
@@ -127,13 +139,13 @@ in
       defaultUser = lib.mkOption {
         type = types.submodule userMeta;
         default = { };
-        description = "The default user for this host";
+        description = "The default user for this host, for Darwin modules";
       };
 
       hostInfo = lib.mkOption {
         type = types.submodule hostMeta;
         default = { };
-        description = "Basic facts about this host";
+        description = "Basic facts about this host, for Darwin modules";
       };
 
     };
