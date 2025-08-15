@@ -14,6 +14,8 @@ in
 {
   flake.modules.nixos.fossil =
     { config, ... }:
+      netConfig = config.networking;
+      webHost = "${netConfig.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
     {
       imports = [
         inputs.self.modules.nixos.base
@@ -63,6 +65,23 @@ in
 
         root = {
           openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+        };
+
+      };
+      services = {
+
+        grafana = {
+          enable = true;
+
+          settings = {
+            server = {
+              http_addr = "127.0.0.1";
+              http_port = 3000;
+              domain = "${webHost}";
+              root_url = "http://${webHost}/grafana/";
+              serve_from_sub_path = true;
+            };
+          };
         };
 
       };
