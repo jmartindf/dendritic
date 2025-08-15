@@ -19,19 +19,24 @@ let
   mTLS-required = false;
 in
 {
-  desertflood.hosts.hosts.fossil = hostInfo;
+  desertflood = {
+    inherit hostInfo defaultUser;
+
+    hosts.hosts.fossil = hostInfo;
+  };
 
   flake.modules.nixos.fossil =
     { config, ... }:
     let
       svcConfig = config.services;
-      netConfig = config.networking;
-      webHost = "${netConfig.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
+      inherit (flakeCfg.desertflood.networking) webHost;
     in
     {
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
+        inputs.self.modules.nixos.grafana
+        inputs.self.modules.nixos.nginx
         inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.step-acme-standalone
         inputs.self.modules.nixos.proxmox-lxc
@@ -41,6 +46,8 @@ in
         inherit defaultUser hostInfo;
 
         services.prometheus = {
+          inherit mTLS-required;
+
           exporters.node.mTLS-required = mTLS-required;
 
           monitorHosts = [
@@ -82,45 +89,22 @@ in
 
       };
 
-      security.acme.certs.${webHost}.listenHTTP = null;
+      services.nginx.virtualHosts.${webHost} = {
+        addSSL = true;
+        enableACME = true;
 
-      services = {
-
-        grafana = {
-          enable = true;
-
-          settings = {
-            server = {
-              http_addr = "127.0.0.1";
-              http_port = 3000;
-              domain = "${webHost}";
-              root_url = "http://${webHost}/grafana/";
-              serve_from_sub_path = true;
-            };
-          };
+        locations."/prometheus/" = {
+          proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
+          proxyWebsockets = true;
+          recommendedProxySettings = true;
         };
 
-        nginx = {
-          enable = true;
-          defaultListenAddresses = [ "0.0.0.0" ];
-          virtualHosts.${svcConfig.grafana.settings.server.domain} = {
-            addSSL = true;
-            enableACME = true;
-
-            locations."/prometheus/" = {
-              proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
-              proxyWebsockets = true;
-              recommendedProxySettings = true;
-            };
-
-            locations."/grafana/" = {
-              proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
-              proxyWebsockets = true;
-              recommendedProxySettings = true;
-            };
-          };
+        locations."/grafana/" = {
+          proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
+          proxyWebsockets = true;
+          recommendedProxySettings = true;
         };
-
       };
+
     };
 }
