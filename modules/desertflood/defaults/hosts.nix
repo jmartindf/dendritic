@@ -6,7 +6,7 @@ _: {
     remote = false;
   };
   desertflood.hosts.hosts.fossil = {
-    hostName = "fossil2";
+    hostName = "fossil";
     domain = "home.thosemartins.family";
     live = false;
     remote = false;
