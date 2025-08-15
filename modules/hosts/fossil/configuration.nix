@@ -7,11 +7,20 @@
 }:
 let
   defaultUser = config.desertflood.users.users.joe;
-  hostInfo = config.desertflood.hosts.hosts.fossil;
+
+  hostInfo = {
+    hostName = "fossil";
+    domain = "home.thosemartins.family";
+    live = false;
+    remote = false;
+  };
+
   flakeCfg = config;
   mTLS-required = false;
 in
 {
+  desertflood.hosts.hosts.fossil = hostInfo;
+
   flake.modules.nixos.fossil =
     { config, ... }:
     let
