@@ -68,6 +68,16 @@ in
         type = types.str;
         description = "The shared tailscale domain name";
       };
+
+      webDomain = lib.mkOption {
+        type = lib.types.str;
+        description = "the default public web domain for nginx and whatnot";
+      };
+
+      webHost = lib.mkOption {
+        type = lib.types.str;
+        description = "the default public web domain (FQDN) for nginx and whatnot";
+      };
     };
 
     step-ca = {

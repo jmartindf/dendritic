@@ -1,5 +1,18 @@
-{ inputs, ... }:
 {
+  config,
+  inputs,
+  lib,
+  ...
+}:
+let
+  flakeCfg = config;
+in
+{
+  desertflood.networking = {
+    webDomain = lib.mkDefault "${flakeCfg.desertflood.networking.tailscaleDomain}";
+    webHost = lib.mkDefault "${flakeCfg.desertflood.hostInfo.hostName}.${flakeCfg.desertflood.networking.webDomain}";
+  };
+
   flake.modules.nixos.base-server =
     { ... }:
     {
@@ -12,5 +25,5 @@
       services = {
         tailscale.enable = true;
       };
-    };
+    }; # end Nix OS module block
 }
