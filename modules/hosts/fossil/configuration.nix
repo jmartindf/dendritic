@@ -14,13 +14,17 @@ in
 {
   flake.modules.nixos.fossil =
     { config, ... }:
+    let
+      svcConfig = config.services;
       netConfig = config.networking;
       webHost = "${netConfig.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
+    in
     {
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.prometheus
+        inputs.self.modules.nixos.step-acme-standalone
         inputs.self.modules.nixos.proxmox-lxc
       ];
 
@@ -68,6 +72,9 @@ in
         };
 
       };
+
+      security.acme.certs.${webHost}.listenHTTP = null;
+
       services = {
 
         grafana = {
@@ -80,6 +87,27 @@ in
               domain = "${webHost}";
               root_url = "http://${webHost}/grafana/";
               serve_from_sub_path = true;
+            };
+          };
+        };
+
+        nginx = {
+          enable = true;
+          defaultListenAddresses = [ "0.0.0.0" ];
+          virtualHosts.${svcConfig.grafana.settings.server.domain} = {
+            addSSL = true;
+            enableACME = true;
+
+            locations."/prometheus/" = {
+              proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
+              proxyWebsockets = true;
+              recommendedProxySettings = true;
+            };
+
+            locations."/grafana/" = {
+              proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
+              proxyWebsockets = true;
+              recommendedProxySettings = true;
             };
           };
         };
