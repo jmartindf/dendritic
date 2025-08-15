@@ -38,7 +38,7 @@ in
         inputs.self.modules.nixos.grafana
         inputs.self.modules.nixos.nginx
         inputs.self.modules.nixos.prometheus
-        inputs.self.modules.nixos.step-acme-standalone
+        inputs.self.modules.nixos.step-acme
         inputs.self.modules.nixos.proxmox-lxc
       ];
 
