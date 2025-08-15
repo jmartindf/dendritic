@@ -18,12 +18,31 @@ in
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
+        inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.proxmox-lxc
       ];
 
       desertflood = {
         inherit defaultUser hostInfo;
-        services.prometheus.exporters.node.mTLS-required = mTLS-required;
+
+        services.prometheus = {
+          exporters.node.mTLS-required = mTLS-required;
+
+          monitorHosts = [
+            "everest.manticore-mark.ts.net"
+            "firewalla.manticore-mark.ts.net"
+            "hermes.manticore-mark.ts.net"
+            "mark.manticore-mark.ts.net"
+            "masto-es.manticore-mark.ts.net"
+            "mastodon.manticore-mark.ts.net"
+            "underworld.manticore-mark.ts.net"
+          ];
+
+          monitorHostsSecure = [
+            "fossil.manticore-mark.ts.net"
+            "richard.manticore-mark.ts.net"
+          ];
+        };
       };
 
       networking = {
