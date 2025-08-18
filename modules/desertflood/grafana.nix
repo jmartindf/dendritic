@@ -2,6 +2,8 @@ _: {
   flake.modules.nixos.grafana =
     { config, ... }:
     let
+      cfg = config;
+      netCfg = cfg.desertflood.networking;
       inherit (config.desertflood.networking) webHost;
     in
     {
@@ -10,21 +12,27 @@ _: {
 
       config = {
 
-        services = {
+        desertflood.networking.services.grafana = { };
 
-          grafana = {
-            enable = true;
+        services =
+          let
+            svcConfig = netCfg.services.grafana;
+          in
+          {
 
-            settings.server = {
-              http_addr = "127.0.0.1";
-              http_port = 3000;
-              domain = "${webHost}";
-              root_url = "https://${webHost}/grafana/";
-              serve_from_sub_path = true;
-            };
-          }; # end `grafana` block
+            grafana = {
+              enable = true;
 
-        }; # end `services` block
+              settings.server = {
+                http_addr = "127.0.0.1";
+                http_port = 3000;
+                domain = "${svcConfig.fqdn}";
+                root_url = "${svcConfig.fullURL}";
+                serve_from_sub_path = if svcConfig.path != "" then true else false;
+              };
+            }; # end `grafana` block
+
+          }; # end `services` block
 
       }; # end Nix OS module config block
 

@@ -5,7 +5,7 @@
     { config, ... }:
     let
       cfg = config;
-      inherit (cfg.desertflood.networking) webHost;
+      netCfg = cfg.desertflood.networking;
       inherit (cfg.networking) hostName;
       inherit (cfg.desertflood.services.prometheus) mTLS-required;
       certInfo = cfg.desertflood.step-ca.certInfo.${hostName};
@@ -66,6 +66,8 @@
         in
         {
 
+          desertflood.networking.services.prometheus = { };
+
           desertflood.step-ca.certs.${hostName}.availableTo = {
             prometheus = {
               group = "prometheus";
@@ -79,7 +81,7 @@
               enable = true;
               listenAddress = "127.0.0.1";
               port = 9001;
-              webExternalUrl = "http://${webHost}/prometheus/";
+              webExternalUrl = "${netCfg.services.prometheus.fullURL}";
 
               extraFlags = [
                 "--web.config.file=/etc/${fragment}/web-config.yml"

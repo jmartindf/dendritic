@@ -1,9 +1,11 @@
 {
+  config,
   lib,
   ...
 }:
 let
   inherit (lib) types;
+  flakeCfg = config;
 
   hostMeta = import ./_meta-hosts.nix {
     inherit lib;
@@ -42,6 +44,89 @@ let
         type = lib.types.str;
         description = "the default public web domain (FQDN) for nginx and whatnot";
       };
+
+      services =
+        nixOScfg:
+        lib.mkOption {
+          description = "Describe the URLs for hosted services";
+          default = { };
+          type = lib.types.attrsOf (
+            lib.types.submodule (
+              { name, config, ... }:
+              {
+
+                options = {
+
+                  protocol = lib.mkOption {
+                    type = lib.types.str;
+                    default = "https";
+                    example = "http";
+                    description = "The protocol to serve from";
+                  };
+
+                  domain = lib.mkOption {
+                    type = lib.types.str;
+                    description = "the default public web domain for nginx and whatnot";
+                    default = flakeCfg.desertflood.networking.tailscaleDomain;
+                  };
+
+                  hostName = lib.mkOption {
+                    type = lib.types.str;
+                    description = "the default public web hostname for nginx and whatnot";
+                    default = nixOScfg.desertflood.networking.hostName;
+                  };
+
+                  fqdn = lib.mkOption {
+                    type = lib.types.str;
+                    description = "the public FQDN for nginx and whatnot";
+                    default = "${config.hostName}.${config.domain}";
+                  };
+
+                  path = lib.mkOption {
+                    type = lib.types.str;
+                    description = "The subpath (if any) that the service is served from";
+                    default = "/${name}/";
+                  };
+
+                  fullURL = lib.mkOption {
+                    type = lib.types.str;
+                    default = "";
+                    description = "FQDN + path";
+                  };
+
+                };
+
+                config = {
+
+                  path = lib.mkDefault "/${name}/";
+                  hostName = lib.mkDefault (
+                    lib.optionalString (nixOScfg.networking.hostName != "") nixOScfg.networking.hostName
+                  );
+                  domain = lib.mkDefault (
+                    lib.optionalString (
+                      flakeCfg.desertflood.networking.tailscaleDomain != ""
+                    ) flakeCfg.desertflood.networking.tailscaleDomain
+                  );
+
+                  fqdn =
+                    if config.hostName != "" && config.domain != "" then
+                      "${config.hostName}.${config.domain}"
+                    else
+                      "${config.hostName}";
+
+                  fullURL =
+                    if config.fqdn != "" && config.path != "" then
+                      "${config.protocol}://${config.fqdn}${config.path}"
+                    else if config.fqdn != "" then
+                      "${config.protocol}://${config.fqdn}"
+                    else
+                      "${config.protocol}://${config.hostName}";
+
+                };
+              }
+            )
+          );
+        };
     };
 
     defaultUser = lib.mkOption {
@@ -125,22 +210,29 @@ in
 
   config = {
 
-    flake.modules.nixos.nixos.options.desertflood = {
+    flake.modules.nixos.nixos =
+      { config, ... }:
+      {
 
-      inherit (dfOptions) defaultUser hostInfo;
+        options.desertflood = {
+          inherit (dfOptions) defaultUser hostInfo;
 
-      networking = {
-        inherit (dfOptions.networking) webDomain webHost;
+          networking = {
+            inherit (dfOptions.networking) webDomain webHost;
+            services = dfOptions.networking.services config;
+          };
+        };
+
       };
 
-    };
+    flake.modules.darwin.darwin = {
 
-    flake.modules.darwin.darwin.options.desertflood = {
+      options.desertflood = {
+        inherit (dfOptions) defaultUser hostInfo;
 
-      inherit (dfOptions) defaultUser hostInfo;
-
-      networking = {
-        inherit (dfOptions.networking) webDomain webHost;
+        networking = {
+          inherit (dfOptions.networking) webDomain webHost services;
+        };
       };
 
     };
