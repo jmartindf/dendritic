@@ -10,6 +10,9 @@ buildFlags := "--no-link"
 default:
     just --list
 
+devshell:
+    echo "run 'nix develop .#'"
+
 [group("richard")]
 rsync host=defaultHost:
     rsync {{ rsyncFlags }} ./ {{ host }}:/home/nixos/dendritic/
