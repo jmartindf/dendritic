@@ -68,7 +68,7 @@
       url = "github:vic/import-tree";
     };
     lix = {
-      url = "https://git.lix.systems/lix-project/lix/archive/2.93.2.tar.gz";
+      url = "https://git.lix.systems/lix-project/lix/archive/2.93.3.tar.gz";
       inputs = {
         flake-compat.follows = "flake-compat";
         nixpkgs.follows = "nixpkgs";
@@ -76,7 +76,7 @@
       };
     };
     lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.2-1.tar.gz";
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.3-1.tar.gz";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         lix.follows = "lix";
