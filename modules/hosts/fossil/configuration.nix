@@ -32,6 +32,7 @@ in
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
+        inputs.self.modules.nixos.forgejo
         inputs.self.modules.nixos.grafana
         inputs.self.modules.nixos.nginx
         inputs.self.modules.nixos.prometheus
@@ -92,16 +93,28 @@ in
         addSSL = true;
         enableACME = true;
 
-        locations."/prometheus/" = {
-          proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
-          proxyWebsockets = true;
-          recommendedProxySettings = true;
-        };
+        locations = {
+          "/prometheus/" = {
+            proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
+            proxyWebsockets = true;
+            recommendedProxySettings = true;
+          };
 
-        locations."/grafana/" = {
-          proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
-          proxyWebsockets = true;
-          recommendedProxySettings = true;
+          "/grafana/" = {
+            proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
+            proxyWebsockets = true;
+            recommendedProxySettings = true;
+          };
+
+          "/forgejo/" = {
+            proxyPass = "http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}/";
+            proxyWebsockets = true;
+            recommendedProxySettings = true;
+            extraConfig = # nginx
+              ''
+                client_max_body_size 1G;
+              '';
+          };
         };
       };
 
