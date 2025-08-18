@@ -3,14 +3,18 @@
 #
 {
   # Pre-configured user details
+  config,
   lib,
   ...
 }:
 let
   inherit (lib) mkDefault;
+  flakeCfg = config;
 in
 {
   config.desertflood = {
+
+    defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
 
     users.users = {
 
