@@ -71,6 +71,11 @@ in
         inherit (hostInfo) hostName domain;
       };
 
+      services.taskchampion-sync-server = {
+        enable = true;
+        allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
+      };
+
       age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDJagbKOnqDYTIZSWnRnMXqSANNeK0KJ+fs6xMhJH6dW";
 
       nix.settings.trusted-users = [ "nixos" ];
@@ -115,6 +120,16 @@ in
                 client_max_body_size 1G;
               '';
           };
+
+          "/taskchamp/" = {
+            proxyPass = "http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}";
+            recommendedProxySettings = true;
+            extraConfig = # nginx
+              ''
+                rewrite ^/taskchamp(/.*) $1 break;
+              '';
+          };
+
         };
       };
 
