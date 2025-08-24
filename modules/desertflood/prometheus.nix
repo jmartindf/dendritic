@@ -74,7 +74,6 @@ in
               group = "prometheus";
               reloadServices = [ "prometheus" ];
             };
-            scrapeConfigs = [
           };
 
           services = {
@@ -93,6 +92,39 @@ in
                 scrape_interval = "15s";
               };
 
+              scrapeConfigs =
+                let
+                  basic_relabel = [
+                    {
+                      source_labels = [ "nodename" ];
+                      target_label = "nodename";
+                      action = "lowercase";
+                    }
+                    {
+                      source_labels = [ "nodename" ];
+                      regex = "^([^\.]+).*";
+                      target_label = "nodename";
+                      replacement = "\$1";
+                    }
+                    {
+                      source_labels = [ "instance" ];
+                      regex = "^([^\.]+).*";
+                      target_label = "instance";
+                      replacement = "\$1";
+                    }
+                    {
+                      source_labels = [ "instance" ];
+                      regex = "^127$";
+                      target_label = "instance";
+                      replacement = "${config.networking.hostName}";
+                    }
+                    # {
+                    #   source_labels = [ "domainname" ];
+                    #   action = "drop";
+                    # }
+                  ];
+                in
+                [
                   {
                     job_name = "${config.networking.hostName}_http";
                     scheme = "http";
@@ -104,6 +136,7 @@ in
                         targets = lib.concatMap (item: [ "${item}:9100" ]) cfg.desertflood.services.prometheus.monitorHosts;
                       }
                     ];
+                    metric_relabel_configs = basic_relabel;
                   }
                   {
                     job_name = "${config.networking.hostName}_https";
@@ -118,6 +151,7 @@ in
                         ]) cfg.desertflood.services.prometheus.monitorHostsSecure;
                       }
                     ];
+                    metric_relabel_configs = basic_relabel;
                   }
                 ];
 
