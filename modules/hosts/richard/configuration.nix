@@ -35,6 +35,7 @@ in
       desertflood = {
         inherit defaultUser hostInfo;
         services.prometheus.exporters.node.mTLS-required = mTLS-required;
+        step-ca.certs.${hostInfo.hostName}.availableTo = { };
       };
 
       networking = {

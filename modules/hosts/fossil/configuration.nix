@@ -19,11 +19,7 @@ let
   mTLS-required = false;
 in
 {
-  desertflood = {
-    inherit hostInfo defaultUser;
-
-    hosts.hosts.fossil = hostInfo;
-  };
+  desertflood.hosts.hosts.fossil = hostInfo;
 
   flake.modules.nixos.fossil =
     { config, ... }:
@@ -45,6 +41,8 @@ in
       desertflood = {
         inherit defaultUser hostInfo;
 
+        step-ca.certs.${hostInfo.hostName}.availableTo = { };
+
         services.prometheus = {
           inherit mTLS-required;
 
@@ -61,7 +59,7 @@ in
           ];
 
           monitorHostsSecure = [
-            "fossil.manticore-mark.ts.net"
+            "127.0.0.1"
             "richard.manticore-mark.ts.net"
           ];
         };
