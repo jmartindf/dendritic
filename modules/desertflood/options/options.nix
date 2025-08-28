@@ -43,6 +43,18 @@ let
         description = "the default public web domain (FQDN) for nginx and whatnot";
       };
     };
+
+    defaultUser = lib.mkOption {
+      type = types.submodule userMeta;
+      default = { };
+      description = "The default user for this host, for flake-parts modules";
+    };
+
+    hostInfo = lib.mkOption {
+      type = types.submodule hostMeta;
+      default = { };
+      description = "Basic facts about this host, for flake-parts modules";
+    };
   };
 in
 {
@@ -63,6 +75,8 @@ in
         description = "Details of the various hosts that can be created.";
       };
     };
+
+    inherit (dfOptions) defaultUser;
 
     builderKeys = {
       builderKeys = lib.mkOption {
@@ -107,34 +121,14 @@ in
         description = "The necessary info to get the root certificate using `fetchurl`";
       };
     };
-
-    defaultUser = lib.mkOption {
-      type = types.submodule userMeta;
-      default = { };
-      description = "The default user for this host, for flake-parts modules";
-    };
-
-    hostInfo = lib.mkOption {
-      type = types.submodule hostMeta;
-      default = { };
-      description = "Basic facts about this host, for flake-parts modules";
-    };
   };
 
   config = {
 
     flake.modules.nixos.nixos.options.desertflood = {
 
-      defaultUser = lib.mkOption {
-        type = types.submodule userMeta;
-        default = { };
-        description = "The default user for this host, for Nix OS modules";
-      };
+      inherit (dfOptions) defaultUser hostInfo;
 
-      hostInfo = lib.mkOption {
-        type = types.submodule hostMeta;
-        default = { };
-        description = "Basic facts about this host, for Nix OS modules";
       networking = {
         inherit (dfOptions.networking) webDomain webHost;
       };
@@ -143,16 +137,8 @@ in
 
     flake.modules.darwin.darwin.options.desertflood = {
 
-      defaultUser = lib.mkOption {
-        type = types.submodule userMeta;
-        default = { };
-        description = "The default user for this host, for Darwin modules";
-      };
+      inherit (dfOptions) defaultUser hostInfo;
 
-      hostInfo = lib.mkOption {
-        type = types.submodule hostMeta;
-        default = { };
-        description = "Basic facts about this host, for Darwin modules";
       networking = {
         inherit (dfOptions.networking) webDomain webHost;
       };
