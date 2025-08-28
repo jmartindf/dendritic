@@ -15,7 +15,6 @@ let
     remote = false;
   };
 
-  flakeCfg = config;
   mTLS-required = false;
 in
 {
@@ -24,8 +23,10 @@ in
   flake.modules.nixos.fossil =
     { config, ... }:
     let
-      svcConfig = config.services;
-      inherit (flakeCfg.desertflood.networking) webHost;
+      nixOScfg = config;
+      svcConfig = nixOScfg.services;
+      inherit (hostInfo) hostName;
+      inherit (nixOScfg.desertflood.networking) webHost;
     in
     {
       imports = [
@@ -41,7 +42,7 @@ in
       desertflood = {
         inherit defaultUser hostInfo;
 
-        step-ca.certs.${hostInfo.hostName}.availableTo = { };
+        step-ca.certs.${hostName}.availableTo = { };
 
         services.prometheus = {
           inherit mTLS-required;

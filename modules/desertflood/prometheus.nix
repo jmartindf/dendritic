@@ -1,15 +1,12 @@
-{ config, lib, ... }:
-let
-  flakeCfg = config;
-in
+{ lib, ... }:
 {
 
   flake.modules.nixos.prometheus =
     { config, ... }:
     let
       cfg = config;
-      webHost = "${config.networking.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
-      inherit (cfg.desertflood.hostInfo) hostName;
+      inherit (cfg.desertflood.networking) webHost;
+      inherit (cfg.networking) hostName;
       inherit (cfg.desertflood.services.prometheus) mTLS-required;
       certInfo = cfg.desertflood.step-ca.certInfo.${hostName};
 
@@ -116,7 +113,7 @@ in
                       source_labels = [ "instance" ];
                       regex = "^127$";
                       target_label = "instance";
-                      replacement = "${config.networking.hostName}";
+                      replacement = "${hostName}";
                     }
                     # {
                     #   source_labels = [ "domainname" ];
@@ -126,7 +123,7 @@ in
                 in
                 [
                   {
-                    job_name = "${config.networking.hostName}_http";
+                    job_name = "${hostName}_http";
                     scheme = "http";
                     static_configs = [
                       {
@@ -139,7 +136,7 @@ in
                     metric_relabel_configs = basic_relabel;
                   }
                   {
-                    job_name = "${config.networking.hostName}_https";
+                    job_name = "${hostName}_https";
                     scheme = "https";
                     static_configs = [
                       {

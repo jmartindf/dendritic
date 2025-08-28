@@ -29,6 +29,21 @@ let
         label = lib.mkDefault name;
       };
     };
+
+  dfOptions = {
+
+    networking = {
+      webDomain = lib.mkOption {
+        type = lib.types.str;
+        description = "the default public web domain for nginx and whatnot";
+      };
+
+      webHost = lib.mkOption {
+        type = lib.types.str;
+        description = "the default public web domain (FQDN) for nginx and whatnot";
+      };
+    };
+  };
 in
 {
   options.desertflood = {
@@ -67,16 +82,6 @@ in
       tailscaleDomain = lib.mkOption {
         type = types.str;
         description = "The shared tailscale domain name";
-      };
-
-      webDomain = lib.mkOption {
-        type = lib.types.str;
-        description = "the default public web domain for nginx and whatnot";
-      };
-
-      webHost = lib.mkOption {
-        type = lib.types.str;
-        description = "the default public web domain (FQDN) for nginx and whatnot";
       };
     };
 
@@ -130,6 +135,8 @@ in
         type = types.submodule hostMeta;
         default = { };
         description = "Basic facts about this host, for Nix OS modules";
+      networking = {
+        inherit (dfOptions.networking) webDomain webHost;
       };
 
     };
@@ -146,6 +153,8 @@ in
         type = types.submodule hostMeta;
         default = { };
         description = "Basic facts about this host, for Darwin modules";
+      networking = {
+        inherit (dfOptions.networking) webDomain webHost;
       };
 
     };

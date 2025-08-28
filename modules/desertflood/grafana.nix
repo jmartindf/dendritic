@@ -1,12 +1,8 @@
-{ config, ... }:
-let
-  flakeCfg = config;
-in
-{
+_: {
   flake.modules.nixos.grafana =
-    _:
+    { config, ... }:
     let
-      inherit (flakeCfg.desertflood.networking) webHost;
+      inherit (config.desertflood.networking) webHost;
     in
     {
       options = {
