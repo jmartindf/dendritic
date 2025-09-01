@@ -63,6 +63,7 @@ in
           monitorHostsSecure = [
             "127.0.0.1"
             "richard.manticore-mark.ts.net"
+            "france.manticore-mark.ts.net"
           ];
         };
       };
