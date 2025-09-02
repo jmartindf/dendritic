@@ -27,10 +27,8 @@ in
           let
             rsaKey = "/etc/ssh/ssh_host_rsa_key";
             ed25519Key = "/etc/ssh/ssh_host_ed25519_key";
-          in
-          {
 
-            "sshd@" = {
+            serviceTweaks = {
 
               enableStrictShellChecks = true;
               environment = {
@@ -62,6 +60,11 @@ in
                   fi
                 '';
             };
+          in
+          {
+
+            "sshd@" = serviceTweaks;
+            "sshd" = serviceTweaks;
 
             # inspired by https://github.com/vulpi/viperML-dotfiles/blob/0e0dacf03489596359d97fd8292da4921f902f29/hosts/gen6/configuration.nix
             # and
