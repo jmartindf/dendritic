@@ -15,6 +15,11 @@ _: {
         recommendedBrotliSettings = true;
       }; # end `services.nginx` block
 
+      networking.firewall.allowedTCPPorts = [
+        80
+        443
+      ];
+
     }; # end Nix OS module config block
 
   }; # end `nginx` Nix OS module

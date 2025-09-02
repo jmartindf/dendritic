@@ -25,6 +25,8 @@ in
         webHost = lib.mkDefault "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.webDomain}";
       };
 
+      networking.firewall.allowPing = true;
+
       services = {
         tailscale.enable = true;
       };
