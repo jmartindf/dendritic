@@ -76,6 +76,7 @@ in
 
                 extraFlags = [
                   "--web.config.file=/etc/${fragment}/web-config.yml"
+                  "--collector.filesystem.mount-points-exclude=\"^/(dev|proc|sys|run|nix)\""
                 ];
               };
             };
