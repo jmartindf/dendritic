@@ -13,14 +13,14 @@ default:
 devshell:
     echo "run 'nix develop .#'"
 
-[group("richard")]
+[group("hosts")]
 rsync host=defaultHost:
     rsync {{ rsyncFlags }} ./ {{ host }}:/home/nixos/dendritic/
 
-[group("richard")]
+[group("hosts")]
 build host=defaultHost:
     {{ build }} build {{ buildFlags }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
-[group("richard")]
+[group("hosts")]
 deploy host=defaultHost: (build host) (rsync host)
-    nixos-rebuild-ng switch --flake . --target-host root@{{ host }}.home.thosemartins.family
+    nixos-rebuild-ng switch --flake . --target-host root@{{ host }}.{{ if host == "france" { "df.fyi" } else { "home.thosemartins.family" } }}
