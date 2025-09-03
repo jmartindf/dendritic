@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
   flakeCfg = config;
 in
@@ -121,6 +121,25 @@ in
           }; # end `forgejo` block
 
         }; # end `services` block
+
+        # Taken from [@orangci](https://github.com/orangci)
+        # [forgejo.nix](https://github.com/orangci/dots/commit/c84ee0a6116592961a5d935d4c961f11eb419c59)
+        systemd.services.forgejo.preStart =
+          let
+            theme = pkgs.fetchzip {
+              url = "https://github.com/catppuccin/gitea/releases/download/v1.0.2/catppuccin-gitea.tar.gz";
+              sha256 = "sha256-rZHLORwLUfIFcB6K9yhrzr+UwdPNQVSadsw6rg8Q7gs=";
+              stripRoot = false;
+            };
+            inherit (nixOScfg.services.forgejo) stateDir;
+          in
+          lib.mkAfter ''
+            rm -rf ${stateDir}/custom/public/assets
+            mkdir -p ${stateDir}/custom/public/assets/css
+            cp -r --no-preserve=mode,ownership ${theme}/* ${stateDir}/custom/public/assets/css
+            mkdir -p ${stateDir}/custom/public/assets/img
+            cp -r --no-preserve=mode,ownership ${./gitea/public/assets/img}/* ${stateDir}/custom/public/assets/img
+          '';
 
       }; # end Nix OS module config block
 
