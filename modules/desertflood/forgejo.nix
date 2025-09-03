@@ -140,6 +140,37 @@ in
                   DEFAULT_SHOW_FULL_NAME = false;
                   ONLY_SHOW_RELEVANT_REPOS = true;
                   PREFERRED_TIMESTAMP_TENSE = "mixed";
+                  THEMES = lib.concatStringsSep "," [
+                    "catppuccin-mocha-rosewater"
+                    "catppuccin-mocha-flamingo"
+                    "catppuccin-mocha-pink"
+                    "catppuccin-mocha-mauve"
+                    "catppuccin-mocha-red"
+                    "catppuccin-mocha-maroon"
+                    "catppuccin-mocha-peach"
+                    "catppuccin-mocha-yellow"
+                    "catppuccin-mocha-green"
+                    "catppuccin-mocha-teal"
+                    "catppuccin-mocha-sky"
+                    "catppuccin-mocha-sapphire"
+                    "catppuccin-mocha-blue"
+                    "catppuccin-mocha-lavender"
+                    "catppuccin-rosewater-auto"
+                    "catppuccin-flamingo-auto"
+                    "catppuccin-pink-auto"
+                    "catppuccin-mauve-auto"
+                    "catppuccin-red-auto"
+                    "catppuccin-maroon-auto"
+                    "catppuccin-peach-auto"
+                    "catppuccin-yellow-auto"
+                    "catppuccin-green-auto"
+                    "catppuccin-teal-auto"
+                    "catppuccin-sky-auto"
+                    "catppuccin-sapphire-auto"
+                    "catppuccin-blue-auto"
+                    "catppuccin-lavender-auto"
+                    "forgejo-auto"
+                  ];
                 };
 
                 "ui.meta" = {
@@ -153,7 +184,7 @@ in
           }; # end `services` block
 
           # Taken from [@orangci](https://github.com/orangci)
-          # [forgejo.nix](https://github.com/orangci/dots/commit/c84ee0a6116592961a5d935d4c961f11eb419c59)
+          # [forgejo.nix](https://github.com/orangci/dots/blob/c84ee0a6116592961a5d935d4c961f11eb419c59/modules/server/forgejo.nix)
           systemd.services.forgejo.preStart =
             let
               theme = pkgs.fetchzip {
