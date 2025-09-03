@@ -134,6 +134,8 @@ in
                   USERNAME_COOLDOWN_PERIOD = 7;
                 };
 
+                session.COOKIE_SECURE = true;
+
                 time.DEFAULT_UI_LOCATION = nixOScfg.time.timeZone;
 
                 ui = {
