@@ -34,9 +34,7 @@ in
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.forgejo
         inputs.self.modules.nixos.grafana
-        inputs.self.modules.nixos.nginx
         inputs.self.modules.nixos.prometheus
-        inputs.self.modules.nixos.step-acme
         inputs.self.modules.nixos.proxmox-lxc
       ];
 
@@ -44,6 +42,37 @@ in
         inherit defaultUser hostInfo;
 
         step-ca.certs.${hostName}.availableTo = { };
+
+        services.caddy = {
+          enable = true;
+
+          settings = {
+            global = # caddy
+              ''
+                local_certs
+              '';
+
+            caddyfile = # caddy
+              ''
+                ${webHost} {
+                  reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
+                  reverse_proxy /prometheus* https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}
+
+                  handle_path /forgejo* {
+                    request_body {
+                      max_size 1G
+                    }
+                    reverse_proxy http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}
+                  }
+
+                  handle_path /taskchamp* {
+                    reverse_proxy http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}
+                  }
+                }
+              '';
+          };
+
+        };
 
         services.prometheus = {
           inherit mTLS-required;
@@ -94,45 +123,5 @@ in
         };
 
       };
-
-      services.nginx.virtualHosts.${webHost} = {
-        addSSL = true;
-        enableACME = true;
-
-        locations = {
-          "/prometheus/" = {
-            proxyPass = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
-            proxyWebsockets = true;
-            recommendedProxySettings = true;
-          };
-
-          "/grafana/" = {
-            proxyPass = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
-            proxyWebsockets = true;
-            recommendedProxySettings = true;
-          };
-
-          "/forgejo/" = {
-            proxyPass = "http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}/";
-            proxyWebsockets = true;
-            recommendedProxySettings = true;
-            extraConfig = # nginx
-              ''
-                client_max_body_size 1G;
-              '';
-          };
-
-          "/taskchamp/" = {
-            proxyPass = "http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}";
-            recommendedProxySettings = true;
-            extraConfig = # nginx
-              ''
-                rewrite ^/taskchamp(/.*) $1 break;
-              '';
-          };
-
-        };
-      };
-
     };
 }
