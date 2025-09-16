@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 let
   flakeCfg = config;
 in
@@ -10,6 +15,7 @@ in
       netCfg = nixOScfg.desertflood.networking;
     in
     {
+
       options = {
       };
 
@@ -44,13 +50,12 @@ in
             # };
           };
 
+          desertflood.services.postgresql.enable = true;
           desertflood.networking.services.forgejo = { };
 
           services = {
 
             postgresql = {
-              enable = true;
-              package = pkgs.postgresql_17;
               ensureDatabases = [ forgejoUser ];
               ensureUsers = [
                 {
@@ -67,7 +72,6 @@ in
                 user = forgejoUser;
                 type = "postgres";
                 name = forgejoUser;
-                # host = "127.0.0.1";
                 createDatabase = false;
                 socket = "/run/postgresql";
                 # passwordFile = nixOScfg.age.secrets.forgejo-password-database.path;
