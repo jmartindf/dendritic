@@ -1,10 +1,10 @@
-{ config, ... }:
+{ config, inputs, ... }:
 let
   flakeCfg = config;
 in
 {
   flake.modules.nixos.grafana =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       cfg = config;
       netCfg = cfg.desertflood.networking;
@@ -24,6 +24,7 @@ in
           group = grafanaGroup;
         };
 
+        desertflood.services.postgresql.enable = true;
         desertflood.networking.services.grafana = { };
 
         services =
@@ -31,6 +32,16 @@ in
             svcConfig = netCfg.services.grafana;
           in
           {
+
+            postgresql = {
+              ensureDatabases = [ grafanaUser ];
+              ensureUsers = [
+                {
+                  name = grafanaUser;
+                  ensureDBOwnership = true;
+                }
+              ];
+            };
 
             grafana = {
               enable = true;
@@ -42,6 +53,13 @@ in
                   domain = "${svcConfig.fqdn}";
                   root_url = "${svcConfig.fullURL}";
                   serve_from_sub_path = if svcConfig.path != "" then true else false;
+                };
+
+                database = {
+                  host = "/run/postgresql";
+                  name = grafanaUser;
+                  type = "postgres";
+                  user = grafanaUser;
                 };
 
                 security = {
