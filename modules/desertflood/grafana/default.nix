@@ -1,17 +1,28 @@
-_: {
+{ config, ... }:
+let
+  flakeCfg = config;
+in
+{
   flake.modules.nixos.grafana =
     { config, ... }:
     let
       cfg = config;
       netCfg = cfg.desertflood.networking;
       promCfg = config.services.prometheus;
-      inherit (config.desertflood.networking) webHost;
+      grafanaUser = "grafana";
+      grafanaGroup = "grafana";
     in
     {
       options = {
       };
 
       config = {
+
+        age.secrets.grafana-password = {
+          rekeyFile = ./grafana-password.age;
+          owner = grafanaUser;
+          group = grafanaGroup;
+        };
 
         desertflood.networking.services.grafana = { };
 
@@ -24,12 +35,21 @@ _: {
             grafana = {
               enable = true;
 
-              settings.server = {
-                http_addr = "127.0.0.1";
-                http_port = 3000;
-                domain = "${svcConfig.fqdn}";
-                root_url = "${svcConfig.fullURL}";
-                serve_from_sub_path = if svcConfig.path != "" then true else false;
+              settings = {
+                server = {
+                  http_addr = "127.0.0.1";
+                  http_port = 3000;
+                  domain = "${svcConfig.fqdn}";
+                  root_url = "${svcConfig.fullURL}";
+                  serve_from_sub_path = if svcConfig.path != "" then true else false;
+                };
+
+                security = {
+                  admin_user = "jmartindf";
+                  admin_password = "$__file{${cfg.age.secrets.grafana-password.path}}";
+                  admin_email = flakeCfg.desertflood.defaultUser.emails.family.email;
+                  cookie_secure = true;
+                };
               };
 
               provision = {
