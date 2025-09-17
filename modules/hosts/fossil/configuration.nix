@@ -46,13 +46,13 @@ in
         services.caddy = {
           enable = true;
 
-          settings = {
-            global = # caddy
-              ''
-                local_certs
-              '';
+          letsencrypt = {
+            enable = true;
+            acme-dns = true;
+          };
 
-            caddyfile = # caddy
+          settings = {
+            site-blocks = # caddy
               ''
                 ${webHost} {
                   reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
@@ -67,6 +67,20 @@ in
 
                   handle_path /taskchamp* {
                     reverse_proxy http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}
+                  }
+                }
+
+                *.desertflood.com {
+                  import challenge_dns_acme-dns
+
+                  @monitor host monitor.desertflood.com
+                  handle @monitor {
+                    reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
+                    reverse_proxy /prometheus* https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}
+                  }
+
+                  handle {
+                    abort
                   }
                 }
               '';
