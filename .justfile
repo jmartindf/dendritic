@@ -27,3 +27,6 @@ buildAll: (build "richard") (build "fossil") (build "france")
 [group("hosts")]
 deploy host=defaultHost: (build host) (rsync host)
     nixos-rebuild-ng switch --flake . --target-host root@{{ host }}.{{ if host == "france" { "df.fyi" } else { "home.thosemartins.family" } }}
+
+[group("hosts")]
+deployAll: (deploy "richard") (deploy "fossil") (deploy "france")
