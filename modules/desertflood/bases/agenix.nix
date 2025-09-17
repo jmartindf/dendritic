@@ -14,10 +14,10 @@
       age.rekey = {
         storageMode = "local";
         masterIdentities = [
-          ../../.secrets/identity-yubikey1.pub
-          ../../.secrets/identity-yubikey2.pub
+          ../../../.secrets/identity-yubikey1.pub
+          ../../../.secrets/identity-yubikey2.pub
         ];
-        localStorageDir = ../../.secrets/${cfg.networking.hostName};
+        localStorageDir = ../../../.secrets/${cfg.networking.hostName};
       };
     };
 }
