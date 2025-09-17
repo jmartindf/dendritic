@@ -35,6 +35,11 @@ let
   dfOptions = {
 
     networking = {
+      tailscaleDomain = lib.mkOption {
+        type = types.str;
+        description = "The shared tailscale domain name";
+      };
+
       webDomain = lib.mkOption {
         type = lib.types.str;
         description = "the default public web domain for nginx and whatnot";
@@ -161,7 +166,7 @@ in
       };
     };
 
-    inherit (dfOptions) defaultUser;
+    inherit (dfOptions) defaultUser networking;
 
     builderKeys = {
       builderKeys = lib.mkOption {
@@ -175,13 +180,6 @@ in
       type = types.attrsOf types.anything;
       default = { };
       description = "Secrets to use in age";
-    };
-
-    networking = {
-      tailscaleDomain = lib.mkOption {
-        type = types.str;
-        description = "The shared tailscale domain name";
-      };
     };
 
     step-ca = {
@@ -218,7 +216,7 @@ in
           inherit (dfOptions) defaultUser hostInfo;
 
           networking = {
-            inherit (dfOptions.networking) webDomain webHost;
+            inherit (dfOptions.networking) webDomain webHost tailscaleDomain;
             services = dfOptions.networking.services config;
           };
         };
@@ -231,7 +229,12 @@ in
         inherit (dfOptions) defaultUser hostInfo;
 
         networking = {
-          inherit (dfOptions.networking) webDomain webHost services;
+          inherit (dfOptions.networking)
+            webDomain
+            webHost
+            tailscaleDomain
+            services
+            ;
         };
       };
 

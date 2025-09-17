@@ -23,6 +23,7 @@ in
       desertflood.networking = {
         webDomain = lib.mkDefault "${flakeCfg.desertflood.networking.tailscaleDomain}";
         webHost = lib.mkDefault "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.webDomain}";
+        tailscaleDomain = lib.mkDefault "${flakeCfg.desertflood.networking.tailscaleDomain}";
       };
 
       networking.firewall.allowPing = true;
