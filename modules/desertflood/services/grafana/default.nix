@@ -8,7 +8,7 @@ in
     let
       cfg = config;
       netCfg = cfg.desertflood.networking;
-      promCfg = config.services.prometheus;
+      promCfg = cfg.services.prometheus;
       grafanaUser = "grafana";
       grafanaGroup = "grafana";
     in
@@ -27,23 +27,23 @@ in
         desertflood.services.postgresql.enable = true;
         desertflood.networking.services.grafana = { };
 
-        services =
-          let
-            svcConfig = netCfg.services.grafana;
-          in
-          {
+        services = {
 
-            postgresql = {
-              ensureDatabases = [ grafanaUser ];
-              ensureUsers = [
-                {
-                  name = grafanaUser;
-                  ensureDBOwnership = true;
-                }
-              ];
-            };
+          postgresql = {
+            ensureDatabases = [ grafanaUser ];
+            ensureUsers = [
+              {
+                name = grafanaUser;
+                ensureDBOwnership = true;
+              }
+            ];
+          };
 
-            grafana = {
+          grafana =
+            let
+              svcConfig = cfg.desertflood.networking.services.grafana;
+            in
+            {
               enable = true;
 
               settings = {
@@ -107,7 +107,7 @@ in
 
             }; # end `grafana` block
 
-          }; # end `services` block
+        }; # end `services` block
 
       }; # end Nix OS module config block
 

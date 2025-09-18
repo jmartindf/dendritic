@@ -104,28 +104,32 @@ let
                 config = {
 
                   path = lib.mkDefault "/${name}/";
+
                   hostName = lib.mkDefault (
                     lib.optionalString (nixOScfg.networking.hostName != "") nixOScfg.networking.hostName
                   );
+
                   domain = lib.mkDefault (
                     lib.optionalString (
                       flakeCfg.desertflood.networking.tailscaleDomain != ""
                     ) flakeCfg.desertflood.networking.tailscaleDomain
                   );
 
-                  fqdn =
+                  fqdn = lib.mkDefault (
                     if config.hostName != "" && config.domain != "" then
                       "${config.hostName}.${config.domain}"
                     else
-                      "${config.hostName}";
+                      "${config.hostName}"
+                  );
 
-                  fullURL =
+                  fullURL = lib.mkDefault (
                     if config.fqdn != "" && config.path != "" then
                       "${config.protocol}://${config.fqdn}${config.path}"
                     else if config.fqdn != "" then
                       "${config.protocol}://${config.fqdn}"
                     else
-                      "${config.protocol}://${config.hostName}";
+                      "${config.protocol}://${config.hostName}"
+                  );
 
                 };
               }
@@ -210,6 +214,9 @@ in
 
     flake.modules.nixos.nixos =
       { config, ... }:
+      let
+        nixOScfg = config;
+      in
       {
 
         options.desertflood = {
@@ -217,7 +224,7 @@ in
 
           networking = {
             inherit (dfOptions.networking) webDomain webHost tailscaleDomain;
-            services = dfOptions.networking.services config;
+            services = dfOptions.networking.services nixOScfg;
           };
         };
 
