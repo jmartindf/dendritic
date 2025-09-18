@@ -32,6 +32,7 @@ in
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.grafana
+        inputs.self.modules.nixos.ntfy
         inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.hetzner-cloud
         { config.facter.reportPath = ./facter.json; }
@@ -56,6 +57,12 @@ in
               path = "/prometheus/";
             };
 
+            ntfy = {
+              domain = "desertflood.com";
+              hostName = "ntfy";
+              path = "";
+            };
+
           };
 
         };
@@ -63,6 +70,8 @@ in
         step-ca.certs.${hostName}.availableTo = { };
 
         services = {
+
+          ntfy.enable = true;
 
           caddy = {
             enable = true;
@@ -92,6 +101,21 @@ in
                     @taskchamp host taskchamp.desertflood.com
                     handle @taskchamp {
                       reverse_proxy http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}
+                    }
+
+                    @ntfy-sh host ntfy.desertflood.com
+                    handle @ntfy-sh {
+                      reverse_proxy http://${toString svcConfig.ntfy-sh.settings.listen-http}
+
+                      # Redirect HTTP to HTTPS, but only for GET topic addresses, since we want
+                      # it to work with curl without the annoying https:// prefix
+                      # https://docs.ntfy.sh/config/#nginxapache2caddy
+                      @httpget {
+                        protocol http
+                        method GET
+                        path_regexp ^/([-_a-z0-9]{0,64}$|docs/|static/)
+                      }
+                      redir @httpget https://{host}{uri}
                     }
 
                     handle {
