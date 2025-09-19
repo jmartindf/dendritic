@@ -38,6 +38,19 @@ in
         { config.facter.reportPath = ./facter.json; }
       ];
 
+      # Attach block storage volume, for Forgejo and others
+      disko.devices.disk = {
+        block = {
+          device = "/dev/disk/by-id/scsi-0HC_Volume_103482293";
+          type = "disk";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/mnt/blockdata";
+          };
+        };
+      };
+
       desertflood = {
         inherit defaultUser hostInfo;
 
