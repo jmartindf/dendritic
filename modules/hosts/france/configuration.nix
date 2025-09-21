@@ -20,7 +20,7 @@ in
   desertflood.hosts.hosts.france = hostInfo;
 
   flake.modules.nixos.france =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       nixOScfg = config;
       svcConfig = nixOScfg.services;
@@ -29,6 +29,7 @@ in
     in
     {
       imports = [
+        inputs.self.modules.nixos.apprise-api
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.grafana
@@ -49,6 +50,14 @@ in
             mountpoint = "/mnt/blockdata";
           };
         };
+      };
+
+      age.secrets.basic_auth = {
+        rekeyFile = ./basic_auth.age;
+      };
+
+      systemd.services.caddy.serviceConfig = {
+        EnvironmentFile = nixOScfg.age.secrets.basic_auth.path;
       };
 
       desertflood = {
@@ -76,6 +85,10 @@ in
               path = "";
             };
 
+            apprise-api = {
+              path = "";
+            };
+
           };
 
         };
@@ -83,6 +96,11 @@ in
         step-ca.certs.${hostName}.availableTo = { };
 
         services = {
+
+          apprise-api = {
+            enable = true;
+            log-level = "INFO";
+          };
 
           ntfy.enable = true;
 
@@ -129,6 +147,18 @@ in
                         path_regexp ^/([-_a-z0-9]{0,64}$|docs/|static/)
                       }
                       redir @httpget https://{host}{uri}
+                    }
+
+                    @apprise-api host apprise.desertflood.com
+                    handle @apprise-api {
+                      handle_path /s/* {
+                        root ${pkgs.local.apprise-api}/webapp/static
+                        file_server
+                      }
+                      reverse_proxy http://${toString nixOScfg.desertflood.services.apprise-api.host}:${toString nixOScfg.desertflood.services.apprise-api.port}
+                      basic_auth {
+                        {$HTTP_BASIC_AUTH_USER} {$HTTP_BASIC_AUTH_PASSWORD}
+                      }
                     }
 
                     handle {
