@@ -47,7 +47,7 @@ in
           content = {
             type = "filesystem";
             format = "ext4";
-            mountpoint = "/mnt/blockdata";
+            mountpoint = "/var";
           };
         };
       };
