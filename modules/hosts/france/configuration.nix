@@ -219,6 +219,11 @@ in
         };
       };
 
+      # Save port 22 for either Forgejo or Endlessh
+      services.openssh.ports = [
+        45897
+      ]; # from `uv run --with port4me python -m port4me --tool=ssh --user france`
+
       services.taskchampion-sync-server = {
         enable = true;
         allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
