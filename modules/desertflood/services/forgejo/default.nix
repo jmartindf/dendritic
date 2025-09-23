@@ -44,6 +44,36 @@ in
               owner = forgejoUser;
               group = forgejoGroup;
             };
+            forgejo-minio_access_key_id = {
+              rekeyFile = ./forgejo-minio_access_key_id.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
+            forgejo-minio_secret_access_key = {
+              rekeyFile = ./forgejo-minio_secret_access_key.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
+            forgejo-minio_bucket = {
+              rekeyFile = ./forgejo-minio_bucket.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
+            forgejo-lfs_jwt_secret = {
+              rekeyFile = ./forgejo-lfs_jwt_secret.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
+            forgejo-security_secret_key = {
+              rekeyFile = ./forgejo-security_secret_key.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
+            forgejo-security_internal_token = {
+              rekeyFile = ./forgejo-security_internal_token.age;
+              owner = forgejoUser;
+              group = forgejoGroup;
+            };
             # forgejo-password-database = {
             #   rekeyFile = ./forgejo-password-database.age;
             #   generator.script = "passphrase";
@@ -95,8 +125,13 @@ in
                   ENABLED = true;
                 };
 
+                log = {
+                  MODE = "file";
+                };
+
                 picture = {
                   GRAVATAR_SOURCE = "gravatar";
+                  ENABLE_FEDERATED_AVATAR = true;
                 };
 
                 repository = {
@@ -123,6 +158,8 @@ in
                 security.LOGIN_REMEMBER_DAYS = 365;
 
                 server = {
+                  LFS_START_SERVER = true;
+                  LFS_JWT_SECRET_URI = "file:${nixOScfg.age.secrets.forgejo-lfs_jwt_secret.path}";
                   DISABLE_SSH = true;
                   DOMAIN = "${netCfg.services.forgejo.fqdn}";
                   ENABLE_GZIP = true;
@@ -141,7 +178,26 @@ in
                   USERNAME_COOLDOWN_PERIOD = 7;
                 };
 
-                session.COOKIE_SECURE = true;
+                session = {
+                  PROVIDER = "db";
+                  COOKIE_NAME = "lfg_forgejo";
+                  COOKIE_SECURE = true;
+                };
+
+                openid = {
+                  ENABLE_OPENID_SIGNIN = false;
+                  ENABLE_OPENID_SIGNUP = false;
+                };
+
+                storage = {
+                  STORAGE_TYPE = "minio";
+                  MINIO_ENDPOINT = "s3.us-west-001.backblazeb2.com";
+                  MINIO_LOCATION = "us-west-001";
+                  MINIO_USE_SSL = true;
+                  MINIO_INSECURE_SKIP_VERIFY = false;
+                  SERVE_DIRECT = false;
+                  MINIO_CHECKSUM_ALGORITHM = "md5";
+                };
 
                 time.DEFAULT_UI_LOCATION = nixOScfg.time.timeZone;
 
@@ -199,6 +255,20 @@ in
                 };
 
               }; # end `forgejo` settings block
+
+              secrets = {
+
+                security.SECRET_KEY = lib.mkForce nixOScfg.age.secrets.forgejo-security_secret_key.path;
+                security.INTERNAL_TOKEN = lib.mkForce nixOScfg.age.secrets.forgejo-security_internal_token.path;
+
+                storage = {
+                  MINIO_ACCESS_KEY_ID = nixOScfg.age.secrets.forgejo-minio_access_key_id.path;
+                  MINIO_SECRET_ACCESS_KEY = nixOScfg.age.secrets.forgejo-minio_secret_access_key.path;
+                  MINIO_BUCKET = nixOScfg.age.secrets.forgejo-minio_bucket.path;
+                };
+
+              }; # end `forgejo` secrets block
+
             }; # end `forgejo` block
 
           }; # end `services` block
