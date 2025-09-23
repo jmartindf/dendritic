@@ -179,6 +179,17 @@ in
                     "catppuccin-blue-auto"
                     "catppuccin-lavender-auto"
                     "forgejo-auto"
+                    "forgejo-auto-deuteranopia-protanopia"
+                    "forgejo-auto-tritanopia"
+                    "forgejo-dark"
+                    "forgejo-dark-deuteranopia-protanopia"
+                    "forgejo-dark-tritanopia"
+                    "forgejo-light"
+                    "forgejo-light-deuteranopia-protanopia"
+                    "forgejo-light-tritanopia"
+                    "gitea-auto"
+                    "gitea-dark"
+                    "gitea-light"
                   ];
                 };
 
