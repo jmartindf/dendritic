@@ -90,6 +90,12 @@ in
               path = "";
             };
 
+            forgejo = {
+              domain = "desertflood.com";
+              hostName = "git";
+              path = "";
+            };
+
           };
 
         };
@@ -104,6 +110,12 @@ in
           };
 
           ntfy.enable = true;
+
+          forgejo = {
+            enable = true;
+            user = "git";
+            mode = "prod";
+          };
 
           caddy = {
             enable = true;
@@ -161,6 +173,15 @@ in
                         {$HTTP_BASIC_AUTH_USER} {$HTTP_BASIC_AUTH_PASSWORD}
                       }
                     }
+
+                    @forgejo host git.desertflood.com
+                    handle @forgejo {
+                      request_body {
+                        max_size 1G
+                      }
+                      reverse_proxy http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}
+                    }
+
 
                     handle {
                       abort
@@ -220,9 +241,10 @@ in
         };
       };
 
-      # Save port 22 for either Forgejo or Endlessh
+      # Save port 22 for Endlessh?
       services.openssh.ports = [
         45897
+        22
       ]; # from `uv run --with port4me python -m port4me --tool=ssh --user france`
 
       services.taskchampion-sync-server = {
