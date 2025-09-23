@@ -22,68 +22,33 @@ in
       config =
         let
           forgejoUser = nixOScfg.services.forgejo.user;
-          forgejoGroup = nixOScfg.services.forgejo.group;
+
+          mkForgejoSecrets =
+            secretHolder: names:
+            lib.genAttrs names (name: {
+              rekeyFile = ./${name}.age;
+              owner = secretHolder;
+              group = secretHolder;
+            });
         in
         {
 
           environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
 
-          age.secrets = {
-            forgejo-password-sunfish = {
-              rekeyFile = ./forgejo-password-sunfish.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-password-mirrors = {
-              rekeyFile = ./forgejo-password-mirrors.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-password-jmartindf = {
-              rekeyFile = ./forgejo-password-jmartindf.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-minio_access_key_id = {
-              rekeyFile = ./forgejo-minio_access_key_id.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-minio_secret_access_key = {
-              rekeyFile = ./forgejo-minio_secret_access_key.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-minio_bucket = {
-              rekeyFile = ./forgejo-minio_bucket.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-lfs_jwt_secret = {
-              rekeyFile = ./forgejo-lfs_jwt_secret.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-security_secret_key = {
-              rekeyFile = ./forgejo-security_secret_key.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            forgejo-security_internal_token = {
-              rekeyFile = ./forgejo-security_internal_token.age;
-              owner = forgejoUser;
-              group = forgejoGroup;
-            };
-            # forgejo-password-database = {
-            #   rekeyFile = ./forgejo-password-database.age;
-            #   generator.script = "passphrase";
-            #   owner = forgejoUser;
-            #   group = forgejoGroup;
-            # };
-          };
 
           desertflood.services.postgresql.enable = true;
           desertflood.networking.services.forgejo = { };
+          age.secrets = mkForgejoSecrets forgejoUser [
+            "forgejo-password-sunfish"
+            "forgejo-password-mirrors"
+            "forgejo-password-jmartindf"
+            "forgejo-minio_access_key_id"
+            "forgejo-minio_secret_access_key"
+            "forgejo-minio_bucket"
+            "forgejo-lfs_jwt_secret"
+            "forgejo-security_secret_key"
+            "forgejo-security_internal_token"
+          ];
 
           services = {
 
