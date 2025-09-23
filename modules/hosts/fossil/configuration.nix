@@ -32,7 +32,6 @@ in
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.forgejo
         inputs.self.modules.nixos.grafana
         inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.proxmox-lxc
@@ -59,16 +58,6 @@ in
                     reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
                     reverse_proxy /prometheus* https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}
 
-                    handle_path /forgejo* {
-                      request_body {
-                        max_size 1G
-                      }
-                      reverse_proxy http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}
-                    }
-
-                    handle_path /taskchamp* {
-                      reverse_proxy http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}
-                    }
                   }
                 '';
             };
@@ -97,22 +86,12 @@ in
             ];
           };
 
-          forgejo = {
-            enable = true;
-            user = "git";
-          };
-
         };
 
       };
 
       networking = {
         inherit (hostInfo) hostName domain;
-      };
-
-      services.taskchampion-sync-server = {
-        enable = true;
-        allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
       };
 
       age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDJagbKOnqDYTIZSWnRnMXqSANNeK0KJ+fs6xMhJH6dW";
