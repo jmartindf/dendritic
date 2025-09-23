@@ -26,6 +26,8 @@ in
         in
         {
 
+          environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
+
           age.secrets = {
             forgejo-password-sunfish = {
               rekeyFile = ./forgejo-password-sunfish.age;
