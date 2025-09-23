@@ -21,8 +21,8 @@ writeShellApplication {
       ${unzipp} ${migrate}/forgejo.zip -d ${migrate}
 
       rm ${migrate}/data/gitea.db
-      echo 'drop owned by forgejo cascade;' | ${psql} --set ON_ERROR_STOP=on forgejo
-      ${psql} --set ON_ERROR_STOP=on forgejo < ${migrate}/forgejo-db.sql
+      echo 'drop owned by forgejo cascade;' | ${psql} --user forgejo --set ON_ERROR_STOP=on forgejo
+      ${psql} --user forgejo --set ON_ERROR_STOP=on forgejo < ${migrate}/forgejo-db.sql
 
       ${rsyncc} --delete-delay --delete --remove-source-files -rav ${migrate}/data/ ${work_path}data/
       ${rsyncc} --delete-delay --delete --remove-source-files -rav ${migrate}/repos/ ${work_path}repositories/

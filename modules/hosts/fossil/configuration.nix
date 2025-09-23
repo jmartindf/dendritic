@@ -97,9 +97,13 @@ in
             ];
           };
 
-          forgejo.enable = true;
+          forgejo = {
+            enable = true;
+            user = "git";
+          };
 
         };
+
       };
 
       networking = {

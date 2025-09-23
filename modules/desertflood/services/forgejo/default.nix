@@ -31,6 +31,12 @@ in
             description = "Development mode or production mode";
           };
 
+          user = lib.mkOption {
+            type = lib.types.str;
+            default = "forgejo";
+            description = "The user to run under and to access Git-over-SSH with";
+          };
+
           disableSSH = lib.mkOption {
             type = lib.types.bool;
             default = false;
@@ -48,7 +54,10 @@ in
 
       config =
         let
-          forgejoUser = nixOScfg.services.forgejo.user;
+          forgejoUser = svcsConfig.forgejo.user;
+          customUser = svcsConfig.forgejo.user != "forgejo";
+          dbName = "forgejo";
+          dbUser = "forgejo";
 
           mkForgejoSecrets =
             secretHolder: names:
@@ -83,13 +92,35 @@ in
             "forgejo-security_internal_token"
           ];
 
+          users.users = lib.mkIf customUser {
+            ${forgejoUser} = {
+              home = nixOScfg.services.forgejo.stateDir;
+              useDefaultShell = true;
+              group = forgejoUser;
+              isSystemUser = true;
+            };
+          };
+
+          users.groups = lib.mkIf customUser {
+            ${forgejoUser} = { };
+          };
+
           services = {
 
             postgresql = {
-              ensureDatabases = [ forgejoUser ];
+
+              authentication = lib.optionalString customUser ''
+                local forgejo all ident map=forgejo-users
+              '';
+
+              identMap = lib.optionalString customUser ''
+                forgejo-users ${forgejoUser} forgejo
+              '';
+
+              ensureDatabases = [ dbName ];
               ensureUsers = [
                 {
-                  name = forgejoUser;
+                  name = dbUser;
                   ensureDBOwnership = true;
                 }
               ];
@@ -99,10 +130,12 @@ in
               enable = true;
               package = pkgs.forgejo-lts;
 
+              user = forgejoUser;
+
               database = {
-                user = forgejoUser;
+                user = dbUser;
                 type = "postgres";
-                name = forgejoUser;
+                name = dbName;
                 createDatabase = false;
                 socket = "/run/postgresql";
                 # passwordFile = nixOScfg.age.secrets.forgejo-password-database.path;
@@ -168,6 +201,7 @@ in
                   ROOT_URL = "${netCfg.services.forgejo.fullURL}";
                   SSH_DOMAIN = "${netCfg.services.forgejo.fqdn}";
                   SSH_PORT = svcsConfig.forgejo.sshPort;
+                  SSH_USER = svcsConfig.forgejo.user;
                 };
 
                 service = {
