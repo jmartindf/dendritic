@@ -69,6 +69,7 @@ in
 
             forgejo = {
               enable = true;
+              package = pkgs.forgejo-lts;
 
               database = {
                 user = forgejoUser;
