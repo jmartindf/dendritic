@@ -13,10 +13,37 @@ in
     let
       nixOScfg = config;
       netCfg = nixOScfg.desertflood.networking;
+      svcsConfig = nixOScfg.desertflood.services;
     in
     {
 
       options = {
+
+        desertflood.services.forgejo = {
+          enable = lib.mkEnableOption "Forgejo shared git hosting";
+
+          mode = lib.mkOption {
+            type = lib.types.enum [
+              "dev"
+              "prod"
+            ];
+            default = "dev";
+            description = "Development mode or production mode";
+          };
+
+          disableSSH = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Disable SSH access to Git";
+          };
+
+          sshPort = lib.mkOption {
+            type = lib.types.int;
+            default = 22;
+            description = "The port SSH-Git is available under";
+          };
+        };
+
       };
 
       config =
@@ -31,13 +58,19 @@ in
               group = secretHolder;
             });
         in
-        {
+        lib.mkIf svcsConfig.forgejo.enable {
+
+          desertflood = {
+
+            services.forgejo = { };
+            networking.services.forgejo = { };
+
+            services.postgresql.enable = true;
+
+          };
 
           environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
 
-
-          desertflood.services.postgresql.enable = true;
-          desertflood.networking.services.forgejo = { };
           age.secrets = mkForgejoSecrets forgejoUser [
             "forgejo-password-sunfish"
             "forgejo-password-mirrors"
@@ -78,7 +111,7 @@ in
               settings = {
                 DEFAULT = {
                   APP_NAME = "Desertforge: Code Hosting by Desertflood";
-                  RUN_MODE = "dev";
+                  RUN_MODE = svcsConfig.forgejo.mode;
                 };
 
                 cache = {
@@ -125,7 +158,7 @@ in
                 server = {
                   LFS_START_SERVER = true;
                   LFS_JWT_SECRET_URI = "file:${nixOScfg.age.secrets.forgejo-lfs_jwt_secret.path}";
-                  DISABLE_SSH = true;
+                  DISABLE_SSH = svcsConfig.forgejo.disableSSH;
                   DOMAIN = "${netCfg.services.forgejo.fqdn}";
                   ENABLE_GZIP = true;
                   HTTP_ADDR = "127.0.0.1";
@@ -134,6 +167,7 @@ in
                   OFFLINE_MODE = false;
                   ROOT_URL = "${netCfg.services.forgejo.fullURL}";
                   SSH_DOMAIN = "${netCfg.services.forgejo.fqdn}";
+                  SSH_PORT = svcsConfig.forgejo.sshPort;
                 };
 
                 service = {

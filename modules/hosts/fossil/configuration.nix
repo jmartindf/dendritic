@@ -96,6 +96,9 @@ in
               "france.manticore-mark.ts.net"
             ];
           };
+
+          forgejo.enable = true;
+
         };
       };
 
