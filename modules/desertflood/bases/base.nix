@@ -4,16 +4,21 @@ let
   myLocale = "en_US.UTF-8";
   defaultPackages = pkgs: [
     pkgs._1password-cli
+    pkgs.bat
     pkgs.cacert
     pkgs.curl
     pkgs.direnv
+    pkgs.eza
+    pkgs.fd
     pkgs.ghostty.terminfo
     pkgs.git
     pkgs.gum
     pkgs.just
     pkgs.local.fqdn
     pkgs.nixos-rebuild-ng
+    pkgs.ripgrep
     pkgs.rsync
+    pkgs.sd
     pkgs.vim
     pkgs.wget
   ];
