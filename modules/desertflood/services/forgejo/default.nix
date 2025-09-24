@@ -66,6 +66,7 @@ in
               owner = secretHolder;
               group = secretHolder;
             });
+
         in
         lib.mkIf svcsConfig.forgejo.enable {
 
@@ -306,6 +307,19 @@ in
 
           }; # end `services` block
 
+          # pattern taken from
+          # https://github.com/dscv101/nyx/blob/d407b4d6e5ab7f60350af61a3d73a62a5e9ac660/modules/core/roles/server/system/services/forgejo.nix#L35
+          # robots.txt taken from
+          # https://codeberg.org/forgejo/forgejo/pulls/7387
+          systemd.tmpfiles.rules =
+            let
+              # Disallow crawlers from indexing this site.
+              robots = pkgs.writeText "forgejo-robots-txt" (lib.readFile ./robots.txt);
+            in
+            [
+              "L+ ${nixOScfg.services.forgejo.customDir}/public/robots.txt - - - - ${robots.outPath}"
+            ];
+
           # Taken from [@orangci](https://github.com/orangci)
           # [forgejo.nix](https://github.com/orangci/dots/blob/c84ee0a6116592961a5d935d4c961f11eb419c59/modules/server/forgejo.nix)
           systemd.services.forgejo.preStart =
@@ -336,6 +350,8 @@ in
                   password = nixOScfg.age.secrets.forgejo-password-jmartindf;
                 };
               };
+
+              robots = ./robots.txt;
             in
             # bash
             ''
