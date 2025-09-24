@@ -213,6 +213,13 @@ in
               "richard.manticore-mark.ts.net"
             ];
           };
+
+          step-ssh = {
+            principals = [
+              "git.desertflood.com"
+            ];
+          };
+
         };
       };
 
