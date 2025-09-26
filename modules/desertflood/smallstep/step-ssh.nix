@@ -31,7 +31,11 @@ in
 
       config = {
 
-        desertflood.services.step-ssh.principals = lib.singleton nixOScfg.networking.fqdn;
+        desertflood.services.step-ssh.principals = [
+          nixOScfg.networking.hostName
+          nixOScfg.networking.fqdn
+          "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain}"
+        ];
 
         age.secrets.provisioner-password.rekeyFile = ./provisioner-password.age;
 
