@@ -84,13 +84,19 @@ in
                         "$1"
                     }
 
-                    if [[ ${ed25519Key}-cert.pub -ot ${ed25519Key} ]];
+                    if [ -r ${config.age.secrets.provisioner-password.path} ];
                     then
-                      sign "${ed25519Key}.pub"
-                    fi
-                    if [[ ${rsaKey}-cert.pub -ot ${rsaKey} ]];
-                    then
-                      sign "${rsaKey}.pub"
+
+                      if [[ ${ed25519Key}-cert.pub -ot ${ed25519Key} ]];
+                      then
+                        sign "${ed25519Key}.pub"
+                      fi
+
+                      if [[ ${rsaKey}-cert.pub -ot ${rsaKey} ]];
+                      then
+                        sign "${rsaKey}.pub"
+                      fi
+
                     fi
                   '';
               };
