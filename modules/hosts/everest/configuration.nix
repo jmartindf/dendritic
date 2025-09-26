@@ -34,6 +34,7 @@ in
         inputs.self.modules.nixos.hetzner-cloud
         { config.facter.reportPath = ./facter.json; }
         inputs.self.modules.nixos.dockeras
+        inputs.self.modules.nixos.lldap
       ];
 
       desertflood = {
@@ -44,6 +45,8 @@ in
         };
 
         step-ca.certs.${hostName}.availableTo = { };
+
+        services.lldap.enable = true;
       };
 
       networking = {

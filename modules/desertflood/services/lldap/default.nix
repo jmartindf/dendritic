@@ -101,22 +101,33 @@ _: {
             };
           };
 
-          systemd.services.lldap.serviceConfig = {
-            # PrivateMounts = true;
-            # BindReadOnlyPaths = [ "/run/credentials" ];
+          systemd.services = {
 
-            LoadCredential =
-              let
-                vault = nixOScfg.age.secrets;
-              in
-              [
-                "CRED_JWT_SECRET:${vault.lldap-jwt-secret.path}"
-                "CRED_KEY_SEED:${vault.lldap-key-seed.path}"
-                "CRED_LDAP_USER_PASS:${vault.ldap-user-password.path}"
-                "CRED_SMTP_SERVER:${vault.smtp-server.path}"
-                "CRED_SMTP_USER:${vault.smtp-user.path}"
-                "CRED_SMTP_PASSWORD:${vault.smtp-password.path}"
-              ];
+            postgresql = {
+              before = [ "lldap.service" ];
+            };
+
+            lldap = {
+              requires = [ "postgresql.service" ];
+
+              serviceConfig = {
+                # PrivateMounts = true;
+                # BindReadOnlyPaths = [ "/run/credentials" ];
+
+                LoadCredential =
+                  let
+                    vault = nixOScfg.age.secrets;
+                  in
+                  [
+                    "CRED_JWT_SECRET:${vault.lldap-jwt-secret.path}"
+                    "CRED_KEY_SEED:${vault.lldap-key-seed.path}"
+                    "CRED_LDAP_USER_PASS:${vault.ldap-user-password.path}"
+                    "CRED_SMTP_SERVER:${vault.smtp-server.path}"
+                    "CRED_SMTP_USER:${vault.smtp-user.path}"
+                    "CRED_SMTP_PASSWORD:${vault.smtp-password.path}"
+                  ];
+              };
+            };
           };
 
         };
