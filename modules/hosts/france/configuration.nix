@@ -213,7 +213,6 @@ in
             exporters.node.mTLS-required = mTLS-required;
 
             monitorHosts = [
-              "everest.manticore-mark.ts.net"
               "firewalla.manticore-mark.ts.net"
               "hermes.manticore-mark.ts.net"
               "mark.manticore-mark.ts.net"
@@ -224,6 +223,7 @@ in
 
             monitorHostsSecure = [
               "127.0.0.1"
+              "everest.manticore-mark.ts.net"
               "fossil.manticore-mark.ts.net"
               "richard.manticore-mark.ts.net"
             ];
