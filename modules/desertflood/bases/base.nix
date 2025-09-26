@@ -126,7 +126,7 @@ in
             "https://cache.nixos.org"
             "https://nix-community.cachix.org"
             "https://nixpkgs-python.cachix.org"
-            "https://attic.h.thosemartins.family/df-test"
+            "https://attic.desertflood.com/df-test"
           ];
 
           trusted-public-keys = [

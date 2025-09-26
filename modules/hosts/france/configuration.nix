@@ -30,6 +30,7 @@ in
     {
       imports = [
         inputs.self.modules.nixos.apprise-api
+        inputs.self.modules.nixos.attic
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.forgejo
@@ -94,6 +95,12 @@ in
               domain = "desertflood.com";
               hostName = "git";
               path = "";
+            };
+
+            attic = {
+              domain = "desertflood.com";
+              hostName = "attic";
+              path = "/";
             };
 
           };
@@ -182,6 +189,14 @@ in
                       reverse_proxy http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}
                     }
 
+                    @attic host attic.desertflood.com
+                    handle @attic {
+                      request_body {
+                        max_size 1G
+                      }
+                      reverse_proxy http://127.0.0.1:${toString nixOScfg.desertflood.services.attic.port}
+                    }
+
 
                     handle {
                       abort
@@ -219,6 +234,8 @@ in
               "git.desertflood.com"
             ];
           };
+
+          attic.enable = true;
 
         };
       };
