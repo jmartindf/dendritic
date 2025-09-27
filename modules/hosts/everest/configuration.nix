@@ -47,6 +47,7 @@ in
         step-ca.certs.${hostName}.availableTo = { };
 
         services.lldap.enable = true;
+        services.redis.enable = true;
       };
 
       networking = {
