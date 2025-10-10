@@ -7,8 +7,8 @@ in
     { config, pkgs, ... }:
     let
       cfg = config;
-      caddyCfg = config.desertflood.services.caddy;
-      leCfg = config.desertflood.services.caddy.letsencrypt;
+      caddyCfg = cfg.desertflood.services.caddy;
+      leCfg = caddyCfg.letsencrypt;
 
       caddyWithPlugins = pkgs.caddy.withPlugins {
         plugins = [
@@ -65,14 +65,14 @@ in
               description = "Use the LetsEncrypt production server instead of staging";
             };
 
-            acme-dns = lib.mkOption {
-              type = lib.types.bool;
-              default = false;
-              description = "Use the acme-dns DNS01 challenge and default accounts for challenges";
-            };
+            acme-dns = lib.mkEnableOption "Use the acme-dns DNS01 challenge and default accounts for challenges";
+
+            tailscaleCerts = lib.mkEnableOption "Get certificates from Tailscale, for secure HTTP.";
           };
 
           settings = {
+
+            disableSSL = lib.mkEnableOption "Disable automatic certificate management entirely";
 
             global = lib.mkOption {
               type = lib.types.lines;
@@ -119,6 +119,11 @@ in
               global = # caddy
               ''
                 admin unix//run/caddy/caddy-admin.sock
+                log default {
+                  output stderr
+                	include http.log.access admin.api
+                	level WARN
+                }
               ''
               + (
                 if leCfg.enable then # caddy
@@ -131,6 +136,8 @@ in
                         "https://acme-staging-v02.api.letsencrypt.org/directory"
                     }
                   ''
+                else if caddyCfg.settings.disableSSL then
+                  "auto_https off"
                 else
                   "local_certs"
               );
@@ -144,8 +151,8 @@ in
         }
         (lib.mkIf caddyCfg.enable {
 
-          age.secrets.acme-dns-json = {
-            rekeyFile = ./acme-dns.json.age;
+          age.secrets.acme-dns-caddy-json = {
+            rekeyFile = ../acme-dns.json.age;
             owner = "caddy";
             group = "caddy";
           };
@@ -157,7 +164,7 @@ in
                 ''
                   (challenge_dns_acme-dns) {
                     tls {
-                      dns acmedns ${cfg.age.secrets.acme-dns-json.path}
+                      dns acmedns ${cfg.age.secrets.acme-dns-caddy-json.path}
                       propagation_delay 60s
                       resolvers 1.1.1.1
                     }
@@ -196,7 +203,7 @@ in
           };
 
           services = {
-            tailscale.permitCertUid = "caddy";
+            tailscale.permitCertUid = lib.mkIf leCfg.tailscaleCerts "caddy";
           };
 
           systemd.services.caddy = {
