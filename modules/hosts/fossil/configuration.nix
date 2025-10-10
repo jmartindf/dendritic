@@ -21,7 +21,7 @@ in
   desertflood.hosts.hosts.fossil = hostInfo;
 
   flake.modules.nixos.fossil =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       nixOScfg = config;
       svcConfig = nixOScfg.services;
@@ -43,25 +43,55 @@ in
         step-ca.certs.${hostName}.availableTo = { };
 
         services = {
-          caddy = {
+
+          traefik = {
             enable = true;
+            domain = "${webHost}";
 
             letsencrypt = {
               enable = true;
               acme-dns = true;
+              tailscaleCerts = true;
+              defaultResolver = "tailscale";
             };
 
-            settings = {
-              site-blocks = # caddy
-                ''
-                  ${webHost} {
-                    reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
-                    reverse_proxy /prometheus* https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}
+            rules = {
 
-                  }
-                '';
+              app-grafana = {
+                http = {
+                  routers.grafana-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`${webHost}`) && PathPrefix(`/grafana`)";
+                    service = "grafana-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certResolver = "tailscale";
+                  };
+                  services.grafana-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
+                    }
+                  ];
+                };
+              };
+
+              app-prometheus = {
+                http = {
+                  routers.prometheus-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`${webHost}`) && PathPrefix(`/prometheus`)";
+                    service = "prometheus-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certResolver = "tailscale";
+                  };
+                  services.prometheus-svc.loadBalancer.servers = [
+                    {
+                      url = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
+                    }
+                  ];
+                };
+              };
+
             };
-
           };
 
           prometheus = {
@@ -109,7 +139,7 @@ in
         root = {
           openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
         };
-
       };
+
     };
 }
