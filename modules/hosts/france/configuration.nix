@@ -26,6 +26,7 @@ in
       svcConfig = nixOScfg.services;
       inherit (hostInfo) hostName;
       inherit (nixOScfg.desertflood.networking) webHost tailscaleDomain;
+      webHostTailscale = "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain}";
     in
     {
       imports = [
@@ -124,82 +125,170 @@ in
             mode = "prod";
           };
 
-          caddy = {
+          traefik = {
             enable = true;
+            domain = "desertflood.com";
+            extraDomains = [ "*.desertflood.com" ];
 
             letsencrypt = {
               enable = true;
               acme-dns = true;
+              tailscaleCerts = true;
+              production = true;
+              defaultResolver = "dns-acme-dns";
+            };
+
+            rules = {
+
+              app-prometheus = {
+                http = {
+                  routers.prometheus-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`${webHostTailscale}`) && PathPrefix(`/prometheus`)";
+                    service = "prometheus-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "tailscale";
+                  };
+                  services.prometheus-svc.loadBalancer.servers = [
+                    {
+                      url = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
+                    }
+                  ];
+                };
+              };
+
+              app-grafana = {
+                http = {
+                  routers.grafana-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`monitor.desertflood.com`) && PathPrefix(`/grafana`)";
+                    service = "grafana-svc";
+                    middlewares = "chain-no-auth@file";
+                  };
+                  services.grafana-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
+                    }
+                  ];
+                };
+              };
+
+              app-taskchamp = {
+                http = {
+                  routers.taskchamp-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`taskchamp.desertflood.com`)";
+                    service = "taskchamp-svc";
+                    middlewares = "chain-no-auth@file";
+                  };
+                  services.taskchamp-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}";
+                    }
+                  ];
+                };
+              };
+
+              app-ntfy = {
+                http = {
+                  routers.ntfy-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`ntfy.desertflood.com`)";
+                    service = "ntfy-svc";
+                    middlewares = "chain-no-auth@file";
+                  };
+                  services.ntfy-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString svcConfig.ntfy-sh.settings.listen-http}";
+                    }
+                  ];
+                };
+              };
+
+              app-attic = {
+                http = {
+                  routers.attic-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`attic.desertflood.com`)";
+                    service = "attic-svc";
+                  };
+                  services.attic-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString nixOScfg.desertflood.services.attic.port}";
+                    }
+                  ];
+                };
+              };
+
+              app-forgejo = {
+                http = {
+                  routers.forgejo-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`git.desertflood.com`)";
+                    service = "forgejo-svc";
+                    middlewares = "chain-no-auth@file";
+                  };
+                  services.forgejo-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}";
+                    }
+                  ];
+                };
+              };
+
+              app-apprise = {
+                http = {
+                  routers.apprise-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`apprise.desertflood.com`)";
+                    service = "apprise-svc";
+                    middlewares = "chain-basic-auth@file";
+                  };
+                  routers.apprise-static-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`apprise.desertflood.com`) && PathPrefix(`/s/`)";
+                    service = "apprise-static-svc";
+                    middlewares = "chain-basic-auth@file";
+                  };
+                  services.apprise-svc.loadBalancer.servers = [
+                    {
+                      url = "http://${toString nixOScfg.desertflood.services.apprise-api.host}:${toString nixOScfg.desertflood.services.apprise-api.port}";
+                    }
+                  ];
+                  services.apprise-static-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:10535";
+                    }
+                  ];
+                };
+              };
+
+            };
+          };
+
+          caddy = {
+            enable = true;
+
+            letsencrypt = {
+              enable = false;
+              acme-dns = false;
+              tailscaleCerts = false;
               production = true;
             };
 
             settings = {
 
+              disableSSL = true;
+
               site-blocks = # caddy
                 ''
-                  ${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain} {
-                    reverse_proxy /prometheus* https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}
-                  }
+                  http://apprise.desertflood.com:10535 {
+                    bind 127.0.0.1
+                    log
 
-                  *.desertflood.com {
-                    import challenge_dns_acme-dns
-
-                    @monitor host monitor.desertflood.com
-                    handle @monitor {
-                      reverse_proxy /grafana* http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}
-                    }
-
-                    @taskchamp host taskchamp.desertflood.com
-                    handle @taskchamp {
-                      reverse_proxy http://${toString svcConfig.taskchampion-sync-server.host}:${toString svcConfig.taskchampion-sync-server.port}
-                    }
-
-                    @ntfy-sh host ntfy.desertflood.com
-                    handle @ntfy-sh {
-                      reverse_proxy http://${toString svcConfig.ntfy-sh.settings.listen-http}
-
-                      # Redirect HTTP to HTTPS, but only for GET topic addresses, since we want
-                      # it to work with curl without the annoying https:// prefix
-                      # https://docs.ntfy.sh/config/#nginxapache2caddy
-                      @httpget {
-                        protocol http
-                        method GET
-                        path_regexp ^/([-_a-z0-9]{0,64}$|docs/|static/)
-                      }
-                      redir @httpget https://{host}{uri}
-                    }
-
-                    @apprise-api host apprise.desertflood.com
-                    handle @apprise-api {
-                      handle_path /s/* {
-                        root ${pkgs.local.apprise-api}/webapp/static
-                        file_server
-                      }
-                      reverse_proxy http://${toString nixOScfg.desertflood.services.apprise-api.host}:${toString nixOScfg.desertflood.services.apprise-api.port}
-                      basic_auth {
-                        {$HTTP_BASIC_AUTH_USER} {$HTTP_BASIC_AUTH_PASSWORD}
-                      }
-                    }
-
-                    @forgejo host git.desertflood.com
-                    handle @forgejo {
-                      request_body {
-                        max_size 1G
-                      }
-                      reverse_proxy http://${toString svcConfig.forgejo.settings.server.HTTP_ADDR}:${toString svcConfig.forgejo.settings.server.HTTP_PORT}
-                    }
-
-                    @attic host attic.desertflood.com
-                    handle @attic {
-                      request_body {
-                        max_size 1G
-                      }
-                      reverse_proxy http://127.0.0.1:${toString nixOScfg.desertflood.services.attic.port}
-                    }
-
-
-                    handle {
-                      abort
+                    handle_path /s/* {
+                      root ${pkgs.local.apprise-api}/webapp/static
+                      file_server
                     }
                   }
                 '';
