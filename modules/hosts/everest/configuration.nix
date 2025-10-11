@@ -59,7 +59,7 @@ in
 
           addresses = [
             {
-              address = "2a01:4ff:1f0:c8c::1/64";
+              address = "2a01:4ff:1f0:c8c::1";
               prefixLength = 64;
             }
           ];
