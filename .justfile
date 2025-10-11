@@ -15,7 +15,7 @@ devshell:
 
 [group("hosts")]
 rsync host=defaultHost:
-    rsync {{ rsyncFlags }} ./ {{ host }}:/home/nixos/dendritic/
+    rsync {{ rsyncFlags }} ./ root@{{ host }}:/home/nixos/dendritic/
 
 [group("hosts")]
 build host=defaultHost:
