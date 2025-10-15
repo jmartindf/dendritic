@@ -21,11 +21,18 @@ in
         inputs.self.modules.nixos.redis
       ];
 
-      desertflood.networking = {
-        webDomain = lib.mkDefault "${flakeCfg.desertflood.networking.tailscaleDomain}";
-        webHost = lib.mkDefault "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.webDomain}";
-        tailscaleDomain = lib.mkDefault "${flakeCfg.desertflood.networking.tailscaleDomain}";
-      };
+      desertflood.networking =
+        let
+          tsDomain = "${flakeCfg.desertflood.networking.tailscaleDomain}";
+          defaultFQDN = "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.webDomain}";
+        in
+        {
+          webDomain = lib.mkDefault tsDomain;
+          webHost = lib.mkDefault defaultFQDN;
+          tailscaleDomain = lib.mkDefault tsDomain;
+          FQDN = lib.mkDefault defaultFQDN;
+          tsFQDN = lib.mkDefault "${nixOScfg.networking.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
+        };
 
       networking.firewall.allowPing = true;
 

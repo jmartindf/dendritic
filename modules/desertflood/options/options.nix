@@ -50,6 +50,22 @@ let
         description = "the default public web domain (FQDN) for nginx and whatnot";
       };
 
+      FQDN = lib.mkOption {
+        type = lib.types.str;
+        description = "the default public web domain (FQDN) for nginx and whatnot";
+      };
+
+      tsFQDN = lib.mkOption {
+        type = lib.types.str;
+        description = "the tailscale domain (FQDN) for nginx and whatnot";
+      };
+
+      extraFQDNs = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        description = "Any additional FQDNs that should/could be used";
+        default = [ ];
+      };
+
       services =
         nixOScfg:
         lib.mkOption {
@@ -223,7 +239,14 @@ in
           inherit (dfOptions) defaultUser hostInfo;
 
           networking = {
-            inherit (dfOptions.networking) webDomain webHost tailscaleDomain;
+            inherit (dfOptions.networking)
+              webDomain
+              webHost
+              tailscaleDomain
+              FQDN
+              tsFQDN
+              extraFQDNs
+              ;
             services = dfOptions.networking.services nixOScfg;
           };
         };
@@ -240,6 +263,9 @@ in
             webDomain
             webHost
             tailscaleDomain
+            FQDN
+            tsFQDN
+            extraFQDNs
             services
             ;
         };
