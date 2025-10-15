@@ -2,6 +2,7 @@
 {
   config,
   inputs,
+  lib,
   ...
 }:
 let
@@ -35,6 +36,7 @@ in
         { config.facter.reportPath = ./facter.json; }
         inputs.self.modules.nixos.dockeras
         inputs.self.modules.nixos.lldap
+        inputs.self.modules.nixos.step-ca
       ];
 
       desertflood = {
@@ -44,10 +46,21 @@ in
           webDomain = "df.fyi";
         };
 
-        step-ca.certs.${hostName}.availableTo = { };
+        step-ca = {
+          # configure client certificates
+          certs.${hostName}.availableTo = { };
+        };
 
-        services.lldap.enable = true;
-        services.redis.enable = true;
+        services = {
+          lldap.enable = true;
+          redis.enable = true;
+
+          step-ca = {
+            # run ca-server
+            enable = true;
+            fqdns = [ "pki.desertflood.link" ];
+          };
+        };
       };
 
       networking = {
