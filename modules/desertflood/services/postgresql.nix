@@ -20,6 +20,12 @@
           postgresql = {
             enable = true;
             package = pkgs.postgresql_17;
+
+            # system root user is postgres admin user (`postgres`)
+            identMap = # identMap
+              ''
+                postgres root postgres
+              '';
           };
 
         }; # end `services` block

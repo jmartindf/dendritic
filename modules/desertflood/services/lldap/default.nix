@@ -91,6 +91,16 @@ _: {
             };
 
             postgresql = {
+              authentication = ''
+                local ${lldapUser} all peer map=lldap-users
+              '';
+
+              identMap = # identMap
+                ''
+                  lldap-users root ${lldapUser}
+                  lldap-users ${lldapUser} ${lldapUser}
+                '';
+
               ensureDatabases = [ lldapUser ];
               ensureUsers = [
                 {
