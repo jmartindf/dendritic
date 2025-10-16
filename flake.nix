@@ -20,6 +20,10 @@
   };
 
   inputs = {
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
     agenix = {
       url = "github:ryantm/agenix";
       inputs = {
@@ -85,7 +89,7 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         lix.follows = "lix";
-        flake-utils.inputs.systems.follows = "systems";
+        flake-utils.follows = "flake-utils";
       };
     };
     nixpkgs = {
@@ -115,7 +119,16 @@
       inputs = {
         flake-compat.follows = "flake-compat";
         nixpkgs.follows = "nixpkgs";
-        flake-utils.inputs.systems.follows = "systems";
+      };
+    };
+    authentik-nix = {
+      url = "github:nix-community/authentik-nix";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        flake-compat.follows = "flake-compat";
+        flake-utils.follows = "flake-utils";
+        systems.follows = "systems";
       };
     };
   };
