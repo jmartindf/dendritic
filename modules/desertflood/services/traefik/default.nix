@@ -343,6 +343,10 @@ in
 
               dynamicConfigOptions = {
 
+                http.serversTransports.skipVerify = {
+                  insecureSkipVerify = true;
+                };
+
                 tls.options = {
                   # generated 2025-10-10, Mozilla Guideline v5.6, Traefik 3.3.6, intermediate config
                   # https://ssl-config.mozilla.org/#server=traefik&version=3.3.6&config=intermediate&guideline=5.6
