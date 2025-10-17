@@ -38,6 +38,7 @@ in
         inputs.self.modules.nixos.lldap
         inputs.self.modules.nixos.step-ca
         inputs.self.modules.nixos.authelia
+        inputs.self.modules.nixos.authentik
       ];
 
       desertflood = {
@@ -73,6 +74,7 @@ in
           };
 
           authelia.enable = true;
+          authentik.enable = true;
 
           traefik = {
             enable = true;
@@ -124,6 +126,25 @@ in
                 };
 
                 services.authelia-svc.loadbalancer.servers = [ { url = "http://127.0.0.1:9091"; } ];
+              };
+
+              authentik.http = {
+
+                routers.authentik-rtr = {
+                  entrypoints = "websecure";
+                  tls.certresolver = "web";
+                  rule = "Host(`authentik.desertflood.link`)";
+                  middlewares = "chain-no-auth@file";
+                  service = "authentik-svc";
+                };
+
+                services.authentik-svc.loadbalancer = {
+
+                  serversTransport = "skipVerify@file";
+                  servers = [ { url = "https://127.0.0.1:9443"; } ];
+
+                };
+
               };
             };
 
