@@ -133,7 +133,7 @@ in
                 routers.authentik-rtr = {
                   entrypoints = "websecure";
                   tls.certresolver = "web";
-                  rule = "Host(`authentik.desertflood.link`)";
+                  rule = "Host(`authentik.desertflood.link`) || Host(`sso.desertflood.link`)";
                   middlewares = "chain-no-auth@file";
                   service = "authentik-svc";
                 };
