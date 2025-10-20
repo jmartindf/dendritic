@@ -16,17 +16,13 @@ in
       options = {
       };
 
-      config = {
+      config =
+        let
+          parentCredFolder = "${cfg.services.grafana.dataDir}/secrets";
+          credFolder = "${parentCredFolder}/credentials";
+        in
+        {
 
-
-        desertflood.services.postgresql.enable = true;
-        desertflood.networking.services.grafana = { };
-
-        services = {
-
-          postgresql = {
-            ensureDatabases = [ grafanaUser ];
-            ensureUsers = [
           age.secrets = {
             grafana-password = {
               rekeyFile = ./grafana-password.age;
@@ -39,78 +35,58 @@ in
               group = grafanaGroup;
             };
           };
-              {
-                name = grafanaUser;
-                ensureDBOwnership = true;
-              }
-            ];
+
+          desertflood = {
+            shared-secrets.smtp.enable = true;
+            services.postgresql.enable = true;
+            networking.services.grafana = { };
           };
 
-          grafana =
-            let
-              svcConfig = cfg.desertflood.networking.services.grafana;
-            in
-            {
-              enable = true;
+          services = {
 
-              settings = {
-                server = {
-                  http_addr = "127.0.0.1";
-                  http_port = 3000;
-                  domain = "${svcConfig.fqdn}";
-                  root_url = "${svcConfig.fullURL}";
-                  serve_from_sub_path = if svcConfig.path != "" then true else false;
-                };
-
-                database = {
-                  host = "/run/postgresql";
+            postgresql = {
+              ensureDatabases = [ grafanaUser ];
+              ensureUsers = [
+                {
                   name = grafanaUser;
-                  type = "postgres";
-                  user = grafanaUser;
-                };
+                  ensureDBOwnership = true;
+                }
+              ];
+            };
 
-              };
-
-              provision = {
+            grafana =
+              let
+                svcConfig = netCfg.services.grafana;
+              in
+              {
                 enable = true;
 
-                datasources.settings.datasources = [
-                  {
-                    orgId = 1;
-                    name = "prometheus";
-                    type = "prometheus";
-                    httpMethod = "POST";
-                    prometheusVersion = "> 2.50.x";
-                    prometheusType = "Prometheus";
-                    cacheLevel = "Low";
-                    tlsSkipVerify = false;
-                    manageAlerts = true;
-                    url = "https://${promCfg.listenAddress}:${builtins.toString promCfg.port}/prometheus/";
-                  }
-                ];
+                settings = {
+                  server = {
+                    http_addr = "127.0.0.1";
+                    http_port = 3000;
+                    domain = "${svcConfig.fqdn}";
+                    root_url = "${svcConfig.fullURL}";
+                    serve_from_sub_path = if svcConfig.path != "" then true else false;
+                  };
 
-                dashboards.settings.providers = [
-                  {
-                    name = "default";
-                    orgId = 1;
-                    type = "file";
-                    disableDeletion = false;
-                    updateIntervalSeconds = 10;
-                    allowUiUpdates = true;
-                    options = {
-                      path = ./dashboards;
-                      foldersFromFilesStructure = true;
-                    };
-                  }
-                ];
+                  database = {
+                    host = "/run/postgresql";
+                    name = grafanaUser;
+                    type = "postgres";
+                    user = grafanaUser;
+                  };
 
-              }; # end `provision` block
+                  smtp = {
+                    enabled = true;
+                    host = "$__file{${credFolder}/smtp-server}:587";
+                    user = "$__file{${credFolder}/smtp-user}";
+                    password = "$__file{${credFolder}/smtp-password}";
+                    startTLS_policy = "MandatoryStartTLS";
+                    from_address = "admin@desertflood.com";
+                    from_name = "Grafana Desertflood";
+                  };
 
-            }; # end `grafana` block
-
-        }; # end `services` block
-
-      }; # end Nix OS module config block
                   security = {
                     admin_user = "gfadmin";
                     admin_password = "$__file{${cfg.age.secrets.grafana-password.path}}";
@@ -147,6 +123,72 @@ in
                     email_attribute_path = "email";
                     email_attribute_name = "email";
                   };
+                };
+
+                provision = {
+                  enable = true;
+
+                  datasources.settings.datasources = [
+                    {
+                      orgId = 1;
+                      name = "prometheus";
+                      type = "prometheus";
+                      httpMethod = "POST";
+                      prometheusVersion = "> 2.50.x";
+                      prometheusType = "Prometheus";
+                      cacheLevel = "Low";
+                      tlsSkipVerify = false;
+                      manageAlerts = true;
+                      url = "https://${promCfg.listenAddress}:${builtins.toString promCfg.port}/prometheus/";
+                    }
+                  ];
+
+                  dashboards.settings.providers = [
+                    {
+                      name = "default";
+                      orgId = 1;
+                      type = "file";
+                      disableDeletion = false;
+                      updateIntervalSeconds = 10;
+                      allowUiUpdates = true;
+                      options = {
+                        path = ./dashboards;
+                        foldersFromFilesStructure = true;
+                      };
+                    }
+                  ];
+
+                }; # end `provision` block
+
+              }; # end `grafana` block
+
+          }; # end `services` block
+
+          systemd.services.grafana = {
+            serviceConfig = {
+
+              LoadCredential = [
+                "smtp-server:${cfg.age.secrets.smtp-server.path}"
+                "smtp-user:${cfg.age.secrets.smtp-user.path}"
+                "smtp-password:${cfg.age.secrets.smtp-password.path}"
+              ];
+
+              ExecStartPre = "+${
+                (pkgs.writeShellScript "grafana-prestart-credentials" # bash
+                  ''
+                    mkdir -p ${parentCredFolder}
+                    rm -f ${credFolder}
+                    chown -R ${grafanaUser}:${grafanaGroup} ${parentCredFolder}
+                    chmod -f 0700 ${parentCredFolder}
+                    ln -s $CREDENTIALS_DIRECTORY ${credFolder}
+                  ''
+                )
+              }";
+
+            };
+          };
+
+        }; # end Nix OS module config block
 
     }; # end `grafana` Nix OS module
 }
