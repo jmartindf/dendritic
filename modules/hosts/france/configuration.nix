@@ -36,6 +36,7 @@ in
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.forgejo
         inputs.self.modules.nixos.grafana
+        inputs.self.modules.nixos.lubelogger
         inputs.self.modules.nixos.ntfy
         inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.hetzner-cloud
@@ -104,6 +105,12 @@ in
               path = "/";
             };
 
+            lubelogger = {
+              domain = "thosemartins.family";
+              hostName = "lubelogger";
+              path = "/";
+            };
+
           };
 
         };
@@ -123,6 +130,10 @@ in
             enable = true;
             user = "git";
             mode = "prod";
+          };
+
+          lubelogger = {
+            enable = true;
           };
 
           traefik = {
@@ -258,6 +269,23 @@ in
                   services.apprise-static-svc.loadBalancer.servers = [
                     {
                       url = "http://127.0.0.1:10535";
+                    }
+                  ];
+                };
+              };
+
+              app-lubelogger = {
+                http = {
+                  routers.lubelogger-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`${nixOScfg.desertflood.networking.services.lubelogger.fqdn}`)";
+                    service = "lubelogger-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "web";
+                  };
+                  services.lubelogger-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString nixOScfg.desertflood.services.lubelogger.port}";
                     }
                   ];
                 };
