@@ -98,6 +98,8 @@ in
                     oauth_allow_insecure_email_lookup = false; # True to match existing users by email address
                   };
 
+                  log.level = "warn";
+
                   "auth.generic_oauth" = {
                     enabled = true;
                     auto_login = true;
