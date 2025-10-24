@@ -122,7 +122,7 @@
       };
     };
     authentik-nix = {
-      url = "github:nix-community/authentik-nix";
+      url = "github:jmartindf/authentik-nix/latest-fixes";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
