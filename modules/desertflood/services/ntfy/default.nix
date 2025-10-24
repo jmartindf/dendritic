@@ -2,7 +2,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.ntfy =
+    flake.modules.nixos.services =
       {
         config,
         lib,

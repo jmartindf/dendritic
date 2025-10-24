@@ -2,7 +2,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.apprise-api =
+    flake.modules.nixos.services =
       {
         config,
         lib,

@@ -35,10 +35,7 @@ in
         inputs.self.modules.nixos.hetzner-cloud
         { config.facter.reportPath = ./facter.json; }
         inputs.self.modules.nixos.dockeras
-        inputs.self.modules.nixos.lldap
         inputs.self.modules.nixos.step-ca
-        inputs.self.modules.nixos.authelia
-        inputs.self.modules.nixos.authentik
       ];
 
       desertflood = {

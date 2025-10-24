@@ -2,7 +2,7 @@ _: {
   # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
   # SPDX-License-Identifier: BlueOak-1.0.0
 
-  flake.modules.nixos.lldap =
+  flake.modules.nixos.services =
     {
       config,
       lib,

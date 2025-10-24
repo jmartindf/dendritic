@@ -8,7 +8,7 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.forgejo =
+  flake.modules.nixos.services =
     { config, pkgs, ... }:
     let
       nixOScfg = config;

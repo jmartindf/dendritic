@@ -2,7 +2,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.authelia =
+    flake.modules.nixos.services =
       {
         config,
         lib,

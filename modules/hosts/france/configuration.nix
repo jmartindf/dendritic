@@ -30,14 +30,9 @@ in
     in
     {
       imports = [
-        inputs.self.modules.nixos.apprise-api
-        inputs.self.modules.nixos.attic
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.forgejo
         inputs.self.modules.nixos.grafana
-        inputs.self.modules.nixos.lubelogger
-        inputs.self.modules.nixos.ntfy
         inputs.self.modules.nixos.prometheus
         inputs.self.modules.nixos.hetzner-cloud
         { config.facter.reportPath = ./facter.json; }

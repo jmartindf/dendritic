@@ -4,7 +4,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.redis =
+    flake.modules.nixos.services =
       {
         config,
         lib,

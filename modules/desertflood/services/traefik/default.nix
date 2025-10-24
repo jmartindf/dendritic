@@ -3,7 +3,7 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.nixos =
+  flake.modules.nixos.services =
     { config, pkgs, ... }:
     let
       cfg = config;

@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  flake.modules.nixos.nixos =
+  flake.modules.nixos.services =
     { config, pkgs, ... }:
     {
 

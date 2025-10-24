@@ -3,7 +3,7 @@
 
   config = {
 
-    flake.modules.nixos.authentik =
+    flake.modules.nixos.services =
       {
         config,
         lib,
