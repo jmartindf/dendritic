@@ -4,7 +4,7 @@ defaultHost := "richard"
 build := "nom"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-rav --exclude=\".jj\" --delete --delete-excluded"
-buildFlags := "--no-link"
+buildFlags := ""
 
 [private]
 default:
@@ -19,7 +19,7 @@ rsync host=defaultHost:
 
 [group("hosts")]
 build host=defaultHost:
-    {{ build }} build {{ buildFlags }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
+    {{ build }} build {{ buildFlags }} --out-link ./derivations/{{ host }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
 [group("hosts")]
 buildAll: (build "richard") (build "fossil") (build "france")
