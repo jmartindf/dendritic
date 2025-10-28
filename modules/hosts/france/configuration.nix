@@ -106,6 +106,12 @@ in
               path = "/";
             };
 
+            linkding = {
+              domain = "desertflood.com";
+              hostName = "linkding";
+              path = "/";
+            };
+
           };
 
         };
@@ -128,6 +134,10 @@ in
           };
 
           lubelogger = {
+            enable = true;
+          };
+
+          linkding = {
             enable = true;
           };
 
@@ -281,6 +291,23 @@ in
                   services.lubelogger-svc.loadBalancer.servers = [
                     {
                       url = "http://127.0.0.1:${toString nixOScfg.desertflood.services.lubelogger.port}";
+                    }
+                  ];
+                };
+              };
+
+              app-linkding = {
+                http = {
+                  routers.linkding-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`${nixOScfg.desertflood.networking.services.linkding.fqdn}`)";
+                    service = "linkding-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "web";
+                  };
+                  services.linkding-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString nixOScfg.desertflood.services.linkding.port}";
                     }
                   ];
                 };
