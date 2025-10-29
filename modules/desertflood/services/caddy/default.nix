@@ -19,8 +19,9 @@ in
           "github.com/darkweak/storages/simplefs/caddy@v0.0.16"
           "github.com/greenpau/caddy-security@v1.1.31"
           "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0"
+          "github.com/sagikazarmark/caddy-fs-s3@v0.11.0"
         ];
-        hash = "sha256-cld0AYC2V/CEsRBFTp/FHRmzTWkaQx/+LU7zWjYLM48=";
+        hash = "sha256-RqMY09/qMQNvCp7loIJOQly/6SapRRWhu7xyxIoJjTc=";
       };
 
       configFile =
