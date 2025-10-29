@@ -19,6 +19,7 @@ in
         inputs.self.modules.nixos.step-ssh
         inputs.self.modules.nixos.node_exporter
         inputs.self.modules.nixos.services
+        inputs.self.modules.nixos.crowdsec
       ];
 
       desertflood.networking =
