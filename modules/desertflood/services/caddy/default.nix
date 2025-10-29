@@ -10,7 +10,7 @@ in
       caddyCfg = cfg.desertflood.services.caddy;
       leCfg = caddyCfg.letsencrypt;
 
-      caddyWithPlugins = pkgs.caddy.withPlugins {
+      caddyWithPlugins = pkgs.local.caddy.withPlugins {
         plugins = [
           "github.com/abiosoft/caddy-json-schema@v0.0.0-20220621031927-c4d6e132f3af"
           "github.com/caddy-dns/acmedns@v0.5.0"
@@ -20,7 +20,7 @@ in
           "github.com/greenpau/caddy-security@v1.1.31"
           "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0"
         ];
-        hash = "sha256-RN2WCaZ402vzkYEi/Vuh4MQR7POkVyyz5tctah3vVJI=";
+        hash = "sha256-DRPjkmVwtSPm1Ww2wWpL8p58csxr87t5Dg3NalYjZUg=";
       };
 
       configFile =
