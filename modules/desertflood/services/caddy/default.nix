@@ -13,14 +13,14 @@ in
       caddyWithPlugins = pkgs.local.caddy.withPlugins {
         plugins = [
           "github.com/abiosoft/caddy-json-schema@v0.0.0-20220621031927-c4d6e132f3af"
-          "github.com/caddy-dns/acmedns@v0.5.0"
-          "github.com/darkweak/souin/plugins/caddy@v1.7.7"
+          "github.com/caddy-dns/acmedns@v0.6.0"
+          "github.com/darkweak/souin/plugins/caddy@v1.7.8"
           "github.com/darkweak/storages/nuts/caddy@v0.0.16"
           "github.com/darkweak/storages/simplefs/caddy@v0.0.16"
           "github.com/greenpau/caddy-security@v1.1.31"
           "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0"
         ];
-        hash = "sha256-DRPjkmVwtSPm1Ww2wWpL8p58csxr87t5Dg3NalYjZUg=";
+        hash = "sha256-cld0AYC2V/CEsRBFTp/FHRmzTWkaQx/+LU7zWjYLM48=";
       };
 
       configFile =
