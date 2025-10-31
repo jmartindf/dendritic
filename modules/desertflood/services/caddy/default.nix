@@ -75,6 +75,8 @@ in
 
             disableSSL = lib.mkEnableOption "Disable automatic certificate management entirely";
 
+            debug = lib.mkEnableOption "debug logging";
+
             global = lib.mkOption {
               type = lib.types.lines;
               default = # caddy
@@ -120,11 +122,19 @@ in
               global = # caddy
               ''
                 admin unix//run/caddy/caddy-admin.sock
+
+                ${lib.optionalString caddyCfg.settings.debug "debug"}
+
                 log default {
                   output stderr
-                	include http.log.access admin.api
-                	level WARN
+                  level ${if caddyCfg.settings.debug then "DEBUG" else "WARN"}
+                  ${if caddyCfg.settings.debug then "" else "include http.log.access admin.api"}
                 }
+
+                servers {
+                  ${lib.optionalString caddyCfg.settings.debug "trace"}
+                }
+
               ''
               + (
                 if leCfg.enable then # caddy
