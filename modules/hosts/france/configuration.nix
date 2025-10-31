@@ -120,6 +120,8 @@ in
 
         services = {
 
+          crowdsec.enable = true;
+
           apprise-api = {
             enable = true;
             log-level = "INFO";
