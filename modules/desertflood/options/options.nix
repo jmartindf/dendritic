@@ -13,6 +13,10 @@ let
   userMeta = import ./_meta-users.nix {
     inherit lib;
   };
+  globalAttrSet = lib.mkOption {
+    type = lib.types.attrsOf lib.types.anything;
+    default = { };
+  };
   publicKeys =
     { name, ... }:
     {
@@ -170,6 +174,8 @@ in
 {
   options.desertflood = {
 
+    globals = globalAttrSet;
+
     users = {
       users = lib.mkOption {
         type = types.attrsOf (types.submodule userMeta);
@@ -236,6 +242,8 @@ in
       {
 
         options.desertflood = {
+
+          globals = globalAttrSet;
           inherit (dfOptions) defaultUser hostInfo;
 
           networking = {
@@ -256,6 +264,8 @@ in
     flake.modules.darwin.darwin = {
 
       options.desertflood = {
+
+        globals = globalAttrSet;
         inherit (dfOptions) defaultUser hostInfo;
 
         networking = {
