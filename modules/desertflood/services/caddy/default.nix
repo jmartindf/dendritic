@@ -132,6 +132,8 @@ in
                 }
 
                 servers {
+                  trusted_proxies static 127.0.0.1/8 fd00::/8 ::1
+                  client_ip_headers X-Forwarded-For X-Real-IP
                   ${lib.optionalString caddyCfg.settings.debug "trace"}
                 }
 
