@@ -19,9 +19,10 @@ in
           "github.com/darkweak/storages/simplefs/caddy@v0.0.16"
           "github.com/greenpau/caddy-security@v1.1.31"
           "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0"
-          "github.com/sagikazarmark/caddy-fs-s3@v0.11.0"
+          "git.desertflood.com/jmartindf/caddy-fs-s3@v0.0.0-20251102022705-124d7ea62120"
+          "git.desertflood.com/jmartindf/caddy-s3-proxy@v0.0.0-20251101025924-56966419076b"
         ];
-        hash = "sha256-RqMY09/qMQNvCp7loIJOQly/6SapRRWhu7xyxIoJjTc=";
+        hash = "sha256-SiCgMWEtMKszmmcIIUtYgUR6zOJFN9J/P4hJe17wg0Y=";
       };
 
       configFile =
@@ -148,6 +149,7 @@ in
                       else
                         "https://acme-staging-v02.api.letsencrypt.org/directory"
                     }
+
                   ''
                 else if caddyCfg.settings.disableSSL then
                   "auto_https off"
