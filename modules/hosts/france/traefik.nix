@@ -166,6 +166,57 @@ _: {
                 };
               };
 
+              site-voxduo = {
+                http = {
+                  routers.voxduo-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`voxduo.com`)";
+                    service = "voxduo-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "web";
+                  };
+                  services.voxduo-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:10535";
+                    }
+                  ];
+                };
+              };
+
+              site-voxduo-files = {
+                http = {
+                  routers.voxfiles-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`files.voxduo.com`)";
+                    service = "voxfiles-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "web";
+                  };
+                  services.voxfiles-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:10535";
+                    }
+                  ];
+                };
+              };
+
+              site-voxduo-pluribus = {
+                http = {
+                  routers.voxpluribus-rtr = {
+                    entrypoints = "websecure";
+                    rule = "Host(`pluribus.voxduo.com`)";
+                    service = "voxpluribus-svc";
+                    middlewares = "chain-no-auth@file";
+                    tls.certresolver = "web";
+                  };
+                  services.voxpluribus-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:10535";
+                    }
+                  ];
+                };
+              };
+
               app-linkding = {
                 http = {
                   routers.linkding-rtr = {

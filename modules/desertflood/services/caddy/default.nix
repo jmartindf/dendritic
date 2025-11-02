@@ -248,6 +248,7 @@ in
               LogsDirectory = "caddy";
               RuntimeDirectory = "caddy";
               ConfigurationDirectory = "caddy";
+              Environment = [ "HOME=/var/lib/caddy" ];
 
               ExecStart = lib.concatStringsSep " " [
                 "${caddyWithPlugins}/bin/caddy"
