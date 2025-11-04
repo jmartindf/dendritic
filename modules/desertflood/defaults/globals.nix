@@ -20,6 +20,7 @@ let
     };
 
     ports = {
+      bluesky-pds = 36825;
     };
   };
 in
