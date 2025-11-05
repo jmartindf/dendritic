@@ -102,6 +102,12 @@ in
               path = "/";
             };
 
+            bluesky-pds = {
+              domain = "wordflood.net";
+              hostName = "pds";
+              path = "";
+            };
+
           };
 
         };
@@ -162,6 +168,8 @@ in
           };
 
           attic.enable = true;
+
+          bluesky-pds.enable = true;
 
         };
       };
