@@ -88,8 +88,29 @@ in
             };
           };
 
+          domains = lib.mkOption {
+            type = lib.types.listOf (
+              lib.types.submodule {
+                options = {
+                  main = lib.mkOption {
+                    type = lib.types.str;
+                    default = null;
+                    description = "Main domain name.";
+                  };
+                  sans = lib.mkOption {
+                    type = lib.types.listOf lib.types.str;
+                    default = [ ];
+                    description = "List of SANS domain names (Wildcards).";
+                  };
+                };
+              }
+            );
+            default = [ ];
+            description = "Domains to use for traefik.";
+          };
+
           domain = lib.mkOption {
-            type = lib.types.str;
+            type = lib.types.nullOr lib.types.str;
             default = null;
             description = "What is the main domain name for hosting services";
           };
@@ -162,6 +183,9 @@ in
             };
           };
         }
+        (lib.mkIf (myTraefikCfg.domains != [ ]) {
+          services.traefik.staticConfigOptions.entryPoints.websecure.http.tls.domains = myTraefikCfg.domains;
+        })
         (lib.mkIf (myTraefikCfg.domain != null) {
           services.traefik.staticConfigOptions.entryPoints.websecure.http.tls.domains = [
             {
