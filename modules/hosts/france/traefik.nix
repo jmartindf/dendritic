@@ -132,6 +132,14 @@ _: {
                 };
               };
 
+              service-caddy = {
+                http.services.sites-static-svc.loadBalancer.servers = [
+                  {
+                    url = "http://127.0.0.1:${toString dfCfg.globals.ports.caddy-static}";
+                  }
+                ];
+              };
+
               app-apprise = {
                 http = {
                   routers.apprise-rtr = {
@@ -143,17 +151,12 @@ _: {
                   routers.apprise-static-rtr = {
                     entrypoints = "websecure";
                     rule = "Host(`apprise.desertflood.com`) && PathPrefix(`/s/`)";
-                    service = "apprise-static-svc";
+                    service = "sites-static-svc@file";
                     middlewares = "chain-basic-auth@file";
                   };
                   services.apprise-svc.loadBalancer.servers = [
                     {
                       url = "http://${toString dfCfg.services.apprise-api.host}:${toString dfCfg.services.apprise-api.port}";
-                    }
-                  ];
-                  services.apprise-static-svc.loadBalancer.servers = [
-                    {
-                      url = "http://127.0.0.1:10535";
                     }
                   ];
                 };
@@ -176,54 +179,15 @@ _: {
                 };
               };
 
-              site-voxduo = {
+              sites-static = {
                 http = {
-                  routers.voxduo-rtr = {
+                  routers.sites-static-rtr = {
                     entrypoints = "websecure";
-                    rule = "Host(`voxduo.com`)";
-                    service = "voxduo-svc";
+                    rule = "Host(`voxduo.com`) || Host(`files.voxduo.com`) || Host(`pluribus.voxduo.com`)";
+                    service = "sites-static-svc@file";
                     middlewares = "chain-no-auth@file";
                     tls.certresolver = "web";
                   };
-                  services.voxduo-svc.loadBalancer.servers = [
-                    {
-                      url = "http://127.0.0.1:10535";
-                    }
-                  ];
-                };
-              };
-
-              site-voxduo-files = {
-                http = {
-                  routers.voxfiles-rtr = {
-                    entrypoints = "websecure";
-                    rule = "Host(`files.voxduo.com`)";
-                    service = "voxfiles-svc";
-                    middlewares = "chain-no-auth@file";
-                    tls.certresolver = "web";
-                  };
-                  services.voxfiles-svc.loadBalancer.servers = [
-                    {
-                      url = "http://127.0.0.1:10535";
-                    }
-                  ];
-                };
-              };
-
-              site-voxduo-pluribus = {
-                http = {
-                  routers.voxpluribus-rtr = {
-                    entrypoints = "websecure";
-                    rule = "Host(`pluribus.voxduo.com`)";
-                    service = "voxpluribus-svc";
-                    middlewares = "chain-no-auth@file";
-                    tls.certresolver = "web";
-                  };
-                  services.voxpluribus-svc.loadBalancer.servers = [
-                    {
-                      url = "http://127.0.0.1:10535";
-                    }
-                  ];
                 };
               };
 

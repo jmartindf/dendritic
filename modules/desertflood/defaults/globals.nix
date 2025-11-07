@@ -21,6 +21,7 @@ let
 
     ports = {
       bluesky-pds = 36825;
+      caddy-static = 10535;
     };
   };
 in
