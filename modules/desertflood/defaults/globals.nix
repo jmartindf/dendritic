@@ -5,7 +5,7 @@ let
     tailscaleIPs = {
       everest = "100.79.239.108";
       firewalla = "100.125.134.86";
-      fossil = "100.104.30.103";
+      fossil = "100.64.101.96";
       france = "100.110.64.44";
       mark = "100.80.91.96";
       masto-es = "100.115.8.118";

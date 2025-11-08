@@ -32,9 +32,7 @@ in
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.grafana
-        inputs.self.modules.nixos.prometheus
-        inputs.self.modules.nixos.proxmox-lxc
+        inputs.self.modules.nixos.qemu-guest
       ];
 
       desertflood = {
@@ -44,78 +42,6 @@ in
 
         services = {
 
-          traefik = {
-            enable = true;
-            domain = "${webHost}";
-
-            letsencrypt = {
-              enable = true;
-              acme-dns = true;
-              tailscaleCerts = true;
-              defaultResolver = "tailscale";
-            };
-
-            rules = {
-
-              app-grafana = {
-                http = {
-                  routers.grafana-rtr = {
-                    entrypoints = "websecure";
-                    rule = "Host(`${webHost}`) && PathPrefix(`/grafana`)";
-                    service = "grafana-svc";
-                    middlewares = "chain-no-auth@file";
-                    tls.certResolver = "tailscale";
-                  };
-                  services.grafana-svc.loadBalancer.servers = [
-                    {
-                      url = "http://${toString svcConfig.grafana.settings.server.http_addr}:${toString svcConfig.grafana.settings.server.http_port}";
-                    }
-                  ];
-                };
-              };
-
-              app-prometheus = {
-                http = {
-                  routers.prometheus-rtr = {
-                    entrypoints = "websecure";
-                    rule = "Host(`${webHost}`) && PathPrefix(`/prometheus`)";
-                    service = "prometheus-svc";
-                    middlewares = "chain-no-auth@file";
-                    tls.certResolver = "tailscale";
-                  };
-                  services.prometheus-svc.loadBalancer.servers = [
-                    {
-                      url = "https://${toString svcConfig.prometheus.listenAddress}:${toString svcConfig.prometheus.port}";
-                    }
-                  ];
-                };
-              };
-
-            };
-          };
-
-          prometheus = {
-            inherit mTLS-required;
-
-            exporters.node.mTLS-required = mTLS-required;
-
-            monitorHosts = [
-              "everest.manticore-mark.ts.net"
-              "firewalla.manticore-mark.ts.net"
-              "hermes.manticore-mark.ts.net"
-              "mark.manticore-mark.ts.net"
-              "masto-es.manticore-mark.ts.net"
-              "mastodon.manticore-mark.ts.net"
-              "underworld.manticore-mark.ts.net"
-            ];
-
-            monitorHostsSecure = [
-              "127.0.0.1"
-              "richard.manticore-mark.ts.net"
-              "france.manticore-mark.ts.net"
-            ];
-          };
-
         };
 
       };
@@ -124,7 +50,7 @@ in
         inherit (hostInfo) hostName domain;
       };
 
-      age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDJagbKOnqDYTIZSWnRnMXqSANNeK0KJ+fs6xMhJH6dW";
+      age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
 
       nix.settings.trusted-users = [ "nixos" ];
 
