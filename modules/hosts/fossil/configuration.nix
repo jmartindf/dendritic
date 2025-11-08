@@ -42,6 +42,8 @@ in
 
         services = {
 
+          forgejo-runner.enable = true;
+
         };
 
       };
