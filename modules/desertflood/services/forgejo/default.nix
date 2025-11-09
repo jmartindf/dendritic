@@ -6,6 +6,13 @@
 }:
 let
   flakeCfg = config;
+  mkServiceSecrets =
+    secretHolder: names:
+    lib.genAttrs names (name: {
+      rekeyFile = ./secrets/${name}.age;
+      owner = secretHolder;
+      group = secretHolder;
+    });
 in
 {
   flake.modules.nixos.services =
@@ -58,15 +65,6 @@ in
           customUser = svcsConfig.forgejo.user != "forgejo";
           dbName = "forgejo";
           dbUser = "forgejo";
-
-          mkForgejoSecrets =
-            secretHolder: names:
-            lib.genAttrs names (name: {
-              rekeyFile = ./${name}.age;
-              owner = secretHolder;
-              group = secretHolder;
-            });
-
         in
         lib.mkIf svcsConfig.forgejo.enable {
 
@@ -81,7 +79,7 @@ in
 
           environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
 
-          age.secrets = mkForgejoSecrets forgejoUser [
+          age.secrets = mkServiceSecrets forgejoUser [
             "forgejo-password-sunfish"
             "forgejo-password-mirrors"
             "forgejo-password-jmartindf"

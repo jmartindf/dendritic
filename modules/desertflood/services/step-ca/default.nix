@@ -1,4 +1,15 @@
-_: {
+{ config, lib, ... }:
+let
+  flakeCfg = config;
+  mkServiceSecrets =
+    secretHolder: names:
+    lib.genAttrs names (name: {
+      rekeyFile = ./secrets/${name}.age;
+      owner = secretHolder;
+      group = secretHolder;
+    });
+in
+{
 
   config = {
 
@@ -17,14 +28,6 @@ _: {
 
         svcsConfig = nixOScfg.desertflood.services;
         netConfig = nixOScfg.desertflood.networking;
-
-        mkStepSecrets =
-          secretHolder: names:
-          lib.genAttrs names (name: {
-            rekeyFile = ./secrets/${name}.age;
-            owner = secretHolder;
-            group = secretHolder;
-          });
       in
       {
 
@@ -69,7 +72,7 @@ _: {
 
         config = lib.mkIf svcsConfig.step-ca.enable {
 
-          age.secrets = mkStepSecrets stepUser [
+          age.secrets = mkServiceSecrets stepUser [
             "step-ca-intermediate_ca_key"
             "step-ca-ssh_host_ca_key"
             "step-ca-ssh_user_ca_key"
