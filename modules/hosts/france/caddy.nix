@@ -46,6 +46,21 @@ _: {
 
               global = # caddy
                 ''
+                  order cache before reverse_proxy
+
+                  cache {
+                    nuts {
+                      path /tmp/nuts/default
+                    }
+
+                    storers nuts
+
+                    ttl 1h
+                    stale 3h
+                    headers Authorization
+                    default_cache_control "public, max-age=3600"
+                  }
+
                   filesystem s3static s3 {
                     region "us-west-001"
                     bucket "desertflood-all-static-sites"
@@ -59,6 +74,7 @@ _: {
                   (b2-static) {
                     http://{args[0]}:${caddyPort} {
                       bind 127.0.0.1
+                      cache
                       log
 
                       @no_ext {
@@ -80,6 +96,7 @@ _: {
                   http://apprise.desertflood.com:${caddyPort} {
                     bind 127.0.0.1
                     log
+                    cache
 
                     handle_path /s/* {
                       root ${pkgs.local.apprise-api}/webapp/static
