@@ -8,6 +8,9 @@ in
     let
       cfg = config;
       caddyCfg = cfg.desertflood.services.caddy;
+      caddyUser = caddyCfg.user;
+      caddyGroup = caddyCfg.group;
+
       leCfg = caddyCfg.letsencrypt;
 
       caddyWithPlugins = pkgs.local.caddy.withPlugins {
@@ -104,6 +107,18 @@ in
             };
 
           };
+
+          user = lib.mkOption {
+            type = lib.types.str;
+            default = "caddy";
+            description = "The user to run the caddy service under";
+          };
+
+          group = lib.mkOption {
+            type = lib.types.str;
+            default = "caddy";
+            description = "The group to run the caddy service under";
+          };
         };
 
       };
@@ -168,8 +183,8 @@ in
 
           age.secrets.acme-dns-caddy-json = {
             rekeyFile = ../acme-dns.json.age;
-            owner = "caddy";
-            group = "caddy";
+            owner = caddyUser;
+            group = caddyGroup;
           };
 
           desertflood.services.caddy.settings = {
@@ -203,22 +218,22 @@ in
 
           };
 
-          users.users.caddy = {
+          users.users.${caddyUser} = {
             createHome = true;
             description = "Caddy web server";
-            group = "caddy";
+            group = caddyGroup;
             home = "/var/lib/caddy";
             isSystemUser = true;
             shell = null;
             uid = cfg.ids.uids.caddy;
           };
 
-          users.groups.caddy = {
+          users.groups.${caddyGroup} = {
             gid = cfg.ids.gids.caddy;
           };
 
           services = {
-            tailscale.permitCertUid = lib.mkIf leCfg.tailscaleCerts "caddy";
+            tailscale.permitCertUid = lib.mkIf leCfg.tailscaleCerts caddyUser;
           };
 
           systemd.services.caddy = {
@@ -239,8 +254,8 @@ in
             reloadTriggers = [ configFile ];
 
             serviceConfig = {
-              User = "caddy";
-              Group = "caddy";
+              User = caddyUser;
+              Group = caddyGroup;
               Type = "notify";
 
               ReadWritePaths = "/var/lib/caddy";
