@@ -268,7 +268,7 @@ in
               ExecStart = lib.concatStringsSep " " [
                 "${caddyWithPlugins}/bin/caddy"
                 "run"
-                "--environ"
+                (lib.optionalString caddyCfg.settings.debug "--environ") # log environment at startup
                 "--config"
                 "/etc/caddy/Caddyfile"
               ];
