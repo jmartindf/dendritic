@@ -43,15 +43,7 @@ in
       };
       age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
 
-      nix.settings.trusted-users = [ "nixos" ];
-
       users.users = {
-
-        nixos = {
-          isNormalUser = true;
-          extraGroups = [ "wheel" ];
-          openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-        };
 
         root = {
           openssh.authorizedKeys.keys = defaultUser.authorizedKeys;

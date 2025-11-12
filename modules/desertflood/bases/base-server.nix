@@ -6,6 +6,7 @@
 }:
 let
   flakeCfg = config;
+  defaultUser = flakeCfg.desertflood.users.users.joe;
 in
 {
   flake.modules.nixos.base-server =
@@ -40,5 +41,14 @@ in
       services = {
         tailscale.enable = true;
       };
+
+      # every server should have a trusted `nixos` user that I can login to
+      users.users.nixos = {
+        isNormalUser = true;
+        extraGroups = [ "wheel" ];
+        openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+      };
+      nix.settings.trusted-users = [ "nixos" ];
+
     }; # end Nix OS module block
 }
