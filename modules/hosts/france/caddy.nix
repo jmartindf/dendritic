@@ -5,18 +5,23 @@ _: {
       nixOScfg = config;
     in
     {
-      age.secrets.basic_auth = {
-        rekeyFile = ./basic_auth.age;
-      };
+      age.secrets = {
 
-      age.secrets.caddy-aws-credentials = {
-        rekeyFile = ./aws-credentials.age;
-        path = "/var/lib/caddy/.aws/credentials";
-        symlink = true;
-        name = "credentials";
-        mode = "0600";
-        owner = "caddy";
-        group = "caddy";
+        basic_auth = {
+          rekeyFile = ./basic_auth.age;
+        };
+
+        caddy-aws-credentials = {
+          rekeyFile = ./aws-credentials.age;
+          path = "/var/lib/caddy/.aws/credentials";
+          symlink = true;
+          name = "credentials";
+          mode = "0600";
+          owner = "caddy";
+          group = "caddy";
+        };
+
+        b2StaticHTML.rekeyFile = ./rcloneConfig.age;
       };
 
       systemd.services.caddy.serviceConfig = {
@@ -46,7 +51,8 @@ _: {
 
               global = # caddy
                 ''
-                  order cache before reverse_proxy
+                  order s3proxy before reverse_proxy
+                  order cache before s3proxy
 
                   cache {
                     nuts {
@@ -61,12 +67,6 @@ _: {
                     default_cache_control "public, max-age=3600"
                   }
 
-                  filesystem s3static s3 {
-                    region "us-west-001"
-                    bucket "desertflood-all-static-sites"
-                    endpoint "https://s3.us-west-001.backblazeb2.com/"
-                    use_path_style
-                  }
                 '';
 
               site-blocks = # caddy
@@ -81,14 +81,28 @@ _: {
                         path_regexp .*\/[^.]+$
                       }
 
-                      root * {args[1]}
+                      root * /srv/www/html-cache/{args[1]}
 
                       try_files {path} {path}/ {path}/index.html
                       header @no_ext ?Content-Type text/html
 
-                      file_server {
-                        fs s3static
-                        disable_canonical_uris
+                      @exists file
+                      handle @exists {
+                        cache
+                        file_server {
+                          disable_canonical_uris
+                        }
+                      }
+
+                      handle {
+                        cache
+                        s3proxy {
+                          root {args[1]}
+                          bucket "desertflood-all-static-sites"
+                          region "us-west-001"
+                          endpoint "https://s3.us-west-001.backblazeb2.com/"
+                          force_path_style
+                        }
                       }
                     }
                   }
@@ -109,6 +123,21 @@ _: {
                   import b2-static pluribus.voxduo.com voxduo-pluribus
                 '';
 
+            };
+
+            html-cache = {
+              enable = true;
+
+              settings = {
+                dataDir = "/srv/www/html-cache";
+                remote = "b2-static:desertflood-all-static-sites";
+                rcloneConfFile = nixOScfg.age.secrets.b2StaticHTML.path;
+
+                extraRcloneArgs = [
+                  "--max-size=325K"
+                  "--fast-list"
+                ];
+              };
             };
           };
 
