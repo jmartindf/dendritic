@@ -24,8 +24,8 @@ rsync host=defaultHost:
 build host=defaultHost:
     {{ build }} build {{ buildFlags }} --out-link ./derivations/{{ host }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
-buildAll: (build "richard") (build "fossil") (build "france")
 [group("build")]
+buildAll: (build "richard") (build "fossil") (build "france") (build "everest")
 
 [group("deploy")]
 deploy host=defaultHost: (build host) (rsync host)
