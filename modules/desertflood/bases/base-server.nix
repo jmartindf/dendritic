@@ -50,5 +50,10 @@ in
       };
       nix.settings.trusted-users = [ "nixos" ];
 
+      # symlink the Nix configuration, if it exists
+      systemd.tmpfiles.rules = [
+        "L? /etc/nixos/flake.nix  -  -  -  -  /home/nixos/dendritic/flake.nix"
+      ];
+
     }; # end Nix OS module block
 }

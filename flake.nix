@@ -135,7 +135,7 @@
       };
     };
     crowdsec = {
-      url = "git+ssh://git@git.desertflood.com/jmartindf/nix-flake-crowdsec?ref=update-crowdsec";
+      url = "git+https://git.desertflood.com/jmartindf/nix-flake-crowdsec.git?ref=update-crowdsec";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
     };

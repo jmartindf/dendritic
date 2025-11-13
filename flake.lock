@@ -132,12 +132,12 @@
         "rev": "43ae9a87072a79ca1bba6fe7f624ca4052baf08a",
         "revCount": 43,
         "type": "git",
-        "url": "ssh://git@git.desertflood.com/jmartindf/nix-flake-crowdsec"
+        "url": "https://git.desertflood.com/jmartindf/nix-flake-crowdsec.git"
       },
       "original": {
         "ref": "update-crowdsec",
         "type": "git",
-        "url": "ssh://git@git.desertflood.com/jmartindf/nix-flake-crowdsec"
+        "url": "https://git.desertflood.com/jmartindf/nix-flake-crowdsec.git"
       }
     },
     "darwin": {
