@@ -28,8 +28,9 @@ build host=defaultHost:
 buildAll: (build "richard") (build "fossil") (build "france") (build "everest")
 
 [group("deploy")]
-deploy host=defaultHost: (build host) (rsync host)
-    nixos-rebuild-ng switch --flake . --target-host root@{{ host }}
+deploy host=defaultHost: (build host) (rsync host) (push host)
+    # nixos-rebuild-ng switch --flake . --target-host root@{{ host }}
+    ssh nixos@{{ host }} -- nixos-rebuild-ng switch --sudo
 
 [group("deploy")]
 deployAll: (deploy "richard") (deploy "fossil") (deploy "france") (deploy "everest")
