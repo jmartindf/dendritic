@@ -5,6 +5,9 @@ build := "nom"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-rav --exclude=\".jj\" --delete --delete-excluded"
 buildFlags := ""
+atticCmd := "./attic-nofail.fish"
+atticOptions := "-j3"
+atticDestination := "desertflood:df-test"
 
 [private]
 default:
@@ -30,3 +33,10 @@ deploy host=defaultHost: (build host) (rsync host)
 
 [group("hosts")]
 deployAll: (deploy "richard") (deploy "fossil") (deploy "france") (deploy "everest")
+
+[group("push")]
+push host=defaultHost:
+    {{ atticCmd }} push "{{ atticOptions }}" "{{ atticDestination }}" derivations/{{ host }}/
+
+[group("push")]
+pushAll: (push "richard") (push "fossil") (push "france") (push "everest")
