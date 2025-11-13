@@ -16,22 +16,22 @@ default:
 devshell:
     echo "run 'nix develop .#'"
 
-[group("hosts")]
+[group("send")]
 rsync host=defaultHost:
     rsync {{ rsyncFlags }} ./ nixos@{{ host }}:/home/nixos/dendritic/
 
-[group("hosts")]
+[group("build")]
 build host=defaultHost:
     {{ build }} build {{ buildFlags }} --out-link ./derivations/{{ host }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
-[group("hosts")]
 buildAll: (build "richard") (build "fossil") (build "france")
+[group("build")]
 
-[group("hosts")]
+[group("deploy")]
 deploy host=defaultHost: (build host) (rsync host)
     nixos-rebuild-ng switch --flake . --target-host root@{{ host }}
 
-[group("hosts")]
+[group("deploy")]
 deployAll: (deploy "richard") (deploy "fossil") (deploy "france") (deploy "everest")
 
 [group("push")]
