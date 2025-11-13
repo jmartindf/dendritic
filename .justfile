@@ -3,7 +3,7 @@ set unstable := true
 defaultHost := "richard"
 build := "nom"
 toplevel := "config.system.build.toplevel"
-rsyncFlags := "-rav --exclude=\".jj\" --delete --delete-excluded"
+rsyncFlags := "-v --links --perms --recursive --times  --exclude=\".jj\" --exclude=\"derivations\" --delete --delete-excluded"
 buildFlags := ""
 atticCmd := "./attic-nofail.fish"
 atticOptions := "-j3"
@@ -18,7 +18,7 @@ devshell:
 
 [group("hosts")]
 rsync host=defaultHost:
-    rsync {{ rsyncFlags }} ./ root@{{ host }}:/home/nixos/dendritic/
+    rsync {{ rsyncFlags }} ./ nixos@{{ host }}:/home/nixos/dendritic/
 
 [group("hosts")]
 build host=defaultHost:
