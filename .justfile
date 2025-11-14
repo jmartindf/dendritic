@@ -5,6 +5,7 @@ build := "nom"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-v --links --perms --recursive --times  --exclude=\".jj\" --exclude=\"derivations\" --delete --delete-excluded"
 buildFlags := ""
+nixGithubToken := "NIX_CONFIG=\"access-tokens = github.com=$(op read 'op://Services/mwxtls4sk6hy72nnpkciluvofu/token')\""
 atticCmd := "./attic-nofail.fish"
 atticOptions := "-j3"
 atticDestination := "desertflood:df-test"
@@ -12,6 +13,10 @@ atticDestination := "desertflood:df-test"
 [private]
 default:
     just --list
+
+# Update all flake sources
+update:
+    {{ nixGithubToken }} nix flake update
 
 devshell:
     echo "run 'nix develop .#'"
