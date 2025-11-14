@@ -20,7 +20,7 @@ in
   desertflood.hosts.hosts.france = hostInfo;
 
   flake.modules.nixos.france =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       nixOScfg = config;
       inherit (hostInfo) hostName;
@@ -207,8 +207,13 @@ in
 
       services.taskchampion-sync-server = {
         enable = true;
+        package = pkgs.local.taskchampion-sync-server;
         allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
       };
+
+      # systemd.services.taskchampion-sync-server.environment = {
+      #   RUST_LOG = "debug";
+      # };
 
       age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKWvOZ3zQ5zitwbtU1iTa5FjG/47yGqGVoZ7jUg6ouku";
 
