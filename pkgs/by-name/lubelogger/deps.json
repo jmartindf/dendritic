@@ -1,8 +1,8 @@
 [
   {
     "pname": "BouncyCastle.Cryptography",
-    "version": "2.5.1",
-    "hash": "sha256-ISDd8fS6/cIJIXBFDd7F3FQ0wzWkAo4r8dvycb8iT6c="
+    "version": "2.6.1",
+    "hash": "sha256-0NNwK/UZlnIK4Nb7bs4ya0XfoVluKQPUVQvaR88UHKo="
   },
   {
     "pname": "CsvHelper",
@@ -16,8 +16,8 @@
   },
   {
     "pname": "MailKit",
-    "version": "4.13.0",
-    "hash": "sha256-mDQpvjLB36QFdBW0EK5Ok3+vk59WxbqEsJ3yO1r+Msc="
+    "version": "4.14.1",
+    "hash": "sha256-YSEcfyYVskwJX6xa13wGW4JgHn0VpD04CtUiAGn3et0="
   },
   {
     "pname": "Microsoft.Extensions.DependencyInjection.Abstractions",
@@ -61,13 +61,13 @@
   },
   {
     "pname": "MimeKit",
-    "version": "4.13.0",
-    "hash": "sha256-mPFMFcK+ks4aoA02JfC6JUhUyc1LTVp5siW9t3wUgNo="
+    "version": "4.14.0",
+    "hash": "sha256-06dqA6w2V2D+miq387smCuJ/8fk1FVc0rvRjmglAWyM="
   },
   {
     "pname": "Npgsql",
-    "version": "9.0.3",
-    "hash": "sha256-X3F05GNj3vNVl++VOV5TMYE5dvEe6cx0k+5yWo2Q/+o="
+    "version": "9.0.4",
+    "hash": "sha256-YH2QYLe56dH6NNGgSwLIaHefjkKQLh0Sf4vMWoJciyU="
   },
   {
     "pname": "System.Formats.Asn1",
