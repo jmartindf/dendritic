@@ -134,7 +134,7 @@ _: {
                 rcloneConfFile = nixOScfg.age.secrets.b2StaticHTML.path;
 
                 extraRcloneArgs = [
-                  "--max-size=325K"
+                  # "--max-size=325K" # download everything for now
                   "--fast-list"
                 ];
               };
