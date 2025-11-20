@@ -214,6 +214,7 @@ in
                   PROVIDER = "db";
                   COOKIE_NAME = "lfg_forgejo";
                   COOKIE_SECURE = true;
+                  SESSION_LIFE_TIME = 14 * 86400; # 14 days
                 };
 
                 openid = {
