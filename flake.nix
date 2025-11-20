@@ -122,9 +122,7 @@
       };
     };
     authentik-nix = {
-      # pin to version with latest commits for 2025.8 branch
-      # 2025.10.0 isn't building. Because of making gopkgs a split package?
-      url = "github:nix-community/authentik-nix/version/2025.10.1";
+      url = "github:nix-community/authentik-nix/version/2025.10.2";
       # url = "github:jmartindf/authentik-nix/56b9d627073f53423ef2593b15cf0b00ac260e0d";
       inputs = {
         nixpkgs.follows = "nixpkgs";
