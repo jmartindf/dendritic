@@ -43,16 +43,6 @@ in
 
         networking = {
           webDomain = "df.fyi";
-
-          services = {
-            lldap = {
-              protocol = "https";
-              domain = "desertflood.link";
-              hostName = "lldap";
-              path = "";
-            };
-          };
-
         };
 
         step-ca = {
@@ -61,8 +51,6 @@ in
         };
 
         services = {
-          lldap.enable = true;
-          redis.enable = true;
 
           step-ca = {
             # run ca-server
@@ -70,7 +58,6 @@ in
             fqdns = [ "pki.desertflood.link" ];
           };
 
-          authelia.enable = true;
           authentik.enable = true;
 
           traefik = {
@@ -97,32 +84,6 @@ in
                 };
 
                 services.smallstep-svc.loadbalancer.servers = [ { address = "127.0.0.1:8443"; } ];
-              };
-
-              lldap.http = {
-
-                routers.lldap-rtr = {
-                  entrypoints = "websecure";
-                  tls.certresolver = "web";
-                  rule = "Host(`lldap.desertflood.link`)";
-                  middlewares = "chain-no-auth@file";
-                  service = "lldap-svc";
-                };
-
-                services.lldap-svc.loadbalancer.servers = [ { url = "http://127.0.0.1:17170"; } ];
-              };
-
-              authelia.http = {
-
-                routers.authelia-rtr = {
-                  entrypoints = "websecure";
-                  tls.certresolver = "web";
-                  rule = "Host(`idm.thosemartins.family`) || Host(`idm.desertflood.link`) || Host(`idm.df.fyi`)";
-                  middlewares = "chain-no-auth@file";
-                  service = "authelia-svc";
-                };
-
-                services.authelia-svc.loadbalancer.servers = [ { url = "http://127.0.0.1:9091"; } ];
               };
 
               authentik.http = {
