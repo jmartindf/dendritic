@@ -6,7 +6,7 @@ writeShellApplication {
   name = "fqdn";
   text = # bash
     ''
-      if [[ -a /etc/fqdn ]];
+      if [[ -e /etc/fqdn ]];
       then
         ${coreutils}/bin/cat /etc/fqdn
       fi
