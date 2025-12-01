@@ -116,6 +116,11 @@ _: {
 
             }; # end services.atticd
 
+            systemd.services.atticd = {
+              after = [ "postgresql.target" ];
+              requires = [ "postgresql.target" ];
+            };
+
           }; # end NixOS module `config`
 
       }; # end NixOS `attic` module

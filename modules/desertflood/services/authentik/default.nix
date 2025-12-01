@@ -92,12 +92,13 @@
           systemd.services = {
 
             authentik-migrate = {
-              requires = [ "postgresql.service" ];
-              after = [ "postgresql.service" ];
+              requires = [ "postgresql.target" ];
+              after = [ "postgresql.target" ];
             };
 
             authentik = {
-              after = [ "postgresql.service" ];
+              requires = [ "postgresql.target" ];
+              after = [ "postgresql.target" ];
             };
           };
 

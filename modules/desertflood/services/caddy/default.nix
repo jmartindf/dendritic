@@ -13,7 +13,7 @@ in
 
       leCfg = caddyCfg.letsencrypt;
 
-      caddyWithPlugins = pkgs.local.caddy.withPlugins {
+      caddyWithPlugins = pkgs.caddy.withPlugins {
         plugins = [
           "github.com/abiosoft/caddy-json-schema@v0.0.0-20220621031927-c4d6e132f3af"
           "github.com/caddy-dns/acmedns@v0.6.0"

@@ -17,10 +17,6 @@ _: {
       in
       {
 
-        # Pending [PR 371458](https://github.com/NixOS/nixpkgs/pull/371458)
-        # Original: https://github.com/bct/nixpkgs/blob/6fc07697e3fae972e865241a73cec8657a984164/nixos/modules/services/web-apps/lubelogger.nix
-        imports = [ ./_lubelogger.nix ];
-
         options = {
 
           desertflood.services.lubelogger = {
@@ -91,6 +87,11 @@ _: {
               OpenIDConfig__UsePKCE = "true";
               OpenIDConfig__DisableRegularLogin = "true";
             };
+          };
+
+          systemd.services.lubelogger = {
+            requires = [ "postgresql.target" ];
+            after = [ "postgresql.target" ];
           };
 
         };

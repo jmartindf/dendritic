@@ -349,8 +349,6 @@ in
                   password = nixOScfg.age.secrets.forgejo-password-jmartindf;
                 };
               };
-
-              robots = ./robots.txt;
             in
             # bash
             ''

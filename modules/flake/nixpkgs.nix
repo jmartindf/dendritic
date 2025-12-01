@@ -1,7 +1,7 @@
 { inputs, ... }:
 let
   overlay = final: prev: {
-    local = inputs.self.packages.${prev.system};
+    local = inputs.self.packages.${prev.stdenv.hostPlatform.system};
   };
 in
 {

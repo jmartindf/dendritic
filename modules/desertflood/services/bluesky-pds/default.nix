@@ -47,11 +47,11 @@ _: {
             mode = "0600";
           };
 
-          services.pds = {
+          services.bluesky-pds = {
 
             enable = true;
 
-            package = pkgs.local.bluesky-pds;
+            package = pkgs.bluesky-pds;
 
             environmentFiles = [ nixOScfg.age.secrets.bluesky-env.path ];
 

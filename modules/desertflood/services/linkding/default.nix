@@ -167,12 +167,12 @@
             podman.enable = true;
           };
 
-          systemd.services.postgresql.postStart =
+          systemd.services.postgresql-setup.postStart =
             let
               password_file_path = nixOScfg.age.secrets.linkding-pgpass.path;
             in
             ''
-              $PSQL -tA <<'EOF'
+              psql -tA <<'EOF'
                 DO $$
                 DECLARE password TEXT;
                 BEGIN
