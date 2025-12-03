@@ -1,5 +1,4 @@
-{ inputs, ... }:
-{
+_: {
 
   flake.modules.nixos.crowdsec =
     {
@@ -10,11 +9,6 @@
     }:
     {
 
-      imports = [
-        inputs.crowdsec.nixosModules.crowdsec
-        inputs.crowdsec.nixosModules.crowdsec-firewall-bouncer
-      ];
-
       options = {
         desertflood.services.crowdsec.enable = lib.mkEnableOption "crowdsec scanning and mitigation";
       };
@@ -23,199 +17,159 @@
         let
           nixOScfg = config;
           api_at = "127.0.0.1:8888";
-
-          yaml = (pkgs.formats.yaml { }).generate;
-
-          crowdsec-allow-attic = yaml "crowdsec-allow-attic.yaml" {
-            name = "jmartindf/http-allow-nix-cache";
-            description = "Whitelist HTTP requests that are checking a Nix cache for specific NARs";
-
-            whitelist = {
-              reason = "NAR checks for Nix cache";
-
-              expression = [
-                ''evt.Parsed.request matches "^/[\\w\\d-]+/[\\w\\d-]+\\.narinfo$" && evt.Parsed.verb == "GET"''
-              ];
-            };
-          };
-
-          crowdsec-allow-tasksync = yaml "crowdsec-allow-tasksync.yaml" {
-            name = "jmartindf/http-allow-taskchampion-sync";
-            description = "Whitelist askchampion-sync-server API calls that generate 404 responses";
-
-            whitelist = {
-              reason = "valid taskchampion-sync-server usage";
-
-              expression = [
-                ''evt.Parsed.request matches "^/v1/client/get-child-version/[\\w\\d-]+$" && evt.Parsed.verb == "GET"''
-              ];
-            };
-          };
+          firewallBouncerName = "FranceFirewallBouncer";
         in
         lib.mkIf nixOScfg.desertflood.services.crowdsec.enable {
 
-          age.secrets.crowdsec-enroll-key.rekeyFile = ./enrollment_key.age;
-          age.secrets.crowdsec-bouncer-api_key.rekeyFile = ./bouncer-api_key.age;
-
-          nixpkgs.overlays = [ inputs.crowdsec.overlays.default ];
-
-          services.crowdsec =
+          age.secrets =
             let
-              acquisitions_file = yaml "acquisitions.yaml" {
-                source = "journalctl";
-                journalctl_filter = [
-                  "_SYSTEMD_UNIT=sshd.service"
-                  "_SYSTEMD_UNIT=traefik.service"
-                  "_SYSTEMD_UNIT=caddy.service"
-                  "_SYSTEMD_UNIT=forgejo.service"
-                  "_SYSTEMD_UNIT=grafana.service"
-                  "_SYSTEMD_UNIT=ntfy-sh.service"
-                ];
-                labels.type = "syslog";
+              ownership = {
+                owner = "${nixOScfg.services.crowdsec.user}";
+                group = "${nixOScfg.services.crowdsec.group}";
               };
             in
             {
-              enable = true;
-              enrollKeyFile = nixOScfg.age.secrets.crowdsec-enroll-key.path;
-              allowLocalJournalAccess = true;
-              settings = {
-                api.server.listen_uri = api_at;
-                crowdsec_service.acquisition_path = acquisitions_file;
+              crowdsec-bouncer-api_key.rekeyFile = ./bouncer-api_key.age;
+              crowdsec-enroll-key = {
+                rekeyFile = ./enrollment_key.age;
+              }
+              // ownership;
+              crowdsec-local-credentials = {
+                rekeyFile = ./local_api_credentials.yaml.age;
+                name = "local_api_credentials.yaml";
+              }
+              // ownership;
+              crowdsec-central-credentials = {
+                rekeyFile = ./central_api_credentials.yaml.age;
+                name = "central_api_credentials.yaml";
+              }
+              // ownership;
+            };
+
+          services.crowdsec = {
+            enable = true;
+            autoUpdateService = true;
+
+            settings = {
+
+              general.api = {
+                server.enable = true;
+                server.listen_uri = api_at;
+              };
+
+              lapi.credentialsFile = nixOScfg.age.secrets.crowdsec-local-credentials.path;
+              capi.credentialsFile = nixOScfg.age.secrets.crowdsec-central-credentials.path;
+
+              console = {
+                tokenFile = nixOScfg.age.secrets.crowdsec-enroll-key.path;
+
+                configuration = {
+                  share_manual_decisions = true;
+                  share_tainted = true;
+                  share_custom = true;
+                  console_management = false;
+                  share_context = true;
+                };
               };
             };
+
+            hub = {
+              collections = [
+                "crowdsecurity/linux"
+                "crowdsecurity/base-http-scenarios"
+                "crowdsecurity/http-cve"
+                "crowdsecurity/caddy"
+                "LePresidente/grafana"
+                "Jgigantino31/ntfy"
+                "crowdsecurity/traefik"
+              ];
+            };
+
+            localConfig = {
+
+              acquisitions = [
+                {
+                  source = "journalctl";
+                  journalctl_filter = [
+                    "_SYSTEMD_UNIT=sshd.service"
+                    "_SYSTEMD_UNIT=traefik.service"
+                    "_SYSTEMD_UNIT=caddy.service"
+                    "_SYSTEMD_UNIT=forgejo.service"
+                    "_SYSTEMD_UNIT=grafana.service"
+                    "_SYSTEMD_UNIT=ntfy-sh.service"
+                  ];
+                  labels.type = "syslog";
+                }
+              ];
+
+              parsers.s02Enrich = [
+                {
+                  name = "jmartindf/http-allow-nix-cache";
+                  description = "Whitelist HTTP requests that are checking a Nix cache for specific NARs";
+
+                  whitelist = {
+                    reason = "NAR checks for Nix cache";
+
+                    expression = [
+                      ''evt.Parsed.request matches "^/[\\w\\d-]+/[\\w\\d-]+\\.narinfo$" && evt.Parsed.verb == "GET"''
+                    ];
+                  };
+                }
+                {
+                  name = "jmartindf/http-allow-taskchampion-sync";
+                  description = "Whitelist askchampion-sync-server API calls that generate 404 responses";
+
+                  whitelist = {
+                    reason = "valid taskchampion-sync-server usage";
+
+                    expression = [
+                      ''evt.Parsed.request matches "^/v1/client/get-child-version/[\\w\\d-]+$" && evt.Parsed.verb == "GET"''
+                    ];
+                  };
+                }
+              ];
+            };
+
+          };
 
           services.crowdsec-firewall-bouncer = {
             enable = true;
+
             settings = {
               api_url = "http://${api_at}";
-              api_key = "@API_KEY@";
+              ipset_type = "nethash";
+              deny_action = "DROP";
+            };
+
+            secrets.apiKeyPath = nixOScfg.age.secrets.crowdsec-bouncer-api_key.path;
+            registerBouncer = {
+              enable = false;
+              bouncerName = firewallBouncerName;
             };
           };
 
-          systemd = {
-            services.crowdsec-firewall-bouncer.serviceConfig =
+          systemd.services.crowdsec.serviceConfig = {
+
+            LoadCredential = [ "api_key:${nixOScfg.age.secrets.crowdsec-bouncer-api_key.path}" ];
+
+            ExecStartPre =
               let
-                format = pkgs.formats.yaml { };
-                configFile = format.generate "crowdsec.yaml" nixOScfg.services.crowdsec-firewall-bouncer.settings;
-                configFileName = "crowdsec-bouncer.yaml";
-
-                hydrate =
-                  pkgs.writeScriptBin "hydrate-bouncer-config" # bash
+                script-bouncer =
+                  pkgs.writeScriptBin "register-bouncer" # bash
                     ''
                       #!${pkgs.runtimeShell}
                       set -eu
                       set -o pipefail
+                      cscli=/run/current-system/sw/bin/cscli
 
-                      install -m 0600 ${configFile} $RUNTIME_DIRECTORY/${configFileName}
-
-                      ${pkgs.replace-secret}/bin/replace-secret \
-                        '@API_KEY@' \
-                        $CREDENTIALS_DIRECTORY/api_key \
-                        $RUNTIME_DIRECTORY/${configFileName}
+                      if ! $cscli bouncers list | ${pkgs.gnugrep}/bin/grep -q "${firewallBouncerName}"; then
+                        $cscli bouncers add "${firewallBouncerName}" --key $(systemd-creds cat api_key)
+                      fi
                     '';
 
-                check =
-                  pkgs.writeScriptBin "bouncer-config-check" # bash
-                    ''
-                      #!${pkgs.runtimeShell}
-                      set -eu
-                      set -o pipefail
-
-                      ${pkgs.crowdsec-firewall-bouncer}/bin/cs-firewall-bouncer \
-                        -t -c $RUNTIME_DIRECTORY/${configFileName}
-                    '';
-
-                run =
-                  pkgs.writeScriptBin "bouncer-run" # bash
-                    ''
-                      #!${pkgs.runtimeShell}
-                      set -eu
-                      set -o pipefail
-
-                      exec ${pkgs.crowdsec-firewall-bouncer}/bin/cs-firewall-bouncer \
-                        -c $RUNTIME_DIRECTORY/crowdsec-bouncer.yaml
-                    '';
-              in
-              {
-                RuntimeDirectory = "crowdsec-firewall-bouncer";
-
-                ExecStartPre = lib.mkForce [
-                  "${hydrate}/bin/hydrate-bouncer-config"
-                  "${check}/bin/bouncer-config-check"
-                ];
-
-                ExecStart = lib.mkForce "${run}/bin/bouncer-run";
-
-                LoadCredential = [ "api_key:${nixOScfg.age.secrets.crowdsec-bouncer-api_key.path}" ];
-              };
-
-            services.crowdsec.serviceConfig = {
-
-              LoadCredential = [ "api_key:${nixOScfg.age.secrets.crowdsec-bouncer-api_key.path}" ];
-
-              ExecStartPre =
-                let
-                  script-bouncer =
-                    pkgs.writeScriptBin "register-bouncer" # bash
-                      ''
-                        #!${pkgs.runtimeShell}
-                        set -eu
-                        set -o pipefail
-
-                        if ! cscli bouncers list | grep -q "FranceFirewallBouncer"; then
-                          cscli bouncers add "FranceFirewallBouncer" --key $(systemd-creds cat api_key)
-                        fi
-                      '';
-
-                  script-scenarios =
-                    pkgs.writeScriptBin "install-scenarios" # bash
-                      ''
-                        #!${pkgs.runtimeShell}
-                        set -eu
-                        set -o pipefail
-
-                        if ! cscli collections list | grep -q "crowdsecurity/linux"; then
-                          cscli collections install crowdsecurity/linux
-                        fi
-
-                        if ! cscli collections list | grep -q "crowdsecurity/base-http-scenarios"; then
-                          cscli collections install crowdsecurity/base-http-scenarios
-                        fi
-
-                        if ! cscli collections list | grep -q "crowdsecurity/http-cve"; then
-                          cscli collections install crowdsecurity/http-cve
-                        fi
-
-                        if ! cscli collections list | grep -q "crowdsecurity/caddy"; then
-                          cscli collections install crowdsecurity/caddy
-                        fi
-
-                        if ! cscli collections list | grep -q "LePresidente/grafana"; then
-                          cscli collections install LePresidente/grafana
-                        fi
-
-                        if ! cscli collections list | grep -q "Jgigantino31/ntfy"; then
-                          cscli collections install Jgigantino31/ntfy
-                        fi
-
-                        if ! cscli collections list | grep -q "crowdsecurity/traefik"; then
-                          cscli collections install crowdsecurity/traefik
-                        fi
-                      '';
-                in
-                [
-                  "${script-bouncer}/bin/register-bouncer"
-                  "${script-scenarios}/bin/install-scenarios"
-                ];
-            };
-
-            tmpfiles.rules =
-              let
-                allowListFolder = "/var/lib/crowdsec/config/parsers/s02-enrich/";
               in
               [
-                "L+? ${allowListFolder}/allow-tasksync.yml  -  -  -  -  ${crowdsec-allow-tasksync}"
-                "L+? ${allowListFolder}/allow-attic.yml  -  -  -  -  ${crowdsec-allow-attic}"
+                "${script-bouncer}/bin/register-bouncer"
               ];
           };
 

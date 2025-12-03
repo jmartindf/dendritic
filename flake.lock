@@ -116,30 +116,6 @@
         "type": "github"
       }
     },
-    "crowdsec": {
-      "inputs": {
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1761804634,
-        "narHash": "sha256-4dKfX3y93ZVJY6u/WZkngdQzMgbsDY8xj6QtTjJFR4A=",
-        "ref": "update-crowdsec",
-        "rev": "43ae9a87072a79ca1bba6fe7f624ca4052baf08a",
-        "revCount": 43,
-        "type": "git",
-        "url": "https://git.desertflood.com/jmartindf/nix-flake-crowdsec.git"
-      },
-      "original": {
-        "ref": "update-crowdsec",
-        "type": "git",
-        "url": "https://git.desertflood.com/jmartindf/nix-flake-crowdsec.git"
-      }
-    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -557,7 +533,6 @@
         "agenix": "agenix",
         "agenix-rekey": "agenix-rekey",
         "authentik-nix": "authentik-nix",
-        "crowdsec": "crowdsec",
         "darwin": "darwin",
         "dendrix": "dendrix",
         "deploy-rs": "deploy-rs",
