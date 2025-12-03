@@ -135,6 +135,19 @@ in
             "nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU="
             "df-test:nGcIjsIXVK/SZON7K4/IVCJPZ2PjNSRFyB2RBDHMPsU="
           ];
+
+          always-allow-substitutes = true;
+          auto-optimise-store = true;
+        };
+
+        # Run a weekly garbage collection
+        # Clean up any profiles older than 21 days
+        gc = {
+          dates = "weekly";
+          automatic = true;
+          persistent = true;
+          randomizedDelaySec = "45min";
+          options = "--delete-older-than 21d";
         };
       };
     };
