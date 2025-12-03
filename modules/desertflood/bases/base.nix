@@ -31,6 +31,9 @@ in
       pkgs,
       ...
     }:
+    let
+      dfCfg = config.desertflood;
+    in
     {
 
       imports = [ inputs.self.modules.nixos.agenix ];
@@ -47,7 +50,28 @@ in
       environment.systemPackages = defaultPackages pkgs;
       environment.etc.fqdn.text = "${config.desertflood.hostInfo.fqdn}";
 
+      # Manage DNS through systemd-resolved
+      networking.resolvconf.enable = false;
+
       services = {
+        # Manage DNS through systemd-resolved
+        resolved = {
+          enable = true;
+
+          domains = [
+            "home.thosemartins.family"
+            "desertflood.com"
+            "df.fyi"
+            dfCfg.networking.tailscaleDomain
+          ];
+
+          fallbackDns = [
+            "1.1.1.1"
+            "1.0.0.1"
+            "2606:4700:4700::1111"
+            "2606:4700:4700::1001"
+          ];
+        };
 
         openssh = {
           enable = true;
@@ -149,6 +173,9 @@ in
           randomizedDelaySec = "45min";
           options = "--delete-older-than 21d";
         };
+      };
+
+      networking = {
       };
     };
 
