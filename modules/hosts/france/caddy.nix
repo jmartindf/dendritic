@@ -85,24 +85,8 @@ _: {
 
                       try_files {path} {path}/ {path}/index.html
                       header @no_ext ?Content-Type text/html
-
-                      @exists file
-                      handle @exists {
-                        cache
-                        file_server {
-                          disable_canonical_uris
-                        }
-                      }
-
-                      handle {
-                        cache
-                        s3proxy {
-                          root {args[1]}
-                          bucket "desertflood-all-static-sites"
-                          region "us-west-001"
-                          endpoint "https://s3.us-west-001.backblazeb2.com/"
-                          force_path_style
-                        }
+                      file_server {
+                        disable_canonical_uris
                       }
                     }
                   }
