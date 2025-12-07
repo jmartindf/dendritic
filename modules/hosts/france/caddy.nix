@@ -121,6 +121,7 @@ _: {
                   import b2-static voxduo.com voxduo
                   import b2-static files.voxduo.com voxduo-files
                   import b2-static pluribus.voxduo.com voxduo-pluribus
+                  import b2-static jmartindf.com jmartindf
                 '';
 
             };

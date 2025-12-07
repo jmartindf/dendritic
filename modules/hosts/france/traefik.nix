@@ -183,7 +183,7 @@ _: {
                 http = {
                   routers.sites-static-rtr = {
                     entrypoints = "websecure";
-                    rule = "Host(`voxduo.com`) || Host(`files.voxduo.com`) || Host(`pluribus.voxduo.com`)";
+                    rule = "Host(`voxduo.com`) || Host(`files.voxduo.com`) || Host(`pluribus.voxduo.com`) || Host(`jmartindf.com`)";
                     service = "sites-static-svc@file";
                     middlewares = "chain-no-auth@file";
                     tls.certresolver = "web";
