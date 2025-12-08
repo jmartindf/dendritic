@@ -108,6 +108,10 @@ in
               path = "";
             };
 
+            sftpgo = {
+              domain = "df.fyi";
+              path = "/sftpgo/";
+            };
           };
 
         };
@@ -171,6 +175,8 @@ in
 
           bluesky-pds.enable = true;
 
+          # Implicitly enables SFTPGo
+          webserv.enable = true;
         };
       };
 

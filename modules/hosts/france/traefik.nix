@@ -223,6 +223,26 @@ _: {
                 };
               };
 
+              app-sftpgo = {
+                http = {
+                  routers.sftpgo-rtr =
+                    let
+                      uri = dfCfg.networking.services.sftpgo;
+                    in
+                    {
+                      entrypoints = "websecure";
+                      rule = "Host(`${uri.fqdn}`) && PathPrefix(`${uri.path}`)";
+                      service = "sftpgo-svc";
+                      tls.certresolver = "web";
+                    };
+                  services.sftpgo-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString dfCfg.services.sftpgo.port}";
+                    }
+                  ];
+                };
+              };
+
             };
           };
         };

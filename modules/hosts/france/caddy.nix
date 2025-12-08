@@ -3,6 +3,7 @@ _: {
     { config, pkgs, ... }:
     let
       nixOScfg = config;
+      cacheHTMLDir = nixOScfg.desertflood.globals.paths.cacheHTML;
     in
     {
       age.secrets = {
@@ -81,7 +82,7 @@ _: {
                         path_regexp .*\/[^.]+$
                       }
 
-                      root * /srv/www/html-cache/{args[1]}
+                      root * ${cacheHTMLDir}/{args[1]}
 
                       try_files {path} {path}/ {path}/index.html
                       header @no_ext ?Content-Type text/html
@@ -118,10 +119,10 @@ _: {
                     }
                   }
 
-                  import b2-static voxduo.com voxduo
-                  import b2-static files.voxduo.com voxduo-files
-                  import b2-static pluribus.voxduo.com voxduo-pluribus
-                  import b2-static jmartindf.com jmartindf
+                  import local-static voxduo.com voxduo
+                  import local-static files.voxduo.com voxduo-files
+                  import local-static pluribus.voxduo.com voxduo-pluribus
+                  import local-static jmartindf.com jmartindf
                 '';
 
             };
@@ -130,7 +131,7 @@ _: {
               enable = true;
 
               settings = {
-                dataDir = "/srv/www/html-cache";
+                dataDir = "${cacheHTMLDir}";
                 remote = "b2-static:desertflood-all-static-sites";
                 rcloneConfFile = nixOScfg.age.secrets.b2StaticHTML.path;
 

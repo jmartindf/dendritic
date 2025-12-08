@@ -22,6 +22,12 @@ let
     ports = {
       bluesky-pds = 36825;
       caddy-static = 10535;
+      sftpgo-http = 42697; # uv run --with port4me python -m port4me --tool=httpd --user sftpgo
+    };
+
+    paths = {
+      cacheHTML = "/srv/www/html-cache";
+      staticHTML = "/srv/www/html";
     };
   };
 in
