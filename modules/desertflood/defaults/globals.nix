@@ -23,6 +23,7 @@ let
       bluesky-pds = 36825;
       caddy-static = 10535;
       sftpgo-http = 42697; # uv run --with port4me python -m port4me --tool=httpd --user sftpgo
+      loki = 3100;
     };
 
     paths = {

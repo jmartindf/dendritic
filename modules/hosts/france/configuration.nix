@@ -177,6 +177,9 @@ in
 
           # Implicitly enables SFTPGo
           webserv.enable = true;
+
+          loki.enable = true;
+          loki.loglevel = "warn";
         };
       };
 

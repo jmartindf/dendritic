@@ -243,6 +243,26 @@ _: {
                 };
               };
 
+              app-loki = {
+                http = {
+                  routers.loki-rtr =
+                    let
+                      uri = dfCfg.networking.services.loki;
+                    in
+                    {
+                      entrypoints = "websecure";
+                      rule = "Host(`${uri.fqdn}`) && PathPrefix(`${uri.path}`)";
+                      service = "loki-svc";
+                      tls.certresolver = "tailscale";
+                    };
+                  services.loki-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString dfCfg.services.loki.port}";
+                    }
+                  ];
+                };
+              };
+
             };
           };
         };
