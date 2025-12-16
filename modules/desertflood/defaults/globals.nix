@@ -24,11 +24,17 @@ let
       caddy-static = 10535;
       sftpgo-http = 42697; # uv run --with port4me python -m port4me --tool=httpd --user sftpgo
       loki = 3100;
+      alloy = 3030;
     };
 
     paths = {
       cacheHTML = "/srv/www/html-cache";
       staticHTML = "/srv/www/html";
+    };
+
+    endpoints = {
+      loki_write = "https://france.manticore-mark.ts.net/loki/api/v1/push";
+      prometheus_write = "https://france.manticore-mark.ts.net/prometheus/api/v1/write";
     };
   };
 in

@@ -85,6 +85,7 @@
 
               extraFlags = [
                 "--web.config.file=/etc/${fragment}/web-config.yml"
+                "--web.enable-remote-write-receiver"
               ];
 
               globalConfig = {

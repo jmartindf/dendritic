@@ -16,7 +16,6 @@ let
   };
 
   flakeCfg = config;
-  mTLS-required = false;
 in
 {
   desertflood.hosts.hosts.richard = hostInfo;
@@ -34,7 +33,6 @@ in
 
       desertflood = {
         inherit defaultUser hostInfo;
-        services.prometheus.exporters.node.mTLS-required = mTLS-required;
         step-ca.certs.${hostInfo.hostName}.availableTo = { };
       };
 

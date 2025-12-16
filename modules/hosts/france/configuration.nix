@@ -146,22 +146,15 @@ in
           prometheus = {
             inherit mTLS-required;
 
-            exporters.node.mTLS-required = mTLS-required;
-
             monitorHosts = [
               "firewalla.manticore-mark.ts.net"
               "hermes.manticore-mark.ts.net"
               "mark.manticore-mark.ts.net"
               "masto-es.manticore-mark.ts.net"
               "mastodon.manticore-mark.ts.net"
-              "underworld.manticore-mark.ts.net"
             ];
 
             monitorHostsSecure = [
-              "127.0.0.1"
-              "everest.manticore-mark.ts.net"
-              "fossil.manticore-mark.ts.net"
-              "richard.manticore-mark.ts.net"
             ];
           };
 

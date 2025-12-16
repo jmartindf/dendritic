@@ -16,12 +16,14 @@ in
     in
     {
       imports = [
+        inputs.self.modules.nixos.alloy
+        inputs.self.modules.nixos.crowdsec
+        inputs.self.modules.nixos.services
         inputs.self.modules.nixos.smallstep
         inputs.self.modules.nixos.step-ssh
-        inputs.self.modules.nixos.node_exporter
-        inputs.self.modules.nixos.services
-        inputs.self.modules.nixos.crowdsec
       ];
+
+      desertflood.services.prometheus.alloy.enable = true;
 
       desertflood.networking =
         let
