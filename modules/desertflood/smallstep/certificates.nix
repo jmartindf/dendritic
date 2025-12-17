@@ -350,7 +350,8 @@ in
                 mkdir --parents ${servicesKeyFolders} ${certKeyFolder}
                 chown smallstep:smallstep ${servicesKeyFolders} ${certKeyFolder}
                 chmod u=rwx,g=,o= ${certKeyFolder}
-                chmod u=rwx,g=rx,o= ${servicesKeyFolders}
+                ${if servicesKeyFolders != "" then "chmod u=rwx,g=rx,o= ${servicesKeyFolders}" else ""}
+
 
                 # delete expired certificates & keys
                 check_expired
@@ -395,7 +396,9 @@ in
                 cd ${svcFolder} || exit 1
                 ${chownServiceKeys}
                 if [ -f ${svcFolder}/${certificate}.renewed ]; then
-                  systemctl --no-block try-reload-or-restart ${reloadServices}
+                  ${
+                    if reloadServices != "" then "systemctl --no-block try-reload-or-restart ${reloadServices}" else ""
+                  }
                   rm ${svcFolder}/${certificate}.renewed
                 fi
               '';
