@@ -149,9 +149,7 @@ in
             monitorHosts = [
               "firewalla.manticore-mark.ts.net"
               "hermes.manticore-mark.ts.net"
-              "mark.manticore-mark.ts.net"
               "masto-es.manticore-mark.ts.net"
-              "mastodon.manticore-mark.ts.net"
             ];
 
             monitorHostsSecure = [
