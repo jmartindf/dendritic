@@ -112,6 +112,13 @@ in
               domain = "df.fyi";
               path = "/sftpgo/";
             };
+
+            linkwarden = {
+              domain = "desertflood.com";
+              hostName = "linkwarden";
+              path = "/";
+            };
+
           };
 
         };
@@ -140,8 +147,10 @@ in
           };
 
           linkding = {
-            enable = true;
+            enable = false;
           };
+
+          linkwarden.enable = true;
 
           prometheus = {
             inherit mTLS-required;

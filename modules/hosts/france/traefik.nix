@@ -191,23 +191,6 @@ _: {
                 };
               };
 
-              app-linkding = {
-                http = {
-                  routers.linkding-rtr = {
-                    entrypoints = "websecure";
-                    rule = "Host(`${dfCfg.networking.services.linkding.fqdn}`)";
-                    service = "linkding-svc";
-                    middlewares = "chain-no-auth@file";
-                    tls.certresolver = "web";
-                  };
-                  services.linkding-svc.loadBalancer.servers = [
-                    {
-                      url = "http://127.0.0.1:${toString dfCfg.services.linkding.port}";
-                    }
-                  ];
-                };
-              };
-
               app-bsky-pds = {
                 http = {
                   routers.bsky-pds-rtr = {
@@ -258,6 +241,26 @@ _: {
                   services.loki-svc.loadBalancer.servers = [
                     {
                       url = "http://127.0.0.1:${toString dfCfg.services.loki.port}";
+                    }
+                  ];
+                };
+              };
+
+              app-linkwarden = {
+                http = {
+                  routers.linkwarden-rtr =
+                    let
+                      uri = dfCfg.networking.services.linkwarden;
+                    in
+                    {
+                      entrypoints = "websecure";
+                      rule = "Host(`${uri.fqdn}`)";
+                      service = "linkwarden-svc";
+                      tls.certresolver = "web";
+                    };
+                  services.linkwarden-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString nixOScfg.services.linkwarden.port}";
                     }
                   ];
                 };
