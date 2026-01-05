@@ -48,7 +48,7 @@ _: {
 
           services.crowdsec = {
             enable = true;
-            autoUpdateService = true;
+            autoUpdateService = false;
 
             settings = {
 
