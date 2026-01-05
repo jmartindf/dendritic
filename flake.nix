@@ -106,8 +106,8 @@
       };
     };
     authentik-nix = {
-      url = "github:nix-community/authentik-nix/version/2025.10.2";
-      # url = "github:jmartindf/authentik-nix/56b9d627073f53423ef2593b15cf0b00ac260e0d";
+      # url = "github:nix-community/authentik-nix/version/2025.10.3";
+      url = "github:jmartindf/authentik-nix/60bc7431ccb809fc0311bfb3751660ee69eb1eb0";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
