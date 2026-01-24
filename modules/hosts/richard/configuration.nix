@@ -26,7 +26,7 @@ in
       imports = [
         inputs.self.modules.nixos.base
         inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.dockeras
+        inputs.self.modules.nixos.docker-server
         inputs.self.modules.nixos.remote-builder
         inputs.self.modules.nixos.proxmox-lxc
       ];
@@ -52,5 +52,6 @@ in
         };
 
       };
+
     };
 }

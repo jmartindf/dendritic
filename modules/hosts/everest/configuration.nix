@@ -34,7 +34,7 @@ in
         inputs.self.modules.nixos.base-server
         inputs.self.modules.nixos.hetzner-cloud
         { config.facter.reportPath = ./facter.json; }
-        inputs.self.modules.nixos.dockeras
+        inputs.self.modules.nixos.docker-server
         inputs.self.modules.nixos.step-ca
       ];
 

@@ -6,6 +6,7 @@ let
 in
 {
   config = {
+
     perSystem =
       { system, config, ... }:
       {
@@ -24,5 +25,12 @@ in
         overlay
       ];
     };
+
+    flake-file.inputs = {
+      nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+      nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+      nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
+    };
+
   };
 }

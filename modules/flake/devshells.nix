@@ -1,14 +1,11 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 {
+
   imports = [
-    (inputs.dendrix.vic-vix.filter (lib.hasSuffix "mk-os.nix"))
     inputs.devshell.flakeModule
-    inputs.flake-parts.flakeModules.modules
   ];
 
   config = {
-
-    systems = import inputs.systems;
 
     perSystem =
       { config, pkgs, ... }:
@@ -48,5 +45,11 @@
         };
 
       };
+
+    flake-file.inputs.devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 }

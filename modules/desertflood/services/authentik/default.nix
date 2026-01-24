@@ -106,6 +106,18 @@
 
       }; # end `flake.modules.nixos.authentik`
 
+    flake-file.inputs.authentik-nix = {
+      # url = "github:nix-community/authentik-nix/version/2025.10.3";
+      url = "github:jmartindf/authentik-nix/60bc7431ccb809fc0311bfb3751660ee69eb1eb0";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        flake-compat.follows = "flake-compat";
+        flake-utils.follows = "flake-utils";
+        systems.follows = "systems";
+      };
+    };
+
   }; # end flake-parts module config
 
 }

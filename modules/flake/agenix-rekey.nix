@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 {
   imports = [
     inputs.agenix-rekey.flakeModule
@@ -28,5 +28,31 @@
         };
 
       };
+
+    flake-file.inputs = {
+
+      agenix = {
+        url = "github:ryantm/agenix";
+        inputs = {
+          darwin.follows = "darwin";
+          home-manager.follows = "home-manager";
+          nixpkgs.follows = "nixpkgs";
+          systems.follows = "systems";
+        };
+      };
+
+      agenix-rekey = {
+        url = "github:oddlama/agenix-rekey";
+        inputs = {
+          nixpkgs.follows = "nixpkgs";
+          devshell.follows = "devshell";
+          flake-parts.follows = "flake-parts";
+          pre-commit-hooks.follows = "git-hooks-nix";
+          treefmt-nix.follows = "treefmt-nix";
+        };
+      };
+
+    };
+
   };
 }

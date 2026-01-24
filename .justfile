@@ -14,10 +14,16 @@ atticDestination := "desertflood:df-test"
 default:
     just --list
 
+[group("flake")]
+update-flakenix:
+    nix run .#write-flake
+
 # Update all flake sources
+[group("flake")]
 update:
     {{ nixGithubToken }} nix flake update
 
+[group("flake")]
 devshell:
     echo "run 'nix develop .#'"
 

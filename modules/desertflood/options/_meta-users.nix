@@ -103,21 +103,7 @@ in
   config = lib.mkMerge [
     { username = lib.mkDefault name; }
     {
-      profileTheme.name =
-        # any root user / super user
-        if config.superuser then
-          "red-alert-df"
-        else
-        # any user on a live server:
-        if config.onHost.live then
-          "blue-borland-df"
-        else
-        # other purposes (such as non-local, non-live, non-root)
-        if config.onHost.remote then
-          "purple-rain-df"
-        else
-          # any user on a local account
-          "felt-green-df";
+      profileTheme.name = "felt-green-df";
     }
   ];
 }
