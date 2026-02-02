@@ -1,0 +1,82 @@
+_: {
+  df.cli._.fish =
+    let
+      shellLaunchFish =
+        config: pkgs: # sh
+        ''
+          # Launch into fish, if it's not already running
+          if [[ $(${pkgs.procps}/bin/ps -p $PPID -o ucomm= | tr -d '[:space:]') != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+          then
+            shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+            exec ${config.programs.fish.package}/bin/fish $LOGIN_OPTION
+          fi
+        '';
+    in
+    {
+      description = "Configuring the Smart and user-friendly command line shell";
+
+      nixos =
+        {
+          config,
+          pkgs,
+          ...
+        }:
+        let
+          nixosCfg = config;
+        in
+        {
+          config = {
+            environment = {
+              etc."bashrc.local".text = shellLaunchFish nixosCfg pkgs;
+            };
+
+            programs = {
+              fish = {
+                enable = true;
+                generateCompletions = false; # Generating completions from man pages is slow and mostly unnecessary
+              };
+            };
+          };
+        };
+
+      darwin =
+        {
+          config,
+          pkgs,
+          ...
+        }:
+        let
+          darwinCfg = config;
+        in
+        {
+          config = {
+            environment = {
+              etc."bashrc.local".text = shellLaunchFish darwinCfg pkgs;
+            };
+
+            programs = {
+              fish = {
+                enable = true;
+              };
+            };
+          };
+        };
+
+      homeManager =
+        {
+          pkgs,
+          lib,
+          ...
+        }:
+        {
+          config = {
+            programs = {
+              fish = {
+                enable = true;
+                generateCompletions = false; # Generating completions from man pages is slow and mostly unnecessary
+              };
+            };
+          };
+        };
+    };
+}
