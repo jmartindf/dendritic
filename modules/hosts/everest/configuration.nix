@@ -18,6 +18,8 @@ let
   mTLS-required = false;
 in
 {
+  flake.nixosConfigurations.everest = inputs.self.lib.mk-os.linux "everest";
+
   desertflood.hosts.hosts.everest = hostInfo;
 
   flake.modules.nixos.everest =

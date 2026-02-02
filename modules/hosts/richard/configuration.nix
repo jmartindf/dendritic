@@ -1,6 +1,8 @@
 #  nix build .#.nixosConfigurations.richard.config.system.build.isoImage
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#richard
 {
+  den,
+  df,
   config,
   inputs,
   ...
@@ -20,38 +22,54 @@ in
 {
   desertflood.hosts.hosts.richard = hostInfo;
 
-  flake.modules.nixos.richard =
-    { ... }:
-    {
-      imports = [
-        inputs.self.modules.nixos.base
-        inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.docker-server
-        inputs.self.modules.nixos.remote-builder
-        inputs.self.modules.nixos.proxmox-lxc
+  den.hosts.x86_64-linux.richard = {
+    description = "Nix OS remote builder";
+    users.nixos = { };
+    users.dockeras = { };
+  };
+
+  den.aspects = {
+
+    richard = {
+      includes = [
+        df.base
+        df.base-server
+        df.docker-server
       ];
 
-      desertflood = {
-        inherit defaultUser hostInfo;
-        step-ca.certs.${hostInfo.hostName}.availableTo = { };
-      };
+      nixos =
+        { ... }:
+        {
+          imports = builtins.trace "den.aspects.richard.nixos active" [
+            inputs.self.modules.nixos.remote-builder
+            inputs.self.modules.nixos.proxmox-lxc
+          ];
 
-      networking = {
-        inherit (hostInfo) hostName domain;
-      };
-      age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
+          desertflood = {
+            inherit defaultUser hostInfo;
+            step-ca.certs.${hostInfo.hostName}.availableTo = { };
+          };
 
-      users.users = {
+          networking = {
+            inherit (hostInfo) hostName domain;
+          };
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
 
-        root = {
-          openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+          users.users = {
+
+            root = {
+              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+            };
+
+            builder = {
+              openssh.authorizedKeys.keys = [ flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey ];
+            };
+
+          };
+
         };
-
-        builder = {
-          openssh.authorizedKeys.keys = [ flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey ];
-        };
-
-      };
-
     };
+
+  };
+
 }

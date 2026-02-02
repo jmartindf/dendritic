@@ -17,6 +17,8 @@ let
   mTLS-required = false;
 in
 {
+  flake.nixosConfigurations.france = inputs.self.lib.mk-os.linux "france";
+
   desertflood.hosts.hosts.france = hostInfo;
 
   flake.modules.nixos.france =

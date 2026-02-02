@@ -18,6 +18,8 @@ let
   mTLS-required = false;
 in
 {
+  flake.nixosConfigurations.fossil = inputs.self.lib.mk-os.linux "fossil";
+
   desertflood.hosts.hosts.fossil = hostInfo;
 
   flake.modules.nixos.fossil =
