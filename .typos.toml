@@ -1,2 +1,6 @@
+[files]
+extend-exclude = ["*.age"]
+
 [default.extend-words]
 ot = "ot"
+facter = "facter" # for nixos-facter-modules
