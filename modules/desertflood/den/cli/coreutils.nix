@@ -32,7 +32,7 @@
                   cat = "bat";
                 };
 
-                systemPackages = builtins.trace "coreutils.nixos active" [
+                systemPackages = builtins.traceVerbose "coreutils.nixos active" [
                   pkgs.bat # A cat(1) clone with syntax highlighting and Git integration
                   pkgs.bat-extras.batman
                   pkgs.bat-extras.batgrep
@@ -75,7 +75,7 @@
                 cat = "bat";
               };
 
-              systemPackages = builtins.trace "coreutils.darwin active" [
+              systemPackages = builtins.traceVerbose "coreutils.darwin active" [
                 pkgs.bat # A cat(1) clone with syntax highlighting and Git integration
                 pkgs.bat-extras.batman
                 pkgs.bat-extras.batgrep

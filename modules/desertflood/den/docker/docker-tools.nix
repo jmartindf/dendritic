@@ -29,7 +29,7 @@
       };
 
     homeManager.config.programs.lazydocker =
-      builtins.trace "df.cli._.tools._.docker homeManager active"
+      builtins.traceVerbose "df.cli._.tools._.docker homeManager active"
         {
           enable = true;
 

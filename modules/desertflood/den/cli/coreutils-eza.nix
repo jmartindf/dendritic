@@ -56,7 +56,7 @@ _: {
         { pkgs, ... }:
         {
           config = {
-            environment = builtins.trace "df.cli._.coreutils extra for eza active" {
+            environment = builtins.traceVerbose "df.cli._.coreutils extra for eza active" {
               shellAliases = ezaAliases;
               systemPackages = [
                 pkgs.eza # modern, maintained replacement for ls
@@ -75,7 +75,7 @@ _: {
             environment = {
               shellAliases = ezaAliases;
 
-              systemPackages = builtins.trace "coreutils.darwin active" [
+              systemPackages = builtins.traceVerbose "coreutils.darwin active" [
                 pkgs.eza # modern, maintained replacement for ls
               ];
             };

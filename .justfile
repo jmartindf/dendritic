@@ -2,9 +2,11 @@ set unstable := true
 
 defaultHost := "richard"
 build := "nom"
+debug_build := "nix"
 toplevel := "config.system.build.toplevel"
 rsyncFlags := "-v --links --perms --recursive --times  --exclude=\".jj\" --exclude=\"derivations\" --delete --delete-excluded"
 buildFlags := ""
+debugFlags := "--show-trace --trace-verbose --debugger"
 nixGithubToken := "NIX_CONFIG=\"access-tokens = github.com=$(op read 'op://Services/mwxtls4sk6hy72nnpkciluvofu/token')\""
 atticCmd := "./attic-nofail.fish"
 atticOptions := "-j3"
@@ -30,6 +32,10 @@ devshell:
 [group("send")]
 rsync host=defaultHost:
     rsync {{ rsyncFlags }} ./ nixos@{{ host }}:/home/nixos/dendritic/
+
+[group("build")]
+debug host=defaultHost:
+    {{ debug_build }} build {{ debugFlags }} --out-link ./derivations/{{ host }} .#.nixosConfigurations.{{ host }}.{{ toplevel }}
 
 [group("build")]
 build host=defaultHost:

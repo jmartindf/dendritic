@@ -22,7 +22,7 @@ in
       nixos =
         { pkgs, ... }:
         {
-          environment.systemPackages = builtins.trace "df.docker-server active" [
+          environment.systemPackages = builtins.traceVerbose "df.docker-server active" [
             pkgs.docker-color-output
             pkgs.docker_28
             pkgs.local.vackup
@@ -49,7 +49,7 @@ in
         flakeCfg.flake.modules.nixos.docker-tools
       ];
 
-      environment.systemPackages = builtins.trace "df.docker-server active" [
+      environment.systemPackages = builtins.traceVerbose "df.docker-server active" [
         pkgs.docker-color-output
         pkgs.docker_28
         pkgs.local.vackup

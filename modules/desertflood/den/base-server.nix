@@ -22,7 +22,7 @@ in
         nixOScfg = config;
       in
       {
-        imports = builtins.trace "df.base-server.nixos active" [
+        imports = builtins.traceVerbose "df.base-server.nixos active" [
           inputs.self.modules.nixos.alloy
           inputs.self.modules.nixos.crowdsec
           inputs.self.modules.nixos.services

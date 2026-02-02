@@ -29,7 +29,7 @@ in
           inherit (config.desertflood) defaultUser;
         in
         {
-          users.users.${username} = builtins.trace "evaluating users.users.${username}" {
+          users.users.${username} = builtins.traceVerbose "evaluating users.users.${username}" {
             isNormalUser = true;
             extraGroups = [ "wheel" ];
             openssh.authorizedKeys.keys = defaultUser.authorizedKeys;

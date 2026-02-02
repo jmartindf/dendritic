@@ -40,7 +40,7 @@ in
       nixos =
         { ... }:
         {
-          imports = builtins.trace "den.aspects.richard.nixos active" [
+          imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
             inputs.self.modules.nixos.remote-builder
             inputs.self.modules.nixos.proxmox-lxc
           ];

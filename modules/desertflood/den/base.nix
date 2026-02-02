@@ -216,7 +216,9 @@ in
     in
     {
 
-      imports = builtins.trace "flake.modules.nixos.base active" [ inputs.self.modules.nixos.agenix ];
+      imports = builtins.traceVerbose "flake.modules.nixos.base active" [
+        inputs.self.modules.nixos.agenix
+      ];
 
       time.timeZone = myTimezone;
       i18n.defaultLocale = myLocale;

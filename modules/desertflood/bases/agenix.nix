@@ -6,7 +6,7 @@
       cfg = config;
     in
     {
-      imports = [
+      imports = builtins.traceVerbose "flake.modules.nixos.agenix active" [
         inputs.agenix.nixosModules.default
         inputs.agenix-rekey.nixosModules.default
       ];
