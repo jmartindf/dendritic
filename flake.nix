@@ -47,7 +47,7 @@
         nixpkgs.follows = "nixpkgs";
         systems.follows = "systems";
       };
-      url = "github:jmartindf/authentik-nix/60bc7431ccb809fc0311bfb3751660ee69eb1eb0";
+      url = "github:jmartindf/authentik-nix/3a8a33d5a031868ff162481b0855db781a2bdfa4";
     };
     darwin = {
       inputs.nixpkgs.follows = "nixpkgs-darwin";

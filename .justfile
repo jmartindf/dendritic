@@ -21,7 +21,7 @@ update-flakenix:
 # Update all flake sources
 [group("flake")]
 update:
-    {{ nixGithubToken }} nix flake update
+    {{ nixGithubToken }} nix flake update darwin home-manager nixpkgs nixpkgs-darwin nixpkgs-lib
 
 [group("flake")]
 devshell:

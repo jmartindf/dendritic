@@ -234,7 +234,7 @@ in
             traefik = {
 
               enable = true;
-              package = pkgs.traefik;
+              package = pkgs.local.traefik;
 
               staticConfigFile = traefikConfigFile;
               dynamicConfigFile = traefikDynamicConfigFile;

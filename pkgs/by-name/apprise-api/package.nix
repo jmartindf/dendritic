@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "1.2.1";
+  version = "1.3.0";
   python = python313Packages;
 
   dependencies = with python; [
@@ -30,7 +30,7 @@ python.buildPythonApplication {
     owner = "caronc";
     repo = "apprise-api";
     rev = "v${version}";
-    sha256 = "sha256-duGwg/zBtbdPv6fpNubNJ6yCqiv1JI9kYLIf799LzlI=";
+    sha256 = "sha256-tFhlBKRliGyx0t2k/81Q8igdyIpMKagkTKgTXk+9tus=";
   };
   inherit dependencies;
   format = "other";
