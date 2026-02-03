@@ -50,6 +50,7 @@ in
 
           services = {
             tailscale.enable = true;
+            tailscale.extraSetFlags = [ "--accept-routes" ];
           };
 
           # symlink the Nix configuration, if it exists
@@ -126,6 +127,7 @@ in
 
       services = {
         tailscale.enable = true;
+        tailscale.extraSetFlags = [ "--accept-routes" ];
       };
 
       # symlink the Nix configuration, if it exists
