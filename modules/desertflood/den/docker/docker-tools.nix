@@ -6,27 +6,25 @@
   lib,
   ...
 }:
+let
+  osContext = den.lib.take.exactly (
+    { OS, host }:
+    {
+      ${host.class} =
+        { pkgs, ... }:
+        {
+          config.environment.systemPackages = [
+            pkgs.lazydocker
+          ];
+        };
+    }
+  );
+in
 {
-  df.cli._.tools._.docker = {
+  df.cli._.tools._.docker = den.lib.parametric {
     description = "Tools for managing Docker, Docker Compose, and containers.";
 
-    includes = [ ];
-
-    nixos =
-      { pkgs, ... }:
-      {
-        config.environment.systemPackages = [
-          pkgs.lazydocker
-        ];
-      };
-
-    darwin =
-      { pkgs, ... }:
-      {
-        config.environment.systemPackages = [
-          pkgs.lazydocker
-        ];
-      };
+    includes = [ osContext ];
 
     homeManager.config.programs.lazydocker =
       builtins.traceVerbose "df.cli._.tools._.docker homeManager active"

@@ -18,6 +18,7 @@ in
         "1password-cli"
         "sftpgo"
       ])
+      df.base
     ];
 
     darwin = {

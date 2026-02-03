@@ -1,4 +1,5 @@
 {
+  den,
   df,
   config,
   ...
@@ -15,10 +16,8 @@ in
     let
       username = "nixos";
     in
-    {
+    den.lib.parametric {
       description = "A trusted admin user, instead of always using root";
-
-      includes = [ df.cli ];
 
       nixos =
         {

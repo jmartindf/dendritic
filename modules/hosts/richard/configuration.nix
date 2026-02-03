@@ -24,15 +24,14 @@ in
 
   den.hosts.x86_64-linux.richard = {
     description = "Nix OS remote builder";
+    capabilities.docker-server = true;
     users.nixos = { };
-    users.dockeras = { };
   };
 
   den.aspects = {
 
     richard = {
       includes = [
-        df.base
         df.base-server
         df.docker-server
       ];
