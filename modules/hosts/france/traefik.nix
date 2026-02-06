@@ -266,6 +266,26 @@ _: {
                 };
               };
 
+              app-acme-dns = {
+                http = {
+                  routers.acme-dns-rtr =
+                    let
+                      uri = dfCfg.networking.services.acme-dns;
+                    in
+                    {
+                      entrypoints = "websecure";
+                      rule = "Host(`${uri.fqdn}`)";
+                      service = "acme-dns-svc";
+                      tls.certresolver = "web";
+                    };
+                  services.acme-dns-svc.loadBalancer.servers = [
+                    {
+                      url = "http://127.0.0.1:${toString nixOScfg.desertflood.globals.ports.acme-dns}";
+                    }
+                  ];
+                };
+              };
+
             };
           };
         };

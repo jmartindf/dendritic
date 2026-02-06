@@ -121,6 +121,12 @@ in
               path = "/";
             };
 
+            acme-dns = {
+              domain = "desertflood.com";
+              hostName = "auth";
+              path = "";
+            };
+
           };
 
         };
@@ -182,6 +188,8 @@ in
 
           loki.enable = true;
           loki.loglevel = "warn";
+
+          acme-dns.enable = true;
         };
       };
 
