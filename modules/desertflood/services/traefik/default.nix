@@ -288,7 +288,7 @@ in
                 accessLog = {
                   bufferingSize = 100; # buffer 100 lines
                   filters.statusCodes = [
-                    "204-299"
+                    "227-299"
                     "400-499"
                     "500-599"
                   ];

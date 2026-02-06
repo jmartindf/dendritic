@@ -24,6 +24,10 @@ _: {
                 main = "pds.wordflood.net";
                 sans = [ "*.pds.wordflood.net" ];
               }
+              # {
+              #   main = "df.fyi";
+              #   sans = [ "*.df.fyi" ];
+              # }
             ];
 
             letsencrypt = {
