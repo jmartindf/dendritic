@@ -16,6 +16,11 @@ let
       hermes = "100.87.9.119";
     };
 
+    publicIPs = {
+      france.ip4 = "5.78.135.35";
+      france.ip6 = "2a01:4ff:1f0:a0b3::1";
+    };
+
     uids = {
     };
 
@@ -25,6 +30,7 @@ let
       sftpgo-http = 42697; # uv run --with port4me python -m port4me --tool=httpd --user sftpgo
       loki = 3100;
       alloy = 3030;
+      acme-dns = 26579; # uv run --with port4me python -m port4me --tool=acme-dns --user france
     };
 
     paths = {
