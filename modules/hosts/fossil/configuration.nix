@@ -1,6 +1,8 @@
 #  nix build .#.nixosConfigurations.fossil.config.system.build.isoImage
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#fossil
 {
+  den,
+  df,
   config,
   inputs,
   ...
@@ -18,50 +20,62 @@ let
   mTLS-required = false;
 in
 {
-  flake.nixosConfigurations.fossil = inputs.self.lib.mk-os.linux "fossil";
-
   desertflood.hosts.hosts.fossil = hostInfo;
 
-  flake.modules.nixos.fossil =
-    { config, pkgs, ... }:
-    let
-      nixOScfg = config;
-      svcConfig = nixOScfg.services;
-      inherit (hostInfo) hostName;
-      inherit (nixOScfg.desertflood.networking) webHost;
-    in
-    {
-      imports = [
-        inputs.self.modules.nixos.base
-        inputs.self.modules.nixos.base-server
-        inputs.self.modules.nixos.qemu-guest
+  den.hosts.x86_64-linux.fossil = {
+    description = "Nix OS homelab VM";
+    capabilities.docker-server = true;
+    users.nixos = { };
+  };
+
+  den.aspects = {
+
+    fossil = {
+      includes = [
+        df.base-server
+        df.docker-server
       ];
 
-      desertflood = {
-        inherit defaultUser hostInfo;
+      nixos =
+        { config, pkgs, ... }:
+        let
+          nixOScfg = config;
+          svcConfig = nixOScfg.services;
+          inherit (hostInfo) hostName;
+          inherit (nixOScfg.desertflood.networking) webHost;
+        in
+        {
+          imports = [
+            inputs.self.modules.nixos.qemu-guest
+          ];
 
-        step-ca.certs.${hostName}.availableTo = { };
+          desertflood = {
+            inherit defaultUser hostInfo;
 
-        services = {
+            step-ca.certs.${hostName}.availableTo = { };
 
-          forgejo-runner.enable = true;
+            services = {
+
+              forgejo-runner.enable = true;
+
+            };
+
+          };
+
+          networking = {
+            inherit (hostInfo) hostName domain;
+          };
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
+
+          users.users = {
+
+            root = {
+              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+            };
+          };
 
         };
-
-      };
-
-      networking = {
-        inherit (hostInfo) hostName domain;
-      };
-
-      age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
-
-      users.users = {
-
-        root = {
-          openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-        };
-      };
-
     };
+  };
 }

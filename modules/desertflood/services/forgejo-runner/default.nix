@@ -39,16 +39,18 @@ _: {
             rekeyFile = ./forgejo-runner-token.env.age;
           };
 
-          virtualisation.podman = {
-            enable = true;
+          # Split into a `podman` capability, later
 
-            defaultNetwork.settings = {
-              dns_enabled = true;
-              ipv6_enabled = true;
-            };
-          };
-
-          networking.firewall.interfaces."podman*".allowedUDPPorts = [ 53 ];
+          # virtualisation.podman = {
+          #   enable = true;
+          #
+          #   defaultNetwork.settings = {
+          #     dns_enabled = true;
+          #     ipv6_enabled = true;
+          #   };
+          # };
+          #
+          # networking.firewall.interfaces."podman*".allowedUDPPorts = [ 53 ];
 
           services.gitea-actions-runner = {
 
