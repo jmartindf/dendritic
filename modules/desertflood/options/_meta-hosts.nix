@@ -43,6 +43,16 @@ in
       default = false;
       description = "This system is usually out of reach";
     };
+
+    system = lib.mkOption {
+      type = types.enum [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+      default = "x86_64-linux";
+      description = "System architecture";
+    };
   };
 
   config = {

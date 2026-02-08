@@ -14,21 +14,22 @@ let
     domain = "df.fyi";
     live = true;
     remote = true;
+    system = "x86_64-linux";
   };
 
   mTLS-required = false;
 in
 {
-  desertflood.hosts.hosts.france = hostInfo;
+  desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
 
-  den.hosts.x86_64-linux.france = {
+  den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS webapp host";
     users.nixos = { };
   };
 
   den.aspects = {
 
-    france = {
+    ${hostInfo.hostName} = {
       includes = [
         df.base-server
       ];

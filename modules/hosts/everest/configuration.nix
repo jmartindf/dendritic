@@ -15,14 +15,15 @@ let
     domain = "df.fyi";
     live = true;
     remote = true;
+    system = "x86_64-linux";
   };
 
   mTLS-required = false;
 in
 {
-  desertflood.hosts.hosts.everest = hostInfo;
+  desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
 
-  den.hosts.x86_64-linux.everest = {
+  den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS PKI and security host";
     capabilities.docker-server = true;
     users.nixos = { };
@@ -30,7 +31,7 @@ in
 
   den.aspects = {
 
-    everest = {
+    ${hostInfo.hostName} = {
       includes = [
         df.base-server
         df.docker-server

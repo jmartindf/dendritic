@@ -15,14 +15,15 @@ let
     domain = "home.thosemartins.family";
     live = false;
     remote = false;
+    system = "x86_64-linux";
   };
 
   flakeCfg = config;
 in
 {
-  desertflood.hosts.hosts.richard = hostInfo;
+  desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
 
-  den.hosts.x86_64-linux.richard = {
+  den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "Nix OS remote builder";
     capabilities.docker-server = true;
     users.nixos = { };
@@ -30,7 +31,7 @@ in
 
   den.aspects = {
 
-    richard = {
+    ${hostInfo.hostName} = {
       includes = [
         df.base-server
         df.docker-server
