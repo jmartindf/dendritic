@@ -77,7 +77,9 @@ in
 
           };
 
-          environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
+          # No longer needed
+          # Keeping it makes 'nix flake check' break on Darwin, because forgejo-lto is broken on Darwin
+          # environment.defaultPackages = [ pkgs.local.forgejo-migrate ];
 
           age.secrets = mkServiceSecrets forgejoUser [
             "forgejo-password-sunfish"
