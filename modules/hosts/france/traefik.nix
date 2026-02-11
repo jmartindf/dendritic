@@ -26,10 +26,14 @@ _: {
                     main = "pds.wordflood.net";
                     sans = [ "*.pds.wordflood.net" ];
                   }
-                  # {
-                  #   main = "df.fyi";
-                  #   sans = [ "*.df.fyi" ];
-                  # }
+                  {
+                    main = "thosemartins.family";
+                    sans = [ "*.thosemartins.family" ];
+                  }
+                  {
+                    main = "df.fyi";
+                    sans = [ "*.df.fyi" ];
+                  }
                 ];
 
                 letsencrypt = {
@@ -175,7 +179,7 @@ _: {
                         rule = "Host(`${dfCfg.networking.services.lubelogger.fqdn}`)";
                         service = "lubelogger-svc";
                         middlewares = "chain-no-auth@file";
-                        tls.certresolver = "web";
+                        # tls.certresolver = "web";
                       };
                       services.lubelogger-svc.loadBalancer.servers = [
                         {
@@ -222,7 +226,7 @@ _: {
                           entrypoints = "websecure";
                           rule = "Host(`${uri.fqdn}`) && PathPrefix(`${uri.path}`)";
                           service = "sftpgo-svc";
-                          tls.certresolver = "web";
+                          # tls.certresolver = "web";
                         };
                       services.sftpgo-svc.loadBalancer.servers = [
                         {
@@ -287,6 +291,23 @@ _: {
                       services.acme-dns-svc.loadBalancer.servers = [
                         {
                           url = "http://127.0.0.1:${toString nixOScfg.desertflood.globals.ports.acme-dns}";
+                        }
+                      ];
+                    };
+                  };
+
+                  app-homeassistant = {
+                    http = {
+                      routers.homeassistant-rtr = {
+                        entrypoints = "websecure";
+                        rule = "Host(`house.thosemartins.family`)";
+                        service = "homeassistant-svc";
+                        middlewares = "chain-no-auth@file";
+                        # tls.certresolver = "web";
+                      };
+                      services.homeassistant-svc.loadBalancer.servers = [
+                        {
+                          url = "http://${dfCfg.globals.tailscaleIPs.homeassistant}:80";
                         }
                       ];
                     };
