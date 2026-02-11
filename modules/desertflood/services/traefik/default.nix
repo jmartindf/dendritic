@@ -214,7 +214,7 @@ in
 
             environment = lib.mkIf leCfg.acme-dns {
               LEGO_DISABLE_CNAME_SUPPORT = "false";
-              ACME_DNS_API_BASE = "https://dns01cf.desertflood-s-account.workers.dev/";
+              ACME_DNS_API_BASE = "https://auth.desertflood.com/";
               ACME_DNS_STORAGE_PATH = cfg.age.secrets.acme-dns-traefik-json.path;
             };
           };
