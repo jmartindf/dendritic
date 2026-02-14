@@ -45,6 +45,14 @@ _: {
             rekeyFile = ./bluesky.env.age;
             name = "bluesky.env";
             mode = "0600";
+            generator.script =
+              let
+                envTemplate = ./bluesky.env;
+              in
+              { lib, ... }: # bash
+              ''
+                cat ${lib.escapeShellArg envTemplate} | op inject
+              '';
           };
 
           services.bluesky-pds = {

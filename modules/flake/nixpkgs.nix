@@ -9,9 +9,13 @@ in
 
     perSystem =
       { system, config, ... }:
+      let
+        whichpkgs = if system == "aarch64-darwin" then "nixpkgs-darwin" else "nixpkgs";
+      in
       {
-        _module.args.pkgs = import inputs.nixpkgs {
+        _module.args.pkgs = import inputs.${whichpkgs} {
           inherit system;
+          config.allowUnfree = true; # Allow devshells, etc to use unfree packages
           overlays = [
             (final: prev: {
               local = config.packages;

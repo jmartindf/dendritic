@@ -17,6 +17,7 @@
           packages = [
             pkgs.age
             pkgs.age-plugin-yubikey
+            pkgs._1password-cli # also use `op` to inject secrets
           ];
 
           commands = [
