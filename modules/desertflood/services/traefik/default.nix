@@ -438,18 +438,18 @@ in
 
                     middlewares-secure-headers = {
                       headers = {
-                        accessControlAllowMethods = [
-                          "GET"
-                          "OPTIONS"
-                          "PUT"
-                        ];
+                        # accessControlAllowMethods = [
+                        #   "GET"
+                        #   "OPTIONS"
+                        #   "PUT"
+                        # ];
 
-                        accessControlMaxAge = 100;
+                        # accessControlMaxAge = 100;
                         hostsProxyHeaders = [ "X-Forwarded-Host" ];
-                        stsSeconds = 63072000;
-                        stsIncludeSubdomains = true;
-                        stsPreload = true;
-                        customFrameOptionsValue = "SAMEORIGIN"; # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+                        # stsSeconds = 63072000;
+                        # stsIncludeSubdomains = true;
+                        # stsPreload = true;
+                        # customFrameOptionsValue = "SAMEORIGIN"; # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
                         contentTypeNosniff = true;
                         browserXssFilter = true;
                         referrerPolicy = "same-origin";
