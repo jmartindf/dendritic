@@ -20,10 +20,15 @@ in
           hostname = options.fqdn;
           profiles.system = {
             user = "root";
-            sshUser = "root";
+            sshUser = "nixos";
 
             autoRollback = true;
             magicRollback = true;
+
+            fastConnection = true;
+
+            activationTimeout = 600; # 10 minutes
+            confirmTimeout = 120; # 2 minutes
 
             path = deploy-rs.lib.${options.system}.activate.nixos self.nixosConfigurations.${host};
           };
