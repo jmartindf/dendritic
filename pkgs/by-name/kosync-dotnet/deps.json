@@ -1,0 +1,17 @@
+[
+  {
+    "pname": "LiteDB",
+    "version": "5.0.16",
+    "hash": "sha256-I6ZNMkYkJZ+Gi9i3JVdCmbfb88r5VIo+EyaWs9klpAI="
+  },
+  {
+    "pname": "Microsoft.AspNetCore.OpenApi",
+    "version": "8.0.11",
+    "hash": "sha256-+S109B9uwqGWYSIMJ8HPQmBpqvwI/mRtXT+gXwUZ/Ww="
+  },
+  {
+    "pname": "Microsoft.OpenApi",
+    "version": "1.4.3",
+    "hash": "sha256-vk47e78OwopXJx2LhDRbKFObqF3GShHfNHR2SzvbQeA="
+  }
+]
