@@ -7,20 +7,20 @@
 
 buildDotnetModule rec {
   pname = "lubelogger";
-  version = "1.5.8";
+  version = "1.6.1";
 
   src = fetchFromGitHub {
     owner = "hargata";
     repo = "lubelog";
     rev = "v${version}";
-    hash = "sha256-nls3pMccnK2kahTRh55U146kIbTZylqx3LwtCUFWTHI=";
+    hash = "sha256-0PjIRf8M4wmn2zm7I9P1o8Zp2CRgZHxt5p6L8bTqJbE=";
   };
 
   projectFile = "CarCareTracker.sln";
   nugetDeps = ./deps.json; # File generated with `nix-build -A lubelogger.passthru.fetch-deps`.
 
-  dotnet-sdk = dotnetCorePackages.sdk_8_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_8_0;
+  dotnet-sdk = dotnetCorePackages.sdk_10_0;
+  dotnet-runtime = dotnetCorePackages.aspnetcore_10_0;
 
   makeWrapperArgs = [
     "--set DOTNET_WEBROOT ${placeholder "out"}/lib/lubelogger/wwwroot"
@@ -29,7 +29,7 @@ buildDotnetModule rec {
   executables = [ "CarCareTracker" ]; # This wraps "$out/lib/$pname/foo" to `$out/bin/foo`.
 
   meta = {
-    description = "Vehicle service records and maintainence tracker";
+    description = "Vehicle service records and maintenance tracker";
     longDescription = ''
       A self-hosted, open-source, unconventionally-named vehicle maintenance records and fuel mileage tracker.
 
