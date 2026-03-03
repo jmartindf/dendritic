@@ -313,6 +313,27 @@ _: {
                     };
                   };
 
+                  app-kosync =
+                    let
+                      uri = dfCfg.networking.services.kosync-dotnet;
+                    in
+                    {
+                      http = {
+                        routers.kosync-rtr = {
+                          entrypoints = "websecure";
+                          rule = "Host(`${uri.fqdn}`)";
+                          service = "kosync-svc";
+                          middlewares = "chain-no-auth@file";
+                          # tls.certresolver = "web";
+                        };
+                        services.kosync-svc.loadBalancer.servers = [
+                          {
+                            url = "http://127.0.0.1:${builtins.toString nixOScfg.desertflood.globals.ports.kosync-dotnet}";
+                          }
+                        ];
+                      };
+                    };
+
                 };
               };
             };

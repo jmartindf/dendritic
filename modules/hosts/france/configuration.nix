@@ -138,6 +138,12 @@ in
                   path = "";
                 };
 
+                kosync-dotnet = {
+                  domain = "desertflood.com";
+                  hostName = "kosync";
+                  path = "";
+                };
+
               };
 
             };
@@ -201,6 +207,12 @@ in
               loki.loglevel = "warn";
 
               acme-dns.enable = true;
+
+              kosync-dotnet.enable = true;
+              kosync-dotnet.trustedProxies = [
+                "127.0.0.1"
+                "::1"
+              ];
             };
           };
 
