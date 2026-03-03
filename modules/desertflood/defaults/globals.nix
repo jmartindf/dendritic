@@ -33,6 +33,7 @@ let
       loki = 3100;
       alloy = 3030;
       acme-dns = 26579; # uv run --with port4me python -m port4me --tool=acme-dns --user france
+      kosync-dotnet = 24730; # uv run --with port4me python -m port4me --tool=kosync-dotnet
     };
 
     paths = {
