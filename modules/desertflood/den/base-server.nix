@@ -48,6 +48,10 @@ in
 
           networking.firewall.allowPing = true;
 
+          # Remote terminal application that allows roaming, supports intermittent
+          # connectivity, and provides intelligent local echo and line editing of user keystrokes.
+          programs.mosh.enable = true;
+
           services = {
             tailscale.enable = true;
             tailscale.extraSetFlags = [ "--accept-routes" ];
