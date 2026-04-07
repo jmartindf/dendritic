@@ -18,14 +18,14 @@ in
           "github.com/abiosoft/caddy-json-schema@v0.0.0-20220621031927-c4d6e132f3af"
           "github.com/caddy-dns/acmedns@v0.6.0"
           "github.com/darkweak/souin/plugins/caddy@v1.7.8"
-          "github.com/darkweak/storages/nuts/caddy@v0.0.16"
-          "github.com/darkweak/storages/simplefs/caddy@v0.0.16"
-          "github.com/greenpau/caddy-security@v1.1.31"
-          "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.10.0"
+          "github.com/darkweak/storages/nuts/caddy@v0.0.19"
+          "github.com/darkweak/storages/simplefs/caddy@v0.0.19"
+          "github.com/greenpau/caddy-security@v1.1.61"
+          "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.12.0"
           "git.desertflood.com/jmartindf/caddy-fs-s3@v0.0.0-20251102022705-124d7ea62120"
           "git.desertflood.com/jmartindf/caddy-s3-proxy@v0.0.0-20251101025924-56966419076b"
         ];
-        hash = "sha256-3R+f85RS9iBkdj4p5qL1jXzlDn5hJkf4i339LcXyVt4=";
+        hash = "sha256-XTm79Q5ErjE8M15t4HDDdJOlKh3eilYqkkWK5jaREkk=";
       };
 
       configFile =
