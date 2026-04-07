@@ -1,6 +1,6 @@
 {
   lib,
-  buildGoModule,
+  buildGo126Module,
   callPackage,
   fetchFromGitHub,
   nixosTests,
@@ -19,7 +19,7 @@ let
     hash = "sha256-D1qI7TDJpSvtgpo1FsPZk6mpqRvRharFZ8soI7Mn3RE=";
   };
 in
-buildGoModule {
+buildGo126Module {
   pname = "caddy";
   inherit version;
 
