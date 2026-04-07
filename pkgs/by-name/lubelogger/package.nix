@@ -7,13 +7,13 @@
 
 buildDotnetModule rec {
   pname = "lubelogger";
-  version = "1.6.1";
+  version = "1.6.3";
 
   src = fetchFromGitHub {
     owner = "hargata";
     repo = "lubelog";
     rev = "v${version}";
-    hash = "sha256-0PjIRf8M4wmn2zm7I9P1o8Zp2CRgZHxt5p6L8bTqJbE=";
+    hash = "sha256-cIEbFNPpEnKryN5Dyf/bCcrngLJxxftCwTQHv07W4AQ=";
   };
 
   projectFile = "CarCareTracker.sln";
@@ -21,6 +21,11 @@ buildDotnetModule rec {
 
   dotnet-sdk = dotnetCorePackages.sdk_10_0;
   dotnet-runtime = dotnetCorePackages.aspnetcore_10_0;
+
+  # Until bug is fixed and PR is fully merged
+  # https://github.com/NixOS/nixpkgs/issues/502224
+  # https://github.com/NixOS/nixpkgs/pull/506470
+  DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = 1;
 
   makeWrapperArgs = [
     "--set DOTNET_WEBROOT ${placeholder "out"}/lib/lubelogger/wwwroot"
