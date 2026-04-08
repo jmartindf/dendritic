@@ -135,6 +135,12 @@ in
                 path = [ pkgs.step-cli ];
                 script = # bash
                   ''
+                    restart=-1
+
+                    # return status
+                    # -1 = unknown error
+                    # 1 = does not need renewal
+                    # 0 = was renewed
                     function renewal_check {
                       step ssh inspect "$1-cert.pub"
 
@@ -151,6 +157,7 @@ in
                         step ssh renew --force \
                           "$1-cert.pub" \
                           "$1"
+                        restart=0
                       else
                         echo "Unknown error"
                         echo ""
@@ -169,6 +176,10 @@ in
                       renewal_check "${ed25519Key}"
                     fi
 
+                    if [[ $restart -eq 0 ]]; then
+                        echo "Restarting sshd after certificate renewal"
+                        systemctl try-restart --quiet sshd.service
+                    fi
                     exit 0
                   '';
               };
