@@ -21,7 +21,11 @@ in
 
           principals = lib.mkOption {
             type = lib.types.listOf lib.types.str;
-            default = [ ];
+            default = [
+              nixOScfg.networking.hostName
+              nixOScfg.networking.fqdn
+              "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain}"
+            ];
             description = "Principal (host) names to include on the certificate";
           };
 
@@ -30,12 +34,6 @@ in
       };
 
       config = {
-
-        desertflood.services.step-ssh.principals = [
-          nixOScfg.networking.hostName
-          nixOScfg.networking.fqdn
-          "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain}"
-        ];
 
         age.secrets.provisioner-password.rekeyFile = ./provisioner-password.age;
 

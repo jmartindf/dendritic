@@ -35,7 +35,12 @@ in
       ];
 
       nixos =
-        { config, pkgs, ... }:
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
         let
           nixOScfg = config;
           inherit (hostInfo) hostName;
@@ -191,7 +196,7 @@ in
               };
 
               step-ssh = {
-                principals = [
+                principals = lib.mkOptionDefault [
                   "git.desertflood.com"
                 ];
               };
