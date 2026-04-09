@@ -7,19 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
-## [Unreleased]
-
-### Added
+## [0.6.1] - 2026-04-08
 
 ### Changed
 
-### Removed
-
-### Deprecated
-
-### Fixed
-
-### Security
+- feat(caddy): build caddy with Go 1.26
+- feat(caddy): update plugins
 
 
 ## [0.6.0] - 2026-04-08
