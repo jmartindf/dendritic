@@ -44,6 +44,14 @@ build host=defaultHost:
 [group("build")]
 buildAll: (build "richard") (build "fossil") (build "france") (build "everest")
 
+[group("build")]
+validate:
+    nix flake check --all-systems -L
+
+[group("deploy")]
+deployrs:
+    deploy --rollback-succeeded=false --skip-checks
+
 [group("deploy")]
 deploy host=defaultHost: (build host) (rsync host) (push host)
     # nixos-rebuild-ng switch --flake . --target-host root@{{ host }}

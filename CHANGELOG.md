@@ -9,6 +9,11 @@ configurations).
 
 ## [Unreleased]
 
+### Added
+
+- build: justfile `deployrs` task to deploy all hosts using deploy-rs
+- build: justfile `validate` tasks to run `nix flake check --all-systems -L`
+
 ### Changed
 
 - lubelogger: 1.6.1 -> 1.6.3
