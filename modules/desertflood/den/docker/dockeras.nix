@@ -57,12 +57,14 @@ let
           let
             inherit (config.desertflood) defaultUser;
           in
-          builtins.traceVerbose "nixos module for configuring ${username} user" {
-            users.users.${username} = {
-              isNormalUser = true;
-              extraGroups = [ "docker" ];
-              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-            };
+          builtins.traceVerbose "implicit nixos module for configuring ${username} user" {
+            users.users.${username} =
+              builtins.traceVerbose "implicit module is evaluating users.users.${username}"
+                {
+                  isNormalUser = true;
+                  extraGroups = [ "docker" ];
+                  openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
+                };
           }
         else
           builtins.traceVerbose "*not* nixos module for configuring ${username} user" { };
