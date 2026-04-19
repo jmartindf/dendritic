@@ -88,19 +88,4 @@ in
       (den.lib.take.exactly homeManager)
     ];
   };
-
-  flake.modules.nixos.${username} =
-    { config, ... }:
-    let
-      inherit (config.desertflood) defaultUser;
-      inherit username;
-    in
-    {
-      users.users.${username} = builtins.traceVerbose "evaluating users.users.${username}" {
-        isNormalUser = true;
-        extraGroups = [ "docker" ];
-        openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-      };
-    };
-
 }
