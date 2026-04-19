@@ -89,11 +89,11 @@ in
     ];
   };
 
-  flake.modules.nixos.dockeras =
+  flake.modules.nixos.${username} =
     { config, ... }:
     let
       inherit (config.desertflood) defaultUser;
-      username = "dockeras";
+      inherit username;
     in
     {
       users.users.${username} = builtins.traceVerbose "evaluating users.users.${username}" {
