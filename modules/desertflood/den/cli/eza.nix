@@ -57,12 +57,15 @@ let
         { pkgs, ... }:
         {
           config = {
-            environment = builtins.traceVerbose "df.cli._.coreutils extra for eza active" {
-              shellAliases = ezaAliases;
-              systemPackages = [
-                pkgs.eza # modern, maintained replacement for ls
-              ];
-            };
+            environment =
+              builtins.traceVerbose
+                "${host.class} system configuring eza for ${host.name} as part of df.cli._.eza"
+                {
+                  shellAliases = ezaAliases;
+                  systemPackages = [
+                    pkgs.eza # modern, maintained replacement for ls
+                  ];
+                };
 
             programs.fish.interactiveShellInit = ezaFishFunctions;
           };

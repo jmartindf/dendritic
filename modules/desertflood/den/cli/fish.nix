@@ -29,7 +29,8 @@ let
         {
           config = {
             environment =
-              builtins.traceVerbose "configuring fish for NixOS (${host.name}) as part of df.cli._.fish"
+              builtins.traceVerbose
+                "${host.class} system configuring fish for ${host.name} as part of df.cli._.fish"
                 {
                   etc."bashrc.local".text = shellLaunchFish nixosCfg pkgs;
                 };
@@ -84,12 +85,14 @@ let
         }:
         {
           config = {
-            programs = builtins.traceVerbose "configuring fish for ${user.userName} as part of df.cli._.fish" {
-              fish = {
-                enable = true;
-                generateCompletions = false; # Generating completions from man pages is slow and mostly unnecessary
-              };
-            };
+            programs =
+              builtins.traceVerbose "configuring fish for ${user.userName}@${host.name} as part of df.cli._.fish"
+                {
+                  fish = {
+                    enable = true;
+                    generateCompletions = false; # Generating completions from man pages is slow and mostly unnecessary
+                  };
+                };
           };
         };
     };

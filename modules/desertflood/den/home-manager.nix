@@ -29,12 +29,10 @@ let
       user,
     }:
     {
-      homeManager =
-        builtins.traceVerbose "configuring home-manager.enable for ${user.userName}@${host.name}"
-          {
-            # Let Home Manager install and manage itself.
-            programs.home-manager.enable = true;
-          };
+      homeManager = builtins.traceVerbose "enable home-manager for ${user.userName}@${host.name}" {
+        # Let Home Manager install and manage itself.
+        programs.home-manager.enable = true;
+      };
     }
   );
 in

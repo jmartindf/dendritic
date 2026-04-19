@@ -266,7 +266,8 @@ let
           config = {
             # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
             programs =
-              builtins.traceVerbose "configuring ripgrep and bat as part of df.base for user ${user.userName}"
+              builtins.traceVerbose
+                "configuring ripgrep and bat for ${user.userName}@${host.name} as part of df.base"
                 {
                   # https://github.com/sharkdp/bat
                   # https://nix-community.github.io/home-manager/options.xhtml#opt-programs.bat.enable

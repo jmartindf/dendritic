@@ -14,13 +14,12 @@ let
   osContext = den.lib.take.exactly (
     { OS, host }:
     {
-      ${host.class} =
+      ${host.class} = builtins.traceVerbose "coreutils.${host.class} active" (
         { pkgs, ... }:
         {
-          config.environment.systemPackages =
-            builtins.traceVerbose "coreutils.${host.class} active" sysPackages
-              pkgs;
-        };
+          config.environment.systemPackages = sysPackages pkgs;
+        }
+      );
     }
   );
 in
