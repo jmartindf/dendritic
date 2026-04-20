@@ -8,7 +8,7 @@
 }:
 let
   osContext = den.lib.take.exactly (
-    { OS, host }:
+    { host }:
     {
       ${host.class} =
         { pkgs, ... }:

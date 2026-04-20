@@ -51,7 +51,7 @@ let
     '';
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         { pkgs, ... }:

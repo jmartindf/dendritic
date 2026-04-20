@@ -15,7 +15,7 @@ let
     '';
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         {
@@ -71,7 +71,6 @@ let
 
   homeContext =
     {
-      HM,
       host,
       user,
       ...

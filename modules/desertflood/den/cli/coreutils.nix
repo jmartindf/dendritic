@@ -12,7 +12,7 @@ let
   ];
 
   osContext = den.lib.take.exactly (
-    { OS, host }:
+    { host }:
     {
       ${host.class} = builtins.traceVerbose "coreutils.${host.class} active" (
         { pkgs, ... }:

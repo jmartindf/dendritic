@@ -45,7 +45,7 @@ let
   };
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         {
@@ -254,7 +254,6 @@ let
 
   homeContext =
     {
-      HM,
       user,
       host,
       ...
@@ -303,8 +302,9 @@ let
   description = "Common to all machines and homes";
 in
 {
-  df.base = den.lib.parametric {
+  df.base = {
     inherit description;
+
     includes = [
       (den.lib.take.exactly osContext)
       homeContext

@@ -49,7 +49,7 @@ let
     aspect;
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         if host.capabilities.docker-server then

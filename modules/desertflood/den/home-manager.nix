@@ -7,7 +7,7 @@
 }:
 let
   osContext = den.lib.take.exactly (
-    { OS, host }:
+    { host }:
     {
       ${host.class} = {
         config = {
@@ -24,7 +24,6 @@ let
 
   homeContext = den.lib.take.exactly (
     {
-      HM,
       host,
       user,
     }:

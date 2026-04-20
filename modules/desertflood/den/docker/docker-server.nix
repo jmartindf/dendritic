@@ -9,7 +9,7 @@ let
   flakeCfg = config;
 
   dockerServerAspect = den.lib.take.exactly (
-    { OS, host }:
+    { host }:
     {
       nixos =
         if host.capabilities.docker-server then
@@ -38,7 +38,7 @@ let
   );
 in
 {
-  den.base.conf = {
+  den.schema.conf = {
     options.capabilities.docker-server = lib.mkEnableOption "Does host provide docker containers?";
   };
 
