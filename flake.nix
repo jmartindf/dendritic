@@ -53,7 +53,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
     };
-    den.url = "github:vic/den";
+    den.url = "github:vic/den/v0.8.0";
     dendrix = {
       inputs = {
         import-tree.follows = "import-tree";

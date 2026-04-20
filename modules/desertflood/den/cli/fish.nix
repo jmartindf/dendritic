@@ -69,7 +69,12 @@ let
     };
 
   homeContext =
-    { user, ... }:
+    {
+      HM,
+      host,
+      user,
+      ...
+    }:
     {
       homeManager =
         {

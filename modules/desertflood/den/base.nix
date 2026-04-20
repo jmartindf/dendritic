@@ -253,7 +253,12 @@ let
     };
 
   homeContext =
-    { user, host, ... }:
+    {
+      HM,
+      user,
+      host,
+      ...
+    }:
     {
       homeManager =
         { pkgs, lib, ... }:

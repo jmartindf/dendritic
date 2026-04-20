@@ -24,7 +24,7 @@ let
 
   homeContext = den.lib.take.exactly (
     {
-      OS,
+      HM,
       host,
       user,
     }:
