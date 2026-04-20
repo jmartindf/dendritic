@@ -3,7 +3,6 @@
 
   imports = [
     (inputs.den.flakeModule or { })
-    inputs.flake-aspects.flakeModule
     (inputs.dendrix.vic-vix.filter (lib.hasSuffix "mk-os.nix"))
   ];
 
@@ -25,15 +24,13 @@
     };
 
     flake-file.inputs = {
-      den.url = "github:vic/den/v0.8.0";
+      den.url = "github:vic/den/v0.16.0";
 
       dendrix = {
         url = "github:vic/dendrix";
         inputs.import-tree.follows = "import-tree";
         inputs.nixpkgs-lib.follows = "nixpkgs-lib";
       };
-
-      flake-aspects.url = "github:vic/flake-aspects";
     };
 
   };

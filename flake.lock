@@ -156,16 +156,16 @@
     },
     "den": {
       "locked": {
-        "lastModified": 1770894221,
-        "narHash": "sha256-ypeLNfVJnh5+NO0ZhFdW3Yqh+tFLrA+mjXeYIAo9bDA=",
+        "lastModified": 1776133621,
+        "narHash": "sha256-RNbDvS6voiq2GalVHRt6w2EpdlEmmCjUAb6fvPO9PnE=",
         "owner": "vic",
         "repo": "den",
-        "rev": "53bc73d78da4f39c3ffa9e8ab38ecea14ef12fcd",
+        "rev": "927f4d8e2be40d05c976a91bbec66238c622bbf5",
         "type": "github"
       },
       "original": {
         "owner": "vic",
-        "ref": "v0.8.0",
+        "ref": "v0.16.0",
         "repo": "den",
         "type": "github"
       }
@@ -254,21 +254,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
-        "type": "github"
-      }
-    },
-    "flake-aspects": {
-      "locked": {
-        "lastModified": 1766081176,
-        "narHash": "sha256-JrsuNSIEXPS3AiIxuWZw+sJ2Td6ni1OkqbW6mO/F4Rs=",
-        "owner": "vic",
-        "repo": "flake-aspects",
-        "rev": "d0a226c84be2900d307aa1896e4e2c6e451844b2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "vic",
-        "repo": "flake-aspects",
         "type": "github"
       }
     },
@@ -587,7 +572,6 @@
         "deploy-rs": "deploy-rs",
         "devshell": "devshell",
         "disko": "disko",
-        "flake-aspects": "flake-aspects",
         "flake-compat": "flake-compat",
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",

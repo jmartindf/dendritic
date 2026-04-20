@@ -53,7 +53,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
     };
-    den.url = "github:vic/den/v0.8.0";
+    den.url = "github:vic/den/v0.16.0";
     dendrix = {
       inputs = {
         import-tree.follows = "import-tree";
@@ -76,7 +76,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:nix-community/disko";
     };
-    flake-aspects.url = "github:vic/flake-aspects";
     flake-compat.url = "github:edolstra/flake-compat";
     flake-file.url = "github:vic/flake-file";
     flake-parts = {
