@@ -6,8 +6,6 @@
 
   config = {
 
-    systems = import inputs.systems;
-
     perSystem =
       { config, pkgs, ... }:
       {
