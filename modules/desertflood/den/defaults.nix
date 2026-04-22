@@ -30,10 +30,10 @@ in
       den.provides.define-user
 
       # enable specific unfree packages
-      # (den.provides.unfree [
-      #   "1password-cli"
-      #   "sftpgo"
-      # ])
+      (den.provides.unfree [
+        "1password-cli"
+        "sftpgo"
+      ])
       df.base
     ];
 
