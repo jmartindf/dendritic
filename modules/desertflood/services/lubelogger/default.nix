@@ -86,6 +86,8 @@ _: {
               OpenIDConfig__ValidateState = "false";
               OpenIDConfig__UsePKCE = "true";
               OpenIDConfig__DisableRegularLogin = "true";
+              OpenIDConfig__AutoGenerateTokens = "true"; # Automatically Generate Tokens for new OIDC Users
+              OpenIDConfig__DisableRegistration = "false"; # Enable Registration for new OIDC Users
             };
           };
 
