@@ -1,6 +1,7 @@
 set unstable := true
 
 defaultHost := "richard"
+deployrsDefaultHost := ""
 build := "nom"
 debug_build := "nix"
 toplevel := "config.system.build.toplevel"
@@ -49,8 +50,8 @@ validate:
     nix flake check --all-systems -L
 
 [group("deploy")]
-deployrs:
-    deploy --rollback-succeeded=false --skip-checks
+deployrs host=deployrsDefaultHost:
+    deploy --rollback-succeeded=false --skip-checks {{ if host != "" { ".#" + host } else { "" } }}
 
 [group("deploy")]
 deploy host=defaultHost: (build host) (rsync host) (push host)
