@@ -19,6 +19,7 @@ configurations).
 - (dockeras): remove pre-dendritic NixOS module
 - add extra debugging code around `dockeras`
 - standardize the trace messages
+- lubelogger: 1.6.3 -> 1.6.5
 - (lubelogger): automatic account creation for OIDC users
 - update sources
 - authentik 2026.2.2 -> 2026.2.3
