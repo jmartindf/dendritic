@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.6.?] - 2026-??-??
+
+### Added
+
+- (justfile): deployrs, optionally with only one host
+
+### Changed
+
+- update den library
+- (dockeras): remove pre-dendritic NixOS module
+- add extra debugging code around `dockeras`
+- standardize the trace messages
+- (lubelogger): automatic account creation for OIDC users
+- update sources
+
+### Fixed
+
+- `dockeras` username wasn't fully DRY
+
+
 ## [0.6.1] - 2026-04-08
 
 ### Changed
