@@ -21,6 +21,7 @@ configurations).
 - standardize the trace messages
 - (lubelogger): automatic account creation for OIDC users
 - update sources
+- authentik 2026.2.2 -> 2026.2.3
 
 ### Fixed
 
