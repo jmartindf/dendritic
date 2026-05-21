@@ -157,7 +157,7 @@ in
 
             services = {
 
-              crowdsec.enable = true;
+              crowdsec.enable = false;
 
               apprise-api = {
                 enable = true;

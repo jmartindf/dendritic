@@ -26,6 +26,7 @@ configurations).
 
 - `dockeras` username wasn't fully DRY
 - (attic): triple the chunk sizes
+- (france): disable crowdsec
 
 
 ## [0.6.1] - 2026-04-08
