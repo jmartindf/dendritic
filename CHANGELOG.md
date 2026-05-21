@@ -25,6 +25,7 @@ configurations).
 ### Fixed
 
 - `dockeras` username wasn't fully DRY
+- (attic): triple the chunk sizes
 
 
 ## [0.6.1] - 2026-04-08

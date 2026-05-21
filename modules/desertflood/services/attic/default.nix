@@ -90,10 +90,10 @@ _: {
                 require-proof-of-possession = true;
 
                 chunking = {
-                  avg-size = 65536;
-                  max-size = 262144;
-                  min-size = 16384;
-                  nar-size-threshold = 65536;
+                  avg-size = 196608;
+                  max-size = 786432;
+                  min-size = 49152;
+                  nar-size-threshold = 196608;
                 };
 
                 database = {
