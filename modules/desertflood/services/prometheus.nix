@@ -102,13 +102,13 @@
                     }
                     {
                       source_labels = [ "nodename" ];
-                      regex = "^([^\.]+).*";
+                      regex = "^([^\\.]+).*";
                       target_label = "nodename";
                       replacement = "\$1";
                     }
                     {
                       source_labels = [ "instance" ];
-                      regex = "^([^\.]+).*";
+                      regex = "^([^\\.]+).*";
                       target_label = "instance";
                       replacement = "\$1";
                     }

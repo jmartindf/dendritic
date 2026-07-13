@@ -205,7 +205,7 @@ _: {
                     http = {
                       routers.bsky-pds-rtr = {
                         entrypoints = "websecure";
-                        rule = "Host(`pds.wordflood.net`) || HostRegexp(`^.+\.pds\.wordflood\.net$`)";
+                        rule = "Host(`pds.wordflood.net`) || HostRegexp(`^.+\\.pds\\.wordflood\\.net$`)";
                         service = "bsky-pds-svc";
                       };
                       services.bsky-pds-svc.loadBalancer.servers = [
