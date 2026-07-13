@@ -1,6 +1,6 @@
 {
   bash,
-  docker_28,
+  docker_29,
   fetchFromGitHub,
   lib,
   makeWrapper,
@@ -30,7 +30,7 @@ stdenv.mkDerivation {
     install -Dm755 vackup "$out/bin/vackup"
 
     wrapProgram "$out/bin/vackup" \
-      --suffix PATH : ${lib.makeBinPath [ docker_28 ]}
+      --suffix PATH : ${lib.makeBinPath [ docker_29 ]}
 
     runHook postInstall
   '';

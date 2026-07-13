@@ -17,13 +17,13 @@ let
           builtins.traceVerbose "df.docker-server active" {
             environment.systemPackages = [
               pkgs.docker-color-output
-              pkgs.docker_28
+              pkgs.docker_29
               pkgs.local.vackup
             ];
 
             virtualisation.docker = {
               enable = true;
-              package = pkgs.docker_28;
+              package = pkgs.docker_29;
               logDriver = "journald";
               storageDriver = "overlay2";
               enableOnBoot = true;
@@ -63,13 +63,13 @@ in
 
       environment.systemPackages = builtins.traceVerbose "df.docker-server active" [
         pkgs.docker-color-output
-        pkgs.docker_28
+        pkgs.docker_29
         pkgs.local.vackup
       ];
 
       virtualisation.docker = {
         enable = true;
-        package = pkgs.docker_28;
+        package = pkgs.docker_29;
         logDriver = "journald";
         storageDriver = "overlay2";
         enableOnBoot = true;
