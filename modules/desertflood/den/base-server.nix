@@ -55,6 +55,16 @@ in
           services = {
             tailscale.enable = true;
             tailscale.extraSetFlags = [ "--accept-routes" ];
+
+            # Limit journaling
+            journald.extraConfig = ''
+              MaxRetentionSec=1month
+              MaxFileSec=1week
+              SystemMaxUse=500M
+              SystemMaxFiles=5
+              RuntimeMaxUse=100M
+              RuntimeMaxFiles=5
+            '';
           };
 
           # symlink the Nix configuration, if it exists
