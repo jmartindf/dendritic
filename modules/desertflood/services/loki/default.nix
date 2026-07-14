@@ -68,6 +68,7 @@ in
               inherit (svcsConfig.loki) port;
               # gRPCPort = 9096;
               listen_on = "127.0.0.1";
+              path = nixOScfg.services.loki.dataDir;
             in
             {
               enable = true;
@@ -82,21 +83,17 @@ in
                   # grpc_server_max_concurrent_streams = 1000;
                 };
 
-                common =
-                  let
-                    path = nixOScfg.services.loki.dataDir;
-                  in
-                  {
-                    instance_addr = "${listen_on}";
-                    path_prefix = "${path}";
-                    replication_factor = 1;
-                    ring.kvstore.store = "inmemory";
+                common = {
+                  instance_addr = "${listen_on}";
+                  path_prefix = "${path}";
+                  replication_factor = 1;
+                  ring.kvstore.store = "inmemory";
 
-                    storage.filesystem = {
-                      chunks_directory = "${path}/chunks";
-                      rules_directory = "${path}/rules";
-                    };
+                  storage.filesystem = {
+                    chunks_directory = "${path}/chunks";
+                    rules_directory = "${path}/rules";
                   };
+                };
 
                 query_range.results_cache.cache.embedded_cache = {
                   enabled = true;
@@ -106,6 +103,18 @@ in
                 limits_config = {
                   metric_aggregation_enabled = true;
                   enable_multi_variant_queries = true;
+                  max_query_lookback = "672h"; # 4 weeks
+                  retention_period = "672h"; # 4 weeks
+                };
+
+                compactor = {
+                  working_directory = "${path}/data/retention";
+                  compaction_interval = "10m";
+                  retention_enabled = true;
+                  retention_delete_delay = "2h";
+                  delete_request_cancel_period = "2h"; # Why wait 24 hours before processing deletes?
+                  retention_delete_worker_count = 25;
+                  delete_request_store = "filesystem";
                 };
 
                 schema_config.configs = [
