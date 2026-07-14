@@ -51,7 +51,7 @@
     };
     darwin = {
       inputs.nixpkgs.follows = "nixpkgs-darwin";
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
     };
     den.url = "github:vic/den/v0.8.0";
     dendrix = {
@@ -96,12 +96,12 @@
     };
     home-manager = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
     };
     import-tree.url = "github:vic/import-tree";
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-26.05-darwin";
     nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
     pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
     systems.url = "github:jmartindf/nix-systems-modern-default";

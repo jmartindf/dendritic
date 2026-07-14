@@ -37,7 +37,7 @@ _: {
             {
               enable = true;
 
-              package = pkgs.local.ntfy-sh;
+              package = pkgs.ntfy-sh;
 
               settings = {
                 base-url = "${svcConfig.fullURL}";

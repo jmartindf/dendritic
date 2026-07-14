@@ -31,8 +31,8 @@ in
     };
 
     flake-file.inputs = {
-      nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-      nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+      nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+      nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-26.05-darwin";
       nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
     };
 

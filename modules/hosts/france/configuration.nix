@@ -254,7 +254,7 @@ in
 
           services.taskchampion-sync-server = {
             enable = true;
-            package = pkgs.local.taskchampion-sync-server;
+            package = pkgs.taskchampion-sync-server;
             allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
           };
 

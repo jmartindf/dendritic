@@ -92,6 +92,7 @@ in
                     admin_password = "$__file{${cfg.age.secrets.grafana-password.path}}";
                     admin_email = flakeCfg.desertflood.defaultUser.emails.family.email;
                     cookie_secure = true;
+                    secret_key = "SW2YcwTIb9zpOOhoPsMm"; # hard-code default from NixOS 25.11
                   };
 
                   auth = {

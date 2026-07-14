@@ -98,19 +98,21 @@ let
               resolved = {
                 enable = true;
 
-                domains = [
-                  "home.thosemartins.family"
-                  "desertflood.com"
-                  "df.fyi"
-                  dfCfg.networking.tailscaleDomain
-                ];
+                settings.Resolve = {
+                  Domains = [
+                    "home.thosemartins.family"
+                    "desertflood.com"
+                    "df.fyi"
+                    dfCfg.networking.tailscaleDomain
+                  ];
 
-                fallbackDns = [
-                  "1.1.1.1"
-                  "1.0.0.1"
-                  "2606:4700:4700::1111"
-                  "2606:4700:4700::1001"
-                ];
+                  FallbackDNS = [
+                    "1.1.1.1"
+                    "1.0.0.1"
+                    "2606:4700:4700::1111"
+                    "2606:4700:4700::1001"
+                  ];
+                };
               };
 
               openssh = {
