@@ -60,7 +60,7 @@ _: {
           services.lubelogger = {
             enable = true;
             # Pending [PR 453649](https://github.com/NixOS/nixpkgs/pull/453649)
-            package = pkgs.lubelogger;
+            package = pkgs.local.lubelogger;
 
             environmentFile = nixOScfg.age.secrets.lubelogger-env.path;
 
