@@ -66,6 +66,13 @@ in
               AUTHENTIK_CUSTOM_NAME = "authentik Desertflood";
               AUTHENTIK_ISSUER = "https://sso.desertflood.link/application/o/linkwarden";
               NEXTAUTH_URL = "${svcsNetCfg.linkwarden.fullURL}api/v1/auth";
+              # Lean and mean config, for Linkwarden 2.15
+              # Limit memory pools
+              MALLOC_ARENA_MAX = "2";
+              # Cap the app's heap size
+              NODE_OPTIONS = "--max-old-space-size=400";
+              # preserve one link at a time
+              ARCHIVE_TAKE_COUNT = "1";
             };
 
             environmentFile = "${nixOScfg.age.secrets.linkwarden.path}";
