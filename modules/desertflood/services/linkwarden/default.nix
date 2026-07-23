@@ -66,6 +66,13 @@ in
               AUTHENTIK_CUSTOM_NAME = "authentik Desertflood";
               AUTHENTIK_ISSUER = "https://sso.desertflood.link/application/o/linkwarden";
               NEXTAUTH_URL = "${svcsNetCfg.linkwarden.fullURL}api/v1/auth";
+
+              # Triple the allowed SingleFile uploads (default is 10 MB)
+              NEXT_PUBLIC_MAX_FILE_BUFFER = "30";
+
+              # Triple the allowed import file size (default is 10 MB)
+              IMPORT_LIMIT = "10";
+
               # Lean and mean config, for Linkwarden 2.15
               # Limit memory pools
               MALLOC_ARENA_MAX = "2";
