@@ -51,6 +51,8 @@ in
           services.linkwarden = {
             enable = true;
 
+            package = pkgs.local.linkwarden;
+
             port = 12568; # uv run --with port4me python -m port4me --tool=linkwarden
             host = "127.0.0.1";
 
