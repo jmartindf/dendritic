@@ -49,6 +49,15 @@
       };
       url = "github:MarcelCoding/authentik-nix/ak-update";
     };
+    bun2nix = {
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "systems";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+      url = "github:nix-community/bun2nix";
+    };
     darwin = {
       inputs.nixpkgs.follows = "nixpkgs-darwin";
       url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";

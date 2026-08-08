@@ -20,6 +20,7 @@ in
             (final: prev: {
               local = config.packages;
             })
+            inputs.bun2nix.overlays.default
           ];
         };
       };
@@ -27,6 +28,7 @@ in
     flake.modules.nixos.nixos = {
       nixpkgs.overlays = [
         overlay
+        inputs.bun2nix.overlays.default
       ];
     };
 
