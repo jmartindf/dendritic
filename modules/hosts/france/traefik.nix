@@ -313,22 +313,43 @@ _: {
                     };
                   };
 
-                  app-kosync =
+                  # app-kosync =
+                  #   let
+                  #     uri = dfCfg.networking.services.kosync-dotnet;
+                  #   in
+                  #   {
+                  #     http = {
+                  #       routers.kosync-rtr = {
+                  #         entrypoints = "websecure";
+                  #         rule = "Host(`${uri.fqdn}`)";
+                  #         service = "kosync-svc";
+                  #         middlewares = "chain-no-auth@file";
+                  #         # tls.certresolver = "web";
+                  #       };
+                  #       services.kosync-svc.loadBalancer.servers = [
+                  #         {
+                  #           url = "http://127.0.0.1:${builtins.toString nixOScfg.desertflood.globals.ports.kosync-dotnet}";
+                  #         }
+                  #       ];
+                  #     };
+                  #   };
+
+                  app-koreadersync =
                     let
-                      uri = dfCfg.networking.services.kosync-dotnet;
+                      uri = dfCfg.networking.services.koreader-sync;
                     in
                     {
                       http = {
-                        routers.kosync-rtr = {
+                        routers.koreadersync-rtr = {
                           entrypoints = "websecure";
                           rule = "Host(`${uri.fqdn}`)";
-                          service = "kosync-svc";
+                          service = "koreadersync-svc";
                           middlewares = "chain-no-auth@file";
                           # tls.certresolver = "web";
                         };
-                        services.kosync-svc.loadBalancer.servers = [
+                        services.koreadersync-svc.loadBalancer.servers = [
                           {
-                            url = "http://127.0.0.1:${builtins.toString nixOScfg.desertflood.globals.ports.kosync-dotnet}";
+                            url = "http://127.0.0.1:${builtins.toString nixOScfg.desertflood.globals.ports.koreader-sync}";
                           }
                         ];
                       };

@@ -149,6 +149,12 @@ in
                   path = "";
                 };
 
+                koreader-sync = {
+                  domain = "desertflood.com";
+                  hostName = "kosync";
+                  path = "";
+                };
+
               };
 
             };
@@ -213,11 +219,14 @@ in
 
               acme-dns.enable = true;
 
-              kosync-dotnet.enable = true;
+              kosync-dotnet.enable = false;
               kosync-dotnet.trustedProxies = [
                 "127.0.0.1"
                 "::1"
               ];
+
+              koreader-sync.enable = true;
+              koreader-sync.disableRegistration = true;
             };
           };
 
