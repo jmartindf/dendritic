@@ -69,6 +69,8 @@ in
                   "auth.${baseDomain}. A ${ip4}"
                   # "auth.${baseDomain}. AAAA ${ip6}"
                   "auth.${baseDomain}. NS auth.${baseDomain}."
+                  "auth.${baseDomain}. CAA 0 issue \"letsencrypt.org\""
+                  "auth.${baseDomain}. CAA 0 issuewild \"letsencrypt.org\""
                 ];
 
                 protocol = "both";
