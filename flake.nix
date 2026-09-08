@@ -47,7 +47,7 @@
         nixpkgs.follows = "nixpkgs";
         systems.follows = "systems";
       };
-      url = "github:MarcelCoding/authentik-nix/ak-update";
+      url = "github:nix-community/authentik-nix/version/2026.8.1";
     };
     bun2nix = {
       inputs = {
