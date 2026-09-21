@@ -109,9 +109,10 @@
     };
     import-tree.url = "github:vic/import-tree";
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-26.05-darwin";
+    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.zst";
+    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.zst";
     nixpkgs-lib.url = "github:nix-community/nixpkgs.lib";
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
     pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
     systems.url = "github:jmartindf/nix-systems-modern-default";
     treefmt-nix = {
