@@ -52,6 +52,11 @@ in
               default = dfCfg.globals.ports.sftpgo-http;
               description = "The port for serving HTTP(S) requests";
             };
+            davPort = lib.mkOption {
+              type = lib.types.port;
+              default = dfCfg.globals.ports.sftpgo-webdav;
+              description = "The port for serving WebDAV(S) requests";
+            };
           };
         };
 
@@ -135,6 +140,18 @@ in
                 ];
                 web_root = "${dfSvcsNetCfg.sftpgo.path}";
                 cookie_lifetime = 720; # valid for 12 hours
+              };
+
+              webdavd = {
+                bindings = [
+                  {
+                    address = "127.0.0.1"; # localhost only, proxy through Traefik
+                    port = dfSvcsConfig.sftpgo.davPort;
+                    prefix = "/dav";
+                    proxy_allowed = "127.0.0.1";
+                    client_ip_proxy_header = "X-Real-IP";
+                  }
+                ];
               };
             };
           };

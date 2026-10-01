@@ -236,6 +236,26 @@ _: {
                     };
                   };
 
+                  app-sftpgo-webdav = {
+                    http = {
+                      routers.sftpgo-webdav-rtr =
+                        let
+                          uri = dfCfg.networking.services.sftpgo;
+                        in
+                        {
+                          entrypoints = "websecure";
+                          rule = "Host(`${uri.fqdn}`) && PathPrefix(`/dav`)";
+                          service = "sftpgo-webdav-svc";
+                          # tls.certresolver = "web";
+                        };
+                      services.sftpgo-webdav-svc.loadBalancer.servers = [
+                        {
+                          url = "http://127.0.0.1:${toString dfCfg.services.sftpgo.davPort}";
+                        }
+                      ];
+                    };
+                  };
+
                   app-loki = {
                     http = {
                       routers.loki-rtr =

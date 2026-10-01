@@ -30,6 +30,7 @@ let
       bluesky-pds = 36825;
       caddy-static = 10535;
       sftpgo-http = 42697; # uv run --with port4me python -m port4me --tool=httpd --user sftpgo
+      sftpgo-webdav = 46954; # uv run --with port4me python -m port4me --tool=webdav --user sftpgo
       loki = 3100;
       alloy = 3030;
       acme-dns = 26579; # uv run --with port4me python -m port4me --tool=acme-dns --user france
