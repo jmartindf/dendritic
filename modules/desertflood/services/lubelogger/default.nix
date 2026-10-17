@@ -69,7 +69,7 @@ _: {
               LANG = "en_US.UTF-8";
               POSTGRES_CONNECTION = "Host=/run/postgresql;Port=5432;Username=${llCfg.user};Database=${llCfg.user};";
               EnableAuth = "true";
-              DefaultReminderEmail = "joe@desertflood.com";
+              # DefaultReminderEmail = "joe@desertflood.com";
               EnableRootUserOIDC = "false";
               LUBELOGGER_OPEN_REGISTRATION = "false";
               LUBELOGGER_DOMAIN = "${llNetCfg.fullURL}"; # - URL to Instance of LubeLogger used to generate email links
