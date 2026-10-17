@@ -85,7 +85,7 @@ _: {
               OpenIDConfig__Scope = "openid email";
               OpenIDConfig__ValidateState = "false";
               OpenIDConfig__UsePKCE = "true";
-              OpenIDConfig__DisableRegularLogin = "true";
+              OpenIDConfig__DisableRegularLogin = "false"; # Enable login logins, for root user
               OpenIDConfig__AutoGenerateTokens = "true"; # Automatically Generate Tokens for new OIDC Users
               OpenIDConfig__DisableRegistration = "false"; # Enable Registration for new OIDC Users
             };
