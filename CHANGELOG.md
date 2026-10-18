@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+
+## [0.7.5] - 2026-10-17
+
+### Changes
+
+- feat: lubelogger 1.7.1 -> 1.7.4
+- feat(lubelogger): enable local logins
+- fix(lubelogger): don't copy me on all reminder emails
+- feat(france): enable webdav for SFTPgo
+- chore: update sources
+- perf: use Nix channel archives
+
+### Package Updates
+
+- docker:   29.8.0 -> 29.8.1
+- forgejo-lts:   15.0.9 -> 15.0.10
+- grafana-loki:   3.7.7 -> 3.7.8
+- lix:   2.95.2 -> 2.95.4
+- lubelogger:   1.7.1 -> 1.7.4
+- nix:   2.34.8 -> 2.34.9
+- openssl:   3.6.4 -> 3.6.5
+- systemd:   260.4 -> 260.5
+
+
 ## [0.7.4] - 2026-09-08
 
 ### Changes
