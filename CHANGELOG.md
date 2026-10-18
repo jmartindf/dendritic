@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.7.3] - 2026-08-27
+
+### Changes
+
+- feat: lubelogger 1.7.0 -> 1.7.1
+- chore: update sources
+- fix(france): acme-dns does not have valid CAA records
+
+ ### Software Updates
+
+ - acl                                2.3.2 -> 2.4.0
+ - attr                               2.5.2 -> 2.6.0
+ - aws-c-http                         0.10.4 -> 0.11.0
+ - aws-c-io                           0.22.0 -> 0.27.2
+ - curl                               8.20.0 -> 8.21.0
+ - docker                             29.6.1 -> 29.7.2
+ - docker-compose                     5.1.4 -> 5.4.0
+ - docker-containerd                  29.6.1 -> 29.7.2
+ - docker-runc                        29.6.1 -> 29.7.2
+ - docker-tini                        29.6.1 -> 29.7.2
+ - dotnet-aspnetcore-runtime          10.0.8 -> 10.0.11
+ - expat                              2.8.1 -> 2.8.3
+ - forgejo-lts                        15.0.4 -> 15.0.7
+ - forgejo-runner                     12.13.0 -> 12.13.2
+ - grafana                            13.0.3 -> 13.0.7
+ - grafana-loki                       3.7.3 -> 3.7.6
+ - linux                              6.18.38 -> 6.18.46
+ - linux-firmware                     20260622-zstd -> 20260810-zstd
+ - lubelogger                         1.7.0 -> 1.7.1
+ - mesa                               26.1.4 -> 26.1.8
+ - moby                               29.6.1 -> 29.7.2
+ - nano                               9.1 -> 9.2
+ - nix                                2.34.7 -> 2.34.8
+ - nodejs                             24.16.0 -> 24.19.0
+ - ntfy-sh                            2.23.0 -> 2.26.0
+ - openssh                            10.3p1 -> 10.5p1
+ - openssl                            3.6.2 -> 3.6.3
+ - pds                                0.4.5009 -> 0.4.5027
+ - postgresql-and-plugins             17.10 -> 17.11
+ - python3                            3.13.13, 3.14.4 -> 3.13.15, 3.14.7
+ - qemu-host-cpu-only                 10.2.2-ga -> 10.2.4-ga
+ - rclone                             1.74.4 -> 1.75.0
+ - tailscale                          1.98.5 -> 1.98.10
+ - traefik                            3.7.6 -> 3.7.10
+ - tzdata                             2026b -> 2026c
+
+
 ## [0.7.2] - 2026-08-18
 
 ### Changes
