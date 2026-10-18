@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.7.4] - 2026-09-08
+
+### Changes
+
+- feat(authentik): 2026.5.6 -> 2026.8.1
+
+
 ## [0.7.3] - 2026-08-27
 
 ### Changes
