@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.7.0] - 2026-07-17
+
+### Changes
+
+- feat: authentik 2026.2.3 -> 2026.5.5
+- feat(france): update lubelogger 1.6.8 -> 1.7.0
+- feat: lubelogger 1.6.5 -> 1.7.0
+- feat: limit journald's log retention
+- feat: limit Loki's log retention
+- feat: update to NixOS 26.05
+- compat(lix): fix broken-string-escape warnings
+
+
 ## [0.6.2] - 2026-05-21
 
 ### Added
