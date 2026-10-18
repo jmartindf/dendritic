@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.7.2] - 2026-08-18
+
+### Changes
+
+- feat(france): kosync-dotnet -> koreader-sync
+- feat(nixos): module for running koreader-sync
+- feat(pkgs): init koreader-sync -> 0.2.3
+
+
 ## [0.7.1] - 2026-07-22
 
 ### Changes
