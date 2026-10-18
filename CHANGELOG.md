@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (as much as possible for something that is a collection of system
 configurations).
 
+## [0.7.1] - 2026-07-22
+
+### Changes
+
+- feat: update authentik 2026.5.5 -> 2026.5.6
+- feat: linkwarden increase file upload limits
+- feat: linkwarden configure for leaner setup
+- feat: update linkwarden 2.14 -> 2.15.1
+
+
 ## [0.7.0] - 2026-07-17
 
 ### Changes
