@@ -108,10 +108,10 @@
 
     flake-file.inputs.authentik-nix = {
       # url = "github:MarcelCoding/authentik-nix/ak-update";
-      url = "github:nix-community/authentik-nix/version/2026.8.1";
+      url = "github:nix-community/authentik-nix/version/2026.8.4";
       # url = "github:jmartindf/authentik-nix/version/2026.2.3";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
+        # nixpkgs.follows = "nixpkgs";
         flake-parts.follows = "flake-parts";
         flake-compat.follows = "flake-compat";
         flake-utils.follows = "flake-utils";

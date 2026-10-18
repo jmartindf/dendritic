@@ -44,10 +44,9 @@
         flake-compat.follows = "flake-compat";
         flake-parts.follows = "flake-parts";
         flake-utils.follows = "flake-utils";
-        nixpkgs.follows = "nixpkgs";
         systems.follows = "systems";
       };
-      url = "github:nix-community/authentik-nix/version/2026.8.1";
+      url = "github:nix-community/authentik-nix/version/2026.8.4";
     };
     bun2nix = {
       inputs = {
