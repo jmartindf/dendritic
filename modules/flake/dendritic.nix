@@ -25,7 +25,7 @@
     };
 
     flake-file.inputs = {
-      den.url = "github:vic/den/v0.8.0";
+      den.url = "github:denful/den/v0.20.0";
 
       dendrix = {
         url = "github:vic/dendrix";

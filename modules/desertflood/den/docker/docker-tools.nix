@@ -7,8 +7,8 @@
   ...
 }:
 let
-  osContext = den.lib.take.exactly (
-    { OS, host }:
+  osContext =
+    { host }:
     {
       ${host.class} =
         { pkgs, ... }:
@@ -17,16 +17,20 @@ let
             pkgs.lazydocker
           ];
         };
-    }
-  );
+    };
 in
 {
-  df.cli._.tools._.docker = den.lib.parametric {
+  df.cli._.tools._.docker = {
     description = "Tools for managing Docker, Docker Compose, and containers.";
 
-    includes = [ osContext ];
+    includes = [
+      osContext
+      df.cli._.tools._.docker._.lazydocker
+    ];
 
-    homeManager.config.programs.lazydocker =
+    # Home side only, for users: a { host } aspect included from a user
+    # aspect would also add lazydocker to the host's packages (den#694).
+    provides.lazydocker.homeManager.config.programs.lazydocker =
       builtins.traceVerbose "df.cli._.tools._.docker homeManager active"
         {
           enable = true;

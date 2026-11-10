@@ -45,7 +45,7 @@ let
   };
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         {
@@ -58,7 +58,7 @@ let
           dfCfg = config.desertflood;
         in
         {
-          # builtins.break, to inspect `OS` and `host` in the REPL
+          # builtins.break, to inspect `host` in the REPL
           imports = [
             inputs.self.modules.nixos.nixos # While migrating to Den from plain Dendritic
             inputs.self.modules.nixos.agenix
@@ -256,7 +256,6 @@ let
 
   homeContext =
     {
-      HM,
       user,
       host,
       ...
@@ -305,10 +304,13 @@ let
   description = "Common to all machines and homes";
 in
 {
-  df.base = den.lib.parametric {
+  # Host-only: den.default is walked at the host and at each user, so a
+  # { host } aspect there would apply once per user too.
+  den.schema.host.includes = [ osContext ];
+
+  df.base = {
     inherit description;
     includes = [
-      (den.lib.take.exactly osContext)
       homeContext
       df.cli
     ];

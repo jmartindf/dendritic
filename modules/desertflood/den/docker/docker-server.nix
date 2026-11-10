@@ -8,8 +8,8 @@
 let
   flakeCfg = config;
 
-  dockerServerAspect = den.lib.take.exactly (
-    { OS, host }:
+  dockerServerAspect =
+    { host }:
     {
       nixos =
         if host.capabilities.docker-server then
@@ -34,15 +34,14 @@ let
 
       darwin = { };
       homeManager = { };
-    }
-  );
+    };
 in
 {
-  den.base.conf = {
+  den.schema.conf = {
     options.capabilities.docker-server = lib.mkEnableOption "Does host provide docker containers?";
   };
 
-  df.docker-server = den.lib.parametric {
+  df.docker-server = {
     includes = [
       # create the `dockeras` system user and home-manager config
       df.dockeras

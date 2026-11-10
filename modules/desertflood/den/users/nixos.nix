@@ -16,7 +16,7 @@ in
     let
       username = "nixos";
     in
-    den.lib.parametric {
+    {
       description = "A trusted admin user, instead of always using root";
 
       nixos =

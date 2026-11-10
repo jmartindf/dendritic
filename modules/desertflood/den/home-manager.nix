@@ -6,8 +6,8 @@
   ...
 }:
 let
-  osContext = den.lib.take.exactly (
-    { OS, host }:
+  osContext =
+    { host }:
     {
       ${host.class} = {
         config = {
@@ -19,12 +19,10 @@ let
           };
         };
       };
-    }
-  );
+    };
 
-  homeContext = den.lib.take.exactly (
+  homeContext =
     {
-      HM,
       host,
       user,
     }:
@@ -33,8 +31,7 @@ let
         # Let Home Manager install and manage itself.
         programs.home-manager.enable = true;
       };
-    }
-  );
+    };
 in
 {
 
@@ -42,10 +39,8 @@ in
 
   config = {
 
-    df.base.includes = [
-      osContext
-      homeContext
-    ];
+    den.schema.host.includes = [ osContext ];
+    df.base.includes = [ homeContext ];
 
     flake-file.inputs.home-manager = {
       url = "github:nix-community/home-manager/release-26.05";

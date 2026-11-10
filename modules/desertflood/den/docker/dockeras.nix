@@ -1,55 +1,9 @@
-{ den, df, ... }:
+{ df, ... }:
 let
   username = "dockeras";
 
-  homeManager =
-    { HM-OS-HOST }:
-    let
-      inherit (HM-OS-HOST) OS host;
-      hmClass = "homeManager";
-
-      hmUserModule =
-        let
-          HM = den.aspects.${username};
-
-          user = {
-            aspect = username;
-            class = hmClass;
-            name = username;
-            userName = username;
-          };
-
-          aspect = HM {
-            HM-OS-USER = {
-              inherit
-                OS
-                HM
-                host
-                user
-                ;
-            };
-          };
-
-          module = aspect.resolve { class = hmClass; };
-        in
-        module;
-
-      aspect.${host.class} =
-        if host.capabilities.docker-server then
-          {
-            home-manager.users.${username} = {
-              imports = [
-                hmUserModule
-              ];
-            };
-          }
-        else
-          { };
-    in
-    aspect;
-
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         if host.capabilities.docker-server then
@@ -74,20 +28,28 @@ let
   description = "A user empowered to manage and control docker";
 in
 {
-  den.aspects.${username} = den.lib.parametric.atLeast {
+  # Every docker-server host gets the dockeras user, with Home Manager.
+  den.schema.host.imports = [
+    (
+      { config, lib, ... }:
+      {
+        users = lib.mkIf config.capabilities.docker-server { ${username} = { }; };
+      }
+    )
+  ];
+
+  den.aspects.${username} = {
     homeManager = { };
     includes = builtins.traceVerbose "den.aspects.${username} active" [
-      den.default
-      df.cli._.tools._.docker # Useful tools such as lazydocker
+      df.cli._.tools._.docker._.lazydocker # Useful tools such as lazydocker
     ];
   };
 
-  df.${username} = den.lib.parametric {
+  df.${username} = {
     inherit description;
 
     includes = [
-      (den.lib.take.exactly osContext)
-      (den.lib.take.exactly homeManager)
+      osContext
     ];
   };
 }

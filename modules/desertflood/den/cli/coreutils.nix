@@ -11,8 +11,8 @@ let
     pkgs.ntfy-sh # Push notifications made easy
   ];
 
-  osContext = den.lib.take.exactly (
-    { OS, host }:
+  osContext =
+    { host }:
     {
       ${host.class} = builtins.traceVerbose "coreutils.${host.class} active" (
         { pkgs, ... }:
@@ -20,12 +20,12 @@ let
           config.environment.systemPackages = sysPackages pkgs;
         }
       );
-    }
-  );
+    };
 in
 {
+  den.schema.host.includes = [ osContext ];
+
   df.cli.includes = [
-    osContext
     {
       homeManager =
         {

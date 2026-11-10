@@ -15,7 +15,7 @@ let
     '';
 
   osContext =
-    { OS, host }:
+    { host }:
     {
       nixos =
         {
@@ -71,7 +71,6 @@ let
 
   homeContext =
     {
-      HM,
       host,
       user,
       ...
@@ -98,8 +97,6 @@ let
     };
 in
 {
-  df.cli.includes = [
-    (den.lib.take.exactly osContext)
-    homeContext
-  ];
+  den.schema.host.includes = [ osContext ];
+  df.cli.includes = [ homeContext ];
 }

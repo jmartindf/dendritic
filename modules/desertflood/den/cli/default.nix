@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  df.cli = den.lib.parametric {
+  df.cli = {
     description = "Everything related to the command line and TUIs";
 
     nixos = { };
