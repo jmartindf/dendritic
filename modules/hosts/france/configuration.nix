@@ -24,15 +24,12 @@ in
 
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS webapp host";
-    users.nixos = { };
+    capabilities.server.enable = true;
   };
 
   den.aspects = {
 
     ${hostInfo.hostName} = {
-      includes = [
-        df.base-server
-      ];
 
       nixos =
         {

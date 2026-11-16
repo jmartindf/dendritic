@@ -1,15 +1,38 @@
 {
   config,
+  df,
   inputs,
   lib,
   ...
 }:
 let
   flakeCfg = config;
-  defaultUser = flakeCfg.desertflood.users.users.joe;
 in
 {
-  df.base-server = {
+  den.schema.conf = {
+    options.capabilities.server.enable = lib.mkEnableOption "Is host a server of any kind?";
+  };
+
+  den.schema.host.imports = [
+    (
+      { config, lib, ... }:
+      {
+        # Every server host gets the admin user
+        users = lib.mkIf config.capabilities.server.enable {
+          ${config.globals.adminAspect} = {
+            userName = config.globals.adminUsername;
+          };
+        };
+
+        # Every server host automatically includes the server aspect
+        includes = lib.mkIf config.capabilities.server.enable [
+          df.server
+        ];
+      }
+    )
+  ];
+
+  df.server = { host, ... }: {
     description = "Common to all headless servers";
 
     nixos =
@@ -22,7 +45,7 @@ in
         nixOScfg = config;
       in
       {
-        imports = builtins.traceVerbose "df.base-server.nixos active" [
+        imports = builtins.traceVerbose "df.server.nixos active" [
           inputs.self.modules.nixos.alloy
           inputs.self.modules.nixos.crowdsec
           inputs.self.modules.nixos.services
@@ -69,7 +92,7 @@ in
 
           # symlink the Nix configuration, if it exists
           systemd.tmpfiles.rules = [
-            "L? /etc/nixos/flake.nix  -  -  -  -  /home/nixos/dendritic/flake.nix"
+            "L? /etc/nixos/flake.nix  -  -  -  -  /home/${host.globals.adminUsername}/dendritic/flake.nix"
           ];
         };
       };

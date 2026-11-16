@@ -26,14 +26,13 @@ in
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "Nix OS homelab VM";
     capabilities.docker-server = true;
-    users.nixos = { };
+    capabilities.server.enable = true;
   };
 
   den.aspects = {
 
     ${hostInfo.hostName} = {
       includes = [
-        df.base-server
         df.docker-server
       ];
 

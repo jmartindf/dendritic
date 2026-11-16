@@ -2,6 +2,9 @@ _:
 let
   globals = {
 
+    adminUsername = "nixos";
+    adminAspect = "admin";
+
     tailscaleIPs = {
       everest = "100.79.239.108";
       firewalla = "100.125.134.86";
@@ -56,5 +59,7 @@ in
     config.desertflood.globals = globals;
 
   };
+
+  den.schema.conf.globals = globals;
 
 }
