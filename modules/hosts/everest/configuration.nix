@@ -25,16 +25,12 @@ in
 
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS PKI and security host";
-    capabilities.docker-server = true;
-    capabilities.server.enable = true;
+    capabilities.server.docker = true;
   };
 
   den.aspects = {
 
     ${hostInfo.hostName} = {
-      includes = [
-        df.docker-server
-      ];
 
       nixos =
         { config, pkgs, ... }:

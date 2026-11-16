@@ -25,50 +25,42 @@ in
 
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "Nix OS remote builder";
-    capabilities.docker-server = true;
-    capabilities.server.enable = true;
+    capabilities.server.docker = true;
   };
 
-  den.aspects = {
+  den.aspects.${hostInfo.hostName} = {
 
-    ${hostInfo.hostName} = {
-      includes = [
-        df.docker-server
-      ];
+    nixos =
+      { ... }:
+      {
+        imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
+          inputs.self.modules.nixos.remote-builder
+          inputs.self.modules.nixos.proxmox-lxc
+        ];
 
-      nixos =
-        { ... }:
-        {
-          imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
-            inputs.self.modules.nixos.remote-builder
-            inputs.self.modules.nixos.proxmox-lxc
-          ];
+        desertflood = {
+          inherit defaultUser hostInfo;
+          step-ca.certs.${hostInfo.hostName}.availableTo = { };
+        };
 
-          desertflood = {
-            inherit defaultUser hostInfo;
-            step-ca.certs.${hostInfo.hostName}.availableTo = { };
+        networking = {
+          inherit (hostInfo) hostName domain;
+        };
+        age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
+
+        users.users = {
+
+          root = {
+            openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
           };
 
-          networking = {
-            inherit (hostInfo) hostName domain;
-          };
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
-
-          users.users = {
-
-            root = {
-              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-            };
-
-            builder = {
-              openssh.authorizedKeys.keys = [ flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey ];
-            };
-
+          builder = {
+            openssh.authorizedKeys.keys = [ flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey ];
           };
 
         };
-    };
 
+      };
   };
 
 }

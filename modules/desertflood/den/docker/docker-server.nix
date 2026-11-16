@@ -1,5 +1,4 @@
 {
-  den,
   df,
   config,
   lib,
@@ -7,49 +6,48 @@
 }:
 let
   flakeCfg = config;
-
-  dockerServerAspect =
-    { host }:
-    {
-      nixos =
-        if host.capabilities.docker-server then
-          { pkgs, ... }:
-          builtins.traceVerbose "df.docker-server active" {
-            environment.systemPackages = [
-              pkgs.docker-color-output
-              pkgs.docker_29
-              pkgs.local.vackup
-            ];
-
-            virtualisation.docker = {
-              enable = true;
-              package = pkgs.docker_29;
-              logDriver = "journald";
-              storageDriver = "overlay2";
-              enableOnBoot = true;
-            };
-          }
-        else
-          builtins.traceVerbose "*not* df.docker-server active" { };
-
-      darwin = { };
-      homeManager = { };
-    };
 in
 {
   den.schema.conf = {
-    options.capabilities.docker-server = lib.mkEnableOption "Does host provide docker containers?";
+    options.capabilities.server.docker = lib.mkEnableOption "Does host provide docker containers?";
   };
 
+  den.schema.host.imports = [
+    (
+      { config, lib, ... }:
+      {
+        # Every docker server host is automatically a base server host, unless specified otherwise
+        capabilities.server.enable = lib.mkDefault config.capabilities.server.docker;
+
+        # Every docker host automatically includes the docker-server aspect
+        includes = lib.mkIf config.capabilities.server.docker [
+          df.docker-server
+        ];
+      }
+    )
+  ];
+
   df.docker-server = {
-    includes = [
-      # create the `dockeras` system user and home-manager config
-      df.dockeras
-      # configure the server itself
-      dockerServerAspect
-    ];
 
     description = "Manage and run containers through Docker";
+
+    nixos =
+      { pkgs, ... }:
+      builtins.traceVerbose "df.docker-server active" {
+        environment.systemPackages = [
+          pkgs.docker-color-output
+          pkgs.docker_29
+          pkgs.local.vackup
+        ];
+
+        virtualisation.docker = {
+          enable = true;
+          package = pkgs.docker_29;
+          logDriver = "journald";
+          storageDriver = "overlay2";
+          enableOnBoot = true;
+        };
+      };
   };
 
   flake.modules.nixos.docker-server =
