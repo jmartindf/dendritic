@@ -8,12 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 configurations).
 
 
+## [0.7.7] - 2026-11-16
+
+### Changes
+
+- feat(lubelogger): disable local logins
+- feat(authentik): 2026.8.4 -> 2026.8.5
+
+
 ## [0.7.6] - 2026-10-17
+
+### Changes
 
 - feat(authentik): 2026.8.1 -> 2026.8.4
 
-
-### Changes
 
 ## [0.7.5] - 2026-10-17
 
