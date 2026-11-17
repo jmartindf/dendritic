@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 configurations).
 
 
+## [0.7.8] - 2026-11-16
+
+### Refactoring
+
+- compat: migrate from Den 0.8 -> 0.20
+- refactor(base-server): clean up the aspect and the admin user creation
+- refactor(docker-server): clean up the aspect and the admin user creation
+
+
 ## [0.7.7] - 2026-11-16
 
 ### Changes
