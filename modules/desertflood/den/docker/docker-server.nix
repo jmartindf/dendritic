@@ -49,27 +49,4 @@ in
         };
       };
   };
-
-  flake.modules.nixos.docker-server =
-    { pkgs, ... }:
-    {
-      imports = [
-        flakeCfg.flake.modules.nixos.dockeras
-        flakeCfg.flake.modules.nixos.docker-tools
-      ];
-
-      environment.systemPackages = builtins.traceVerbose "df.docker-server active" [
-        pkgs.docker-color-output
-        pkgs.docker_29
-        pkgs.local.vackup
-      ];
-
-      virtualisation.docker = {
-        enable = true;
-        package = pkgs.docker_29;
-        logDriver = "journald";
-        storageDriver = "overlay2";
-        enableOnBoot = true;
-      };
-    };
 }

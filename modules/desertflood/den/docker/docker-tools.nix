@@ -44,13 +44,4 @@ in
           ];
         };
   };
-
-  flake.modules.nixos.docker-tools =
-    { pkgs, ... }:
-    {
-      config.environment.systemPackages = [
-        pkgs.lazydocker
-      ];
-    };
-
 }
