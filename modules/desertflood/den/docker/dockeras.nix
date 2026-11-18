@@ -12,7 +12,7 @@ in
     )
   ];
 
-  df.docker-server = { host, ... }: {
+  df.docker-server = {
     nixos =
       { config, ... }:
       let
