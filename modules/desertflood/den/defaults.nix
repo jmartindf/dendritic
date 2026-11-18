@@ -1,4 +1,9 @@
-{ den, df, lib, ... }:
+{
+  den,
+  df,
+  lib,
+  ...
+}:
 let
   myTimezone = "America/Phoenix";
   myLocale = "en_US.UTF-8";
@@ -14,9 +19,9 @@ in
 
     includes = [
       # define users at OS and Home levels.
-      den._.define-user
+      den.batteries.define-user
       # enable specific unfree packages
-      (den._.unfree [
+      (den.batteries.unfree [
         "1password-cli"
         "sftpgo"
       ])
