@@ -1,7 +1,6 @@
 #  nix build .#.nixosConfigurations.richard.config.system.build.isoImage
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#richard
 {
-  den,
   df,
   config,
   inputs,
@@ -30,11 +29,18 @@ in
 
   den.aspects.${hostInfo.hostName} = {
 
+    includes = [
+      df.remote-builder
+    ];
+
+    builder-clients = { host, ... }: {
+      key = flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey;
+    };
+
     nixos =
       { ... }:
       {
         imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
-          inputs.self.modules.nixos.remote-builder
           inputs.self.modules.nixos.proxmox-lxc
         ];
 
@@ -48,18 +54,7 @@ in
         };
         age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
 
-        users.users = {
-
-          root = {
-            openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-          };
-
-          builder = {
-            openssh.authorizedKeys.keys = [ flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey ];
-          };
-
-        };
-
+        users.users.root.openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
       };
   };
 
