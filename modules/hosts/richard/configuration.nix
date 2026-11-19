@@ -31,6 +31,7 @@ in
 
     includes = [
       df.remote-builder
+      df.machines.proxmox-lxc
     ];
 
     builder-clients = { host, ... }: {
@@ -41,7 +42,6 @@ in
       { ... }:
       {
         imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
-          inputs.self.modules.nixos.proxmox-lxc
         ];
 
         desertflood = {
