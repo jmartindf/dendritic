@@ -30,6 +30,9 @@ in
   df.docker-server = {
 
     description = "Manage and run containers through Docker";
+    includes = [
+      df.cli.tools.docker # Useful tools such as lazydocker
+    ];
 
     nixos =
       { pkgs, ... }:

@@ -36,11 +36,7 @@ in
 
   df.${username} = {
     description = "A user empowered to manage and control docker";
-
-    homeManager = { };
-
-    includes = builtins.traceVerbose "den.aspects.${username} active" [
-      df.cli._.tools._.docker._.lazydocker # Useful tools such as lazydocker
-    ];
+    includes = [ df.cli.tools.docker ];
+    homeManager = { }; # Maybe include certain Docker hubs / repositories?
   };
 }
