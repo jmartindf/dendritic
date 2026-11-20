@@ -26,6 +26,7 @@ in
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS PKI and security host";
     capabilities.server.docker = true;
+    inherit (hostInfo) domain live remote;
   };
 
   den.aspects = {
@@ -33,11 +34,16 @@ in
     ${hostInfo.hostName} = {
 
       nixos =
-        { config, pkgs, ... }:
+        {
+          host,
+          config,
+          pkgs,
+          ...
+        }:
         let
           nixOScfg = config;
           svcConfig = nixOScfg.services;
-          inherit (hostInfo) hostName;
+          inherit (host) hostName;
           inherit (nixOScfg.desertflood.networking) webHost tailscaleDomain;
         in
         {
@@ -120,7 +126,7 @@ in
           };
 
           networking = {
-            inherit (hostInfo) hostName domain;
+            inherit (host) hostName domain;
 
             enableIPv6 = true;
 

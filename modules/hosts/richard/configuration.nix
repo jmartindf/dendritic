@@ -19,6 +19,7 @@ in
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "Nix OS remote builder";
     capabilities.server.docker = true;
+    inherit (hostInfo) domain live remote;
   };
 
   den.aspects.${hostInfo.hostName} = {
@@ -43,11 +44,11 @@ in
 
         desertflood = {
           inherit defaultUser hostInfo;
-          step-ca.certs.${hostInfo.hostName}.availableTo = { };
+          step-ca.certs.${host.hostName}.availableTo = { };
         };
 
         networking = {
-          inherit (hostInfo) hostName domain;
+          inherit (host) hostName domain;
         };
         age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
 

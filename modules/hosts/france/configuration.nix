@@ -25,6 +25,7 @@ in
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "NixOS webapp host";
     capabilities.server.enable = true;
+    inherit (hostInfo) domain live remote;
   };
 
   den.aspects = {
@@ -33,6 +34,7 @@ in
 
       nixos =
         {
+          host,
           config,
           lib,
           pkgs,
@@ -40,7 +42,7 @@ in
         }:
         let
           nixOScfg = config;
-          inherit (hostInfo) hostName;
+          inherit (host) hostName;
           inherit (nixOScfg.desertflood.networking) tailscaleDomain;
         in
         {
@@ -228,7 +230,7 @@ in
           };
 
           networking = {
-            inherit (hostInfo) hostName domain;
+            inherit (host) hostName domain;
 
             enableIPv6 = true;
 

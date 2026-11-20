@@ -26,6 +26,7 @@ in
   den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
     description = "Nix OS homelab VM";
     capabilities.server.docker = true;
+    inherit (hostInfo) domain live remote;
   };
 
   den.aspects = {
@@ -33,11 +34,16 @@ in
     ${hostInfo.hostName} = {
 
       nixos =
-        { config, pkgs, ... }:
+        {
+          host,
+          config,
+          pkgs,
+          ...
+        }:
         let
           nixOScfg = config;
           svcConfig = nixOScfg.services;
-          inherit (hostInfo) hostName;
+          inherit (host) hostName;
           inherit (nixOScfg.desertflood.networking) webHost;
         in
         {
@@ -59,7 +65,7 @@ in
           };
 
           networking = {
-            inherit (hostInfo) hostName domain;
+            inherit (host) hostName domain;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
