@@ -1,15 +1,16 @@
-{ config, lib, ... }:
-let
-  flakeCfg = config;
-in
-{
-  flake.modules.nixos.alloy =
-    { config, ... }:
+_: {
+  df.services.alloy.nixos =
+    {
+      prometheus,
+      config,
+      lib,
+      ...
+    }:
     let
       cfg = config;
       dfCfg = cfg.desertflood;
-      alloyCfg = cfg.desertflood.services.prometheus.alloy;
-      inherit (cfg.desertflood.hostInfo) hostName;
+      alloyCfg = dfCfg.services.prometheus.alloy;
+      inherit (dfCfg.hostInfo) hostName;
       ipAddress = dfCfg.globals.tailscaleIPs.${hostName};
     in
     {
@@ -203,7 +204,7 @@ in
 
                   prometheus.remote_write "default" {
                   	endpoint {
-                  		url = "${alloyCfg.prometheus_endpoint}"
+                  		url = "${builtins.head (lib.concatMap (p: p.endpoints or [ ]) prometheus)}"
                   	}
                   }
 

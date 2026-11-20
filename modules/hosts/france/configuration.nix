@@ -32,6 +32,10 @@ in
 
     ${hostInfo.hostName} = {
 
+      includes = [
+        df.services.prometheus
+      ];
+
       nixos =
         {
           host,
@@ -48,7 +52,6 @@ in
         {
           imports = [
             inputs.self.modules.nixos.grafana
-            inputs.self.modules.nixos.prometheus
             inputs.self.modules.nixos.hetzner-cloud
             { config.facter.reportPath = ./facter.json; }
           ];

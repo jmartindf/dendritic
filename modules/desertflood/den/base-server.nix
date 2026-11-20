@@ -35,6 +35,8 @@ in
   df.server = { host, ... }: {
     description = "Common to all headless servers";
 
+    includes = [ df.services.alloy ];
+
     nixos =
       {
         config,
@@ -46,7 +48,6 @@ in
       in
       {
         imports = builtins.traceVerbose "df.server.nixos active" [
-          inputs.self.modules.nixos.alloy
           inputs.self.modules.nixos.crowdsec
           inputs.self.modules.nixos.services
           inputs.self.modules.nixos.smallstep
