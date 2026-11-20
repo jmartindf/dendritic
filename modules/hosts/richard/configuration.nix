@@ -2,13 +2,9 @@
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#richard
 {
   df,
-  config,
-  inputs,
   ...
 }:
 let
-  defaultUser = config.desertflood.users.users.joe;
-
   hostInfo = {
     hostName = "richard";
     domain = "home.thosemartins.family";
@@ -16,8 +12,6 @@ let
     remote = false;
     system = "x86_64-linux";
   };
-
-  flakeCfg = config;
 in
 {
   desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
@@ -35,11 +29,14 @@ in
     ];
 
     builder-clients = { host, ... }: {
-      key = flakeCfg.desertflood.builderKeys.builderKeys.psyche.publicKey;
+      key = host.desertflood.builderKeys.builderKeys.psyche.publicKey;
     };
 
     nixos =
-      { ... }:
+      { host, ... }:
+      let
+        defaultUser = host.desertflood.users.users.joe;
+      in
       {
         imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
         ];

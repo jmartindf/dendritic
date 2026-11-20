@@ -170,66 +170,73 @@ let
       description = "Basic facts about this host, for flake-parts modules";
     };
   };
+
+  users = {
+    users = lib.mkOption {
+      type = types.attrsOf (types.submodule userMeta);
+      default = { };
+      description = "Details of user accounts that can be shared across hosts.";
+    };
+  };
+
+  hosts = {
+    hosts = lib.mkOption {
+      type = types.attrsOf (types.submodule hostMeta);
+      default = { };
+      description = "Details of the various hosts that can be created.";
+    };
+  };
+
+  builderKeys = {
+    builderKeys = lib.mkOption {
+      type = types.attrsOf (types.submodule publicKeys);
+      default = { };
+      description = "Available machines that may want to use a remote Nix builder";
+    };
+  };
+
+  secrets = lib.mkOption {
+    type = types.attrsOf types.anything;
+    default = { };
+    description = "Secrets to use in age";
+  };
+
+  step-ca = {
+    provisioner = lib.mkOption {
+      type = types.str;
+      description = "Which provisioner to use for creating certificates";
+    };
+
+    url = lib.mkOption {
+      type = types.str;
+      description = "What is the URL for the smallstep ca";
+    };
+
+    fingerprint = lib.mkOption {
+      type = types.str;
+      description = "The fingerprint of the smallstep ca’s root certificate";
+    };
+
+    rootCert = lib.mkOption {
+      type = types.attrsOf types.anything;
+      default = { };
+      description = "The necessary info to get the root certificate using `fetchurl`";
+    };
+  };
 in
 {
   options.desertflood = {
 
     globals = globalAttrSet;
 
-    users = {
-      users = lib.mkOption {
-        type = types.attrsOf (types.submodule userMeta);
-        default = { };
-        description = "Details of user accounts that can be shared across hosts.";
-      };
-    };
-
-    hosts = {
-      hosts = lib.mkOption {
-        type = types.attrsOf (types.submodule hostMeta);
-        default = { };
-        description = "Details of the various hosts that can be created.";
-      };
-    };
-
     inherit (dfOptions) defaultUser networking;
-
-    builderKeys = {
-      builderKeys = lib.mkOption {
-        type = types.attrsOf (types.submodule publicKeys);
-        default = { };
-        description = "Available machines that may want to use a remote Nix builder";
-      };
-    };
-
-    secrets = lib.mkOption {
-      type = types.attrsOf types.anything;
-      default = { };
-      description = "Secrets to use in age";
-    };
-
-    step-ca = {
-      provisioner = lib.mkOption {
-        type = types.str;
-        description = "Which provisioner to use for creating certificates";
-      };
-
-      url = lib.mkOption {
-        type = types.str;
-        description = "What is the URL for the smallstep ca";
-      };
-
-      fingerprint = lib.mkOption {
-        type = types.str;
-        description = "The fingerprint of the smallstep ca’s root certificate";
-      };
-
-      rootCert = lib.mkOption {
-        type = types.attrsOf types.anything;
-        default = { };
-        description = "The necessary info to get the root certificate using `fetchurl`";
-      };
-    };
+    inherit
+      users
+      hosts
+      builderKeys
+      secrets
+      step-ca
+      ;
   };
 
   config = {
@@ -260,6 +267,33 @@ in
         };
 
       };
+
+    den.schema.conf = { config, ... }: {
+      options.desertflood = {
+
+        globals = globalAttrSet;
+        inherit (dfOptions) defaultUser hostInfo;
+        inherit
+          users
+          hosts
+          builderKeys
+          secrets
+          step-ca
+          ;
+
+        networking = {
+          inherit (dfOptions.networking)
+            webDomain
+            webHost
+            tailscaleDomain
+            FQDN
+            tsFQDN
+            extraFQDNs
+            ;
+          services = dfOptions.networking.services config;
+        };
+      };
+    };
 
     flake.modules.darwin.darwin = {
 

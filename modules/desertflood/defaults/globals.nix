@@ -60,6 +60,5 @@ in
 
   };
 
-  den.schema.conf.globals = globals;
-
+  den.schema.conf.desertflood.globals = globals;
 }

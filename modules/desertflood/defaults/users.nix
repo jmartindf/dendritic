@@ -12,26 +12,50 @@ let
   flakeCfg = config;
 in
 {
-  config.desertflood = {
+  config = {
+    den.schema.conf.desertflood = {
+      defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
 
-    defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
+      users.users = {
 
-    users.users = {
+        joe = {
+          fullName = mkDefault "Joe Martin";
 
-      joe = {
-        fullName = mkDefault "Joe Martin";
+          emails = mkDefault {
+            family.email = "joe@thosemartins.family";
+            thosemartins.email = "joe@thosemartins.net";
+            desertflood.email = "joe@desertflood.com";
+          };
 
-        emails = mkDefault {
-          family.email = "joe@thosemartins.family";
-          thosemartins.email = "joe@thosemartins.net";
-          desertflood.email = "joe@desertflood.com";
+          authorizedKeys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
+          ];
         };
 
-        authorizedKeys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
-        ];
       };
+    };
 
+    desertflood = {
+
+      defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
+
+      users.users = {
+
+        joe = {
+          fullName = mkDefault "Joe Martin";
+
+          emails = mkDefault {
+            family.email = "joe@thosemartins.family";
+            thosemartins.email = "joe@thosemartins.net";
+            desertflood.email = "joe@desertflood.com";
+          };
+
+          authorizedKeys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
+          ];
+        };
+
+      };
     };
   };
 }

@@ -1,5 +1,10 @@
-_: {
-  desertflood.builderKeys.builderKeys = {
+_:
+let
+  builderKeys = {
     psyche.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEkx1va9u4AsbUJl0Oc12wVu3Jn0JkuVFSZdfXRXdqQ root@psyche";
   };
+in
+{
+  desertflood.builderKeys = { inherit builderKeys; };
+  den.schema.conf.desertflood.builderKeys = { inherit builderKeys; };
 }

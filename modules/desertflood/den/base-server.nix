@@ -19,8 +19,8 @@ in
       {
         # Every server host gets the admin user
         users = lib.mkIf config.capabilities.server.enable {
-          ${config.globals.adminAspect} = {
-            userName = config.globals.adminUsername;
+          ${config.desertflood.globals.adminAspect} = {
+            userName = config.desertflood.globals.adminUsername;
           };
         };
 
@@ -92,7 +92,7 @@ in
 
           # symlink the Nix configuration, if it exists
           systemd.tmpfiles.rules = [
-            "L? /etc/nixos/flake.nix  -  -  -  -  /home/${host.globals.adminUsername}/dendritic/flake.nix"
+            "L? /etc/nixos/flake.nix  -  -  -  -  /home/${host.desertflood.globals.adminUsername}/dendritic/flake.nix"
           ];
         };
       };
