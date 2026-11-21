@@ -1,10 +1,7 @@
 #  nix build .#.nixosConfigurations.everest.config.system.build.isoImage
 {
-  den,
   df,
   config,
-  inputs,
-  lib,
   ...
 }:
 let
@@ -17,8 +14,6 @@ let
     remote = true;
     system = "x86_64-linux";
   };
-
-  mTLS-required = false;
 in
 {
   desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
@@ -35,25 +30,22 @@ in
 
       includes = [
         df.machines.hetzner-cloud
+        df.services.step-ca
       ];
 
       nixos =
         {
           host,
           config,
-          pkgs,
           ...
         }:
         let
           nixOScfg = config;
-          svcConfig = nixOScfg.services;
           inherit (host) hostName;
-          inherit (nixOScfg.desertflood.networking) webHost tailscaleDomain;
         in
         {
           imports = [
             { config.facter.reportPath = ./facter.json; }
-            inputs.self.modules.nixos.step-ca
           ];
 
           desertflood = {
