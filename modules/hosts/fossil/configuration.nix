@@ -1,10 +1,8 @@
 #  nix build .#.nixosConfigurations.fossil.config.system.build.isoImage
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#fossil
 {
-  den,
   df,
   config,
-  inputs,
   ...
 }:
 let
@@ -17,8 +15,6 @@ let
     remote = false;
     system = "x86_64-linux";
   };
-
-  mTLS-required = false;
 in
 {
   desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
@@ -33,24 +29,17 @@ in
 
     ${hostInfo.hostName} = {
 
+      includes = [ df.machines.qemu-guest ];
+
       nixos =
         {
           host,
-          config,
-          pkgs,
           ...
         }:
         let
-          nixOScfg = config;
-          svcConfig = nixOScfg.services;
           inherit (host) hostName;
-          inherit (nixOScfg.desertflood.networking) webHost;
         in
         {
-          imports = [
-            inputs.self.modules.nixos.qemu-guest
-          ];
-
           desertflood = {
             inherit defaultUser hostInfo;
 

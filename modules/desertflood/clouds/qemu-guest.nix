@@ -1,81 +1,78 @@
 { inputs, ... }:
 {
-  config = {
+  df.machines.qemu-guest.nixos =
+    {
+      lib,
+      modulesPath,
+      pkgs,
+      ...
+    }:
+    {
 
-    flake.modules.nixos.qemu-guest =
-      {
-        lib,
-        modulesPath,
-        pkgs,
-        ...
-      }:
-      {
+      imports = [
+        inputs.disko.nixosModules.disko
+        inputs.nixos-facter-modules.nixosModules.facter
+        (modulesPath + "/installer/scan/not-detected.nix")
+        (modulesPath + "/profiles/qemu-guest.nix")
+      ];
 
-        imports = [
-          inputs.disko.nixosModules.disko
-          inputs.nixos-facter-modules.nixosModules.facter
-          (modulesPath + "/installer/scan/not-detected.nix")
-          (modulesPath + "/profiles/qemu-guest.nix")
-        ];
+      config = {
+        services.qemuGuest.enable = true;
+        services.qemuGuest.package = pkgs.qemu_kvm.ga;
 
-        config = {
-          services.qemuGuest.enable = true;
-          services.qemuGuest.package = pkgs.qemu_kvm.ga;
+        boot.loader.grub = {
+          # no need to set devices, disko will add all devices that have a EF02 partition to the list already
+          # devices = [ ];
+          efiSupport = true;
+          efiInstallAsRemovable = true;
+        };
 
-          boot.loader.grub = {
-            # no need to set devices, disko will add all devices that have a EF02 partition to the list already
-            # devices = [ ];
-            efiSupport = true;
-            efiInstallAsRemovable = true;
-          };
-
-          disko.devices = {
-            disk.disk1 = {
-              device = lib.mkDefault "/dev/sda";
-              type = "disk";
-              content = {
-                type = "gpt";
-                partitions = {
-                  boot = {
-                    name = "boot";
-                    size = "1M";
-                    type = "EF02";
+        disko.devices = {
+          disk.disk1 = {
+            device = lib.mkDefault "/dev/sda";
+            type = "disk";
+            content = {
+              type = "gpt";
+              partitions = {
+                boot = {
+                  name = "boot";
+                  size = "1M";
+                  type = "EF02";
+                };
+                esp = {
+                  name = "ESP";
+                  size = "500M";
+                  type = "EF00";
+                  content = {
+                    type = "filesystem";
+                    format = "vfat";
+                    mountpoint = "/boot";
                   };
-                  esp = {
-                    name = "ESP";
-                    size = "500M";
-                    type = "EF00";
-                    content = {
-                      type = "filesystem";
-                      format = "vfat";
-                      mountpoint = "/boot";
-                    };
-                  };
-                  root = {
-                    name = "root";
-                    size = "100%";
-                    content = {
-                      type = "lvm_pv";
-                      vg = "pool";
-                    };
+                };
+                root = {
+                  name = "root";
+                  size = "100%";
+                  content = {
+                    type = "lvm_pv";
+                    vg = "pool";
                   };
                 };
               };
             };
-            lvm_vg = {
-              pool = {
-                type = "lvm_vg";
-                lvs = {
-                  root = {
-                    size = "100%FREE";
-                    content = {
-                      type = "filesystem";
-                      format = "ext4";
-                      mountpoint = "/";
-                      mountOptions = [
-                        "defaults"
-                      ];
-                    };
+          };
+          lvm_vg = {
+            pool = {
+              type = "lvm_vg";
+              lvs = {
+                root = {
+                  size = "100%FREE";
+                  content = {
+                    type = "filesystem";
+                    format = "ext4";
+                    mountpoint = "/";
+                    mountOptions = [
+                      "defaults"
+                    ];
                   };
                 };
               };
@@ -83,5 +80,5 @@
           };
         };
       };
-  };
+    };
 }
