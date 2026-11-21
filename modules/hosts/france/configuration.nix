@@ -1,14 +1,9 @@
 #  nix build .#.nixosConfigurations.france.config.system.build.isoImage
 {
-  den,
   df,
-  config,
-  inputs,
   ...
 }:
 let
-  defaultUser = config.desertflood.users.users.joe;
-
   hostInfo = {
     hostName = "france";
     domain = "df.fyi";
@@ -71,7 +66,8 @@ in
           };
 
           desertflood = {
-            inherit defaultUser hostInfo;
+            inherit hostInfo;
+            inherit (host.desertflood) defaultUser;
 
             networking = {
               webDomain = "df.fyi";
@@ -275,15 +271,6 @@ in
           # };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKWvOZ3zQ5zitwbtU1iTa5FjG/47yGqGVoZ7jUg6ouku";
-
-          users.users = {
-
-            root = {
-              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-            };
-
-          };
-
         };
     };
   };

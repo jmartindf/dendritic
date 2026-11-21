@@ -2,12 +2,9 @@
 #  nix run github:nix-community/nixos-generators -- -f proxmox-lxc --system x86_64-linux --flake .#fossil
 {
   df,
-  config,
   ...
 }:
 let
-  defaultUser = config.desertflood.users.users.joe;
-
   hostInfo = {
     hostName = "fossil";
     domain = "home.thosemartins.family";
@@ -36,14 +33,12 @@ in
           host,
           ...
         }:
-        let
-          inherit (host) hostName;
-        in
         {
           desertflood = {
-            inherit defaultUser hostInfo;
+            inherit hostInfo;
+            inherit (host.desertflood) defaultUser;
 
-            step-ca.certs.${hostName}.availableTo = { };
+            step-ca.certs.${host.hostName}.availableTo = { };
 
             services = {
 
@@ -58,14 +53,6 @@ in
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
-
-          users.users = {
-
-            root = {
-              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-            };
-          };
-
         };
     };
   };

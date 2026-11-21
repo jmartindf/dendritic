@@ -35,15 +35,13 @@ in
 
     nixos =
       { host, ... }:
-      let
-        defaultUser = host.desertflood.users.users.joe;
-      in
       {
         imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
         ];
 
         desertflood = {
-          inherit defaultUser hostInfo;
+          inherit hostInfo;
+          inherit (host.desertflood) defaultUser;
           step-ca.certs.${host.hostName}.availableTo = { };
         };
 
@@ -51,8 +49,6 @@ in
           inherit (host) hostName domain;
         };
         age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
-
-        users.users.root.openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
       };
   };
 

@@ -3,59 +3,38 @@
 #
 {
   # Pre-configured user details
-  config,
   lib,
   ...
 }:
 let
   inherit (lib) mkDefault;
-  flakeCfg = config;
+
+  desertflood = rec {
+    defaultUser = lib.mkDefault users.users.joe;
+
+    users.users = {
+      joe = {
+        fullName = mkDefault "Joe Martin";
+
+        emails = mkDefault {
+          family.email = "joe@thosemartins.family";
+          thosemartins.email = "joe@thosemartins.net";
+          desertflood.email = "joe@desertflood.com";
+        };
+
+        authorizedKeys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
+        ];
+      };
+    };
+  };
 in
 {
   config = {
-    den.schema.conf.desertflood = {
-      defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
-
-      users.users = {
-
-        joe = {
-          fullName = mkDefault "Joe Martin";
-
-          emails = mkDefault {
-            family.email = "joe@thosemartins.family";
-            thosemartins.email = "joe@thosemartins.net";
-            desertflood.email = "joe@desertflood.com";
-          };
-
-          authorizedKeys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
-          ];
-        };
-
-      };
+    den.schema.conf = {
+      inherit desertflood;
     };
 
-    desertflood = {
-
-      defaultUser = lib.mkDefault flakeCfg.desertflood.users.users.joe;
-
-      users.users = {
-
-        joe = {
-          fullName = mkDefault "Joe Martin";
-
-          emails = mkDefault {
-            family.email = "joe@thosemartins.family";
-            thosemartins.email = "joe@thosemartins.net";
-            desertflood.email = "joe@desertflood.com";
-          };
-
-          authorizedKeys = [
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmB+dj98dHaQuaK0qcxTVpJxVAongswoUSZFOPrM4UW"
-          ];
-        };
-
-      };
-    };
+    inherit desertflood;
   };
 }

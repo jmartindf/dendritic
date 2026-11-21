@@ -32,13 +32,14 @@ in
     )
   ];
 
-  df.server = { host, ... }: {
+  df.server = {
     description = "Common to all headless servers";
 
     includes = [ df.services.alloy ];
 
     nixos =
       {
+        host,
         config,
         lib,
         ...
@@ -55,6 +56,9 @@ in
         ];
 
         config = {
+
+          users.users.root.openssh.authorizedKeys.keys = host.desertflood.defaultUser.authorizedKeys;
+
           desertflood.services.prometheus.alloy.enable = true;
 
           desertflood.networking =

@@ -1,12 +1,9 @@
 #  nix build .#.nixosConfigurations.everest.config.system.build.isoImage
 {
   df,
-  config,
   ...
 }:
 let
-  defaultUser = config.desertflood.users.users.joe;
-
   hostInfo = {
     hostName = "everest";
     domain = "df.fyi";
@@ -49,7 +46,8 @@ in
           ];
 
           desertflood = {
-            inherit defaultUser hostInfo;
+            inherit hostInfo;
+            inherit (host.desertflood) defaultUser;
 
             networking = {
               webDomain = "df.fyi";
@@ -152,15 +150,6 @@ in
           ]; # from `uv run --with port4me python -m port4me --tool=ssh --user everest`
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEuOqBBSAsZYRTXSZmT5InXA2XbI6ciRtESNcXHJxGij";
-
-          users.users = {
-
-            root = {
-              openssh.authorizedKeys.keys = defaultUser.authorizedKeys;
-            };
-
-          };
-
         };
     };
   };
