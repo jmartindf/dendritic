@@ -33,6 +33,7 @@ in
     ${hostInfo.hostName} = {
 
       includes = [
+        df.machines.hetzner-cloud
         df.services.prometheus
         df.services.loki
       ];
@@ -53,7 +54,6 @@ in
         {
           imports = [
             inputs.self.modules.nixos.grafana
-            inputs.self.modules.nixos.hetzner-cloud
             { config.facter.reportPath = ./facter.json; }
           ];
 

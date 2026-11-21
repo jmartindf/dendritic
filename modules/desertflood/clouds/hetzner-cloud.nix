@@ -1,7 +1,7 @@
 # Example to create a bios compatible gpt partition
 { inputs, lib, ... }:
 {
-  flake.modules.nixos.hetzner-cloud =
+  df.machines.hetzner-cloud.nixos =
     { modulesPath, ... }:
     {
 
@@ -74,6 +74,6 @@
           };
         };
 
-      }; # the end of `config` for flake.modules.nixos.hetzner-cloud
-    }; # the end of flake.modules.nixos.hetzner-cloud
+      }; # the end of `config` for df.machines.hetzner-cloud.nixos
+    }; # the end of df.machines.hetzner-cloud.nixos
 } # the end of everything

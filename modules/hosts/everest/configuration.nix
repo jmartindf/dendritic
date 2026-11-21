@@ -33,6 +33,10 @@ in
 
     ${hostInfo.hostName} = {
 
+      includes = [
+        df.machines.hetzner-cloud
+      ];
+
       nixos =
         {
           host,
@@ -48,7 +52,6 @@ in
         in
         {
           imports = [
-            inputs.self.modules.nixos.hetzner-cloud
             { config.facter.reportPath = ./facter.json; }
             inputs.self.modules.nixos.step-ca
           ];
