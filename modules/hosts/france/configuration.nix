@@ -36,6 +36,7 @@ in
         df.machines.hetzner-cloud
         df.services.prometheus
         df.services.loki
+        df.services.grafana
       ];
 
       nixos =
@@ -53,7 +54,6 @@ in
         in
         {
           imports = [
-            inputs.self.modules.nixos.grafana
             { config.facter.reportPath = ./facter.json; }
           ];
 

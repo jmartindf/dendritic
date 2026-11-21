@@ -1,10 +1,11 @@
-{ config, ... }:
-let
-  flakeCfg = config;
-in
-{
-  flake.modules.nixos.grafana =
-    { config, pkgs, ... }:
+_: {
+  df.services.grafana.nixos =
+    {
+      host,
+      config,
+      pkgs,
+      ...
+    }:
     let
       cfg = config;
       netCfg = cfg.desertflood.networking;
@@ -90,7 +91,7 @@ in
                   security = {
                     admin_user = "gfadmin";
                     admin_password = "$__file{${cfg.age.secrets.grafana-password.path}}";
-                    admin_email = flakeCfg.desertflood.defaultUser.emails.family.email;
+                    admin_email = host.desertflood.defaultUser.emails.family.email;
                     cookie_secure = true;
                     secret_key = "SW2YcwTIb9zpOOhoPsMm"; # hard-code default from NixOS 25.11
                   };
@@ -193,5 +194,5 @@ in
 
         }; # end Nix OS module config block
 
-    }; # end `grafana` Nix OS module
+    }; # end Nix OS module of `grafana` Den aspect
 }
