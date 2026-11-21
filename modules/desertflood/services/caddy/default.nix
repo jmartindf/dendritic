@@ -16,16 +16,16 @@ in
       caddyWithPlugins = pkgs.local.caddy.withPlugins {
         plugins = [
           "github.com/abiosoft/caddy-json-schema@v0.0.0-20220621031927-c4d6e132f3af"
-          "github.com/caddy-dns/acmedns@v0.6.0"
-          "github.com/darkweak/souin/plugins/caddy@v1.7.8"
-          "github.com/darkweak/storages/nuts/caddy@v0.0.19"
-          "github.com/darkweak/storages/simplefs/caddy@v0.0.19"
-          "github.com/greenpau/caddy-security@v1.1.61"
-          "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.12.0"
+          "github.com/caddy-dns/acmedns@v0.7.0"
+          "github.com/darkweak/souin/plugins/caddy@v1.7.10"
+          "github.com/darkweak/storages/nuts/caddy@v0.0.23"
+          "github.com/darkweak/storages/simplefs/caddy@v0.0.23"
+          "github.com/greenpau/caddy-security@v1.7.0"
+          "github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1"
           "git.desertflood.com/jmartindf/caddy-fs-s3@v0.0.0-20251102022705-124d7ea62120"
           "git.desertflood.com/jmartindf/caddy-s3-proxy@v0.0.0-20251101025924-56966419076b"
         ];
-        hash = "sha256-XTm79Q5ErjE8M15t4HDDdJOlKh3eilYqkkWK5jaREkk=";
+        hash = "sha256-9HFpDd7aicI4NWPYU3uuyYnvBIYM/V4ZdyiVQoqMd3s=";
       };
 
       configFile =
