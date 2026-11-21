@@ -45,11 +45,6 @@ let
       cacheHTML = "/srv/www/html-cache";
       staticHTML = "/srv/www/html";
     };
-
-    endpoints = {
-      loki_write = "https://france.manticore-mark.ts.net/loki/api/v1/push";
-      prometheus_write = "https://france.manticore-mark.ts.net/prometheus/api/v1/write";
-    };
   };
 in
 {

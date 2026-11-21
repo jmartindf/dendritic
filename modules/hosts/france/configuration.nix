@@ -34,6 +34,7 @@ in
 
       includes = [
         df.services.prometheus
+        df.services.loki
       ];
 
       nixos =

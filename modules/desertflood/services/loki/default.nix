@@ -1,39 +1,49 @@
 {
-  inputs,
-  config,
-  lib,
+  den,
   ...
 }:
-let
-  flakeCfg = config;
-in
 {
   # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
   # SPDX-License-Identifier: BlueOak-1.0.0
 
-  imports = [ ];
+  den = {
+    schema.host.includes = [ den.policies.loki-writers ];
 
-  options = { };
+    quirks.loki = {
+      description = "Loki destination information";
+    };
 
-  config = {
+    policies.loki-writers =
+      { host, ... }:
+      let
+        inherit (den.lib.policy) pipe;
+      in
+      [
+        (pipe.from "loki" [
+          (pipe.collect ({ host, ... }: true))
+        ])
+      ];
+  };
 
-    flake.modules.nixos.services =
+  df.services.loki = {
+
+    # Quirk for sharing configuration to other aspects
+    loki = { config, ... }: {
+      endpoints = [ "${config.desertflood.networking.services.loki.fullURL}api/v1/push" ];
+    };
+
+    nixos =
       {
         lib,
-        pkgs,
         config,
         ...
       }:
       let
         nixOScfg = config;
         dfCfg = nixOScfg.desertflood;
-        netCfg = dfCfg.networking;
         svcsConfig = dfCfg.services;
-        svcsNetCfg = netCfg.services;
       in
       {
-
-        imports = [ ];
 
         options = {
 

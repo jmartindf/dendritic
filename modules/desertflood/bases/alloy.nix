@@ -1,6 +1,7 @@
 _: {
   df.services.alloy.nixos =
     {
+      loki,
       prometheus,
       config,
       lib,
@@ -198,7 +199,7 @@ _: {
 
                   loki.write "default" {
                   	endpoint {
-                  		url = "${alloyCfg.loki_endpoint}"
+                  		url = "${builtins.head (lib.concatMap (p: p.endpoints or [ ]) loki)}"
                   	}
                   }
 
