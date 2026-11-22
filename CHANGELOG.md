@@ -8,6 +8,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 configurations).
 
 
+## [0.7.9] - 2026-11-21
+
+### Changes
+
+- chore: update sources
+
+### Refactoring
+
+- refactor(dockeras): remove unnecessary host arg
+- refactor(docker): remove deprecated flake modules
+- refactor(defaults): modernize battery syntax
+- refactor(df/cli/tools/docker): cleanup and modernize aspect
+- refactor(remote-builder): convert to den aspect with quirks and pipes
+- refactor(proxmox-lxc): convert to den aspect
+- refactor(desertflood/options): attach to den.schema.conf
+- refactor(hostInfo): move options into den.schema.host
+- refactor(services/prometheus): use Den aspects and quirks
+- refactor(services/loki): use Den aspects and quirks
+- refactor(hetzner-cloud): convert to den aspect
+- refactor(services/grafana): convert to den aspect
+- refactor(services/step-ca): convert to den aspect
+- refactor(qemu-guest): convert to den aspect
+- refactor(server-base): centralize root SSH authorized key
+
+### Package Updates
+
+- authentik:   2026.8.5 -> 2026.8.6
+- caddy:   2.11.2 -> 2.11.9
+- deploy-rs:   0.1.0 -> 1.0.0
+- linkwarden:   2.15.1 -> 2.17.0
+- lubelogger:   1.7.4 -> 1.7.5
+- bind:   9.20.29-host -> 9.20.30-host
+- brotli:   1.2.0 -> 1.2.1
+- curl:   8.22.0 -> 8.23.0
+- docker:   29.8.1 -> 29.9.3
+- docker:   5.4.0 -> 5.6.1
+- dotnet:   10.0.12 -> 10.0.14
+- eza:   0.23.4 -> 0.23.5
+- forgejo:   15.0.10 -> 15.0.12
+- grafana:   13.0.9 -> 13.0.13
+- grafana:   3.7.8 -> 3.7.9
+- linux:   20260916-zstd -> 20261019-zstd
+- nodejs:   22.23.3, 24.21.0 -> 24.22.3
+- openssh:   10.5p1 -> 10.6p2
+- postgresql:   17.11 -> 17.12
+- python3:   3.13.15 -> 3.13.18
+- rsync:   3.5.0 -> 3.5.2
+- sqlite:   3.51.2 -> 3.53.3
+- tailscale:   1.98.10 -> 1.104.5
+- traefik:   3.7.13 -> 3.7.16
+- tzdata:   2026c -> 2026f
+
+
 ## [0.7.8] - 2026-11-16
 
 ### Refactoring
