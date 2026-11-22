@@ -4,25 +4,17 @@
   df,
   ...
 }:
-let
-  hostInfo = {
-    hostName = "richard";
+{
+  den.hosts.richard = {
+    description = "Nix OS remote builder";
+    capabilities.server.docker = true;
+    system = "x86_64-linux";
     domain = "home.thosemartins.family";
     live = false;
     remote = false;
-    system = "x86_64-linux";
-  };
-in
-{
-  desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
-
-  den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
-    description = "Nix OS remote builder";
-    capabilities.server.docker = true;
-    inherit (hostInfo) domain live remote;
   };
 
-  den.aspects.${hostInfo.hostName} = {
+  den.aspects.richard = {
 
     includes = [
       df.remote-builder
@@ -40,7 +32,6 @@ in
         ];
 
         desertflood = {
-          inherit hostInfo;
           inherit (host.desertflood) defaultUser;
           step-ca.certs.${host.hostName}.availableTo = { };
         };

@@ -4,274 +4,264 @@
   ...
 }:
 let
-  hostInfo = {
-    hostName = "france";
+  mTLS-required = false;
+in
+{
+  den.hosts.france = {
+    description = "NixOS webapp host";
+    capabilities.server.enable = true;
     domain = "df.fyi";
     live = true;
     remote = true;
     system = "x86_64-linux";
   };
 
-  mTLS-required = false;
-in
-{
-  desertflood.hosts.hosts.${hostInfo.hostName} = hostInfo;
+  den.aspects.france = {
 
-  den.hosts.${hostInfo.system}.${hostInfo.hostName} = {
-    description = "NixOS webapp host";
-    capabilities.server.enable = true;
-    inherit (hostInfo) domain live remote;
-  };
+    includes = [
+      df.machines.hetzner-cloud
+      df.services.prometheus
+      df.services.loki
+      df.services.grafana
+    ];
 
-  den.aspects = {
+    nixos =
+      {
+        host,
+        config,
+        lib,
+        pkgs,
+        ...
+      }:
+      let
+        nixOScfg = config;
+        inherit (host) hostName;
+        inherit (nixOScfg.desertflood.networking) tailscaleDomain;
+      in
+      {
+        imports = [
+          { config.facter.reportPath = ./facter.json; }
+        ];
 
-    ${hostInfo.hostName} = {
-
-      includes = [
-        df.machines.hetzner-cloud
-        df.services.prometheus
-        df.services.loki
-        df.services.grafana
-      ];
-
-      nixos =
-        {
-          host,
-          config,
-          lib,
-          pkgs,
-          ...
-        }:
-        let
-          nixOScfg = config;
-          inherit (host) hostName;
-          inherit (nixOScfg.desertflood.networking) tailscaleDomain;
-        in
-        {
-          imports = [
-            { config.facter.reportPath = ./facter.json; }
-          ];
-
-          # Attach block storage volume, for Forgejo and others
-          disko.devices.disk = {
-            block = {
-              device = "/dev/disk/by-id/scsi-0HC_Volume_103482293";
-              type = "disk";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/var";
-              };
+        # Attach block storage volume, for Forgejo and others
+        disko.devices.disk = {
+          block = {
+            device = "/dev/disk/by-id/scsi-0HC_Volume_103482293";
+            type = "disk";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/var";
             };
           };
+        };
 
-          desertflood = {
-            inherit hostInfo;
-            inherit (host.desertflood) defaultUser;
+        desertflood = {
+          inherit (host.desertflood) defaultUser;
 
-            networking = {
-              webDomain = "df.fyi";
-
-              services = {
-
-                grafana = {
-                  domain = "desertflood.com";
-                  hostName = "monitor";
-                  path = "/grafana/";
-                };
-
-                prometheus = {
-                  domain = tailscaleDomain;
-                  path = "/prometheus/";
-                };
-
-                ntfy = {
-                  domain = "desertflood.com";
-                  hostName = "ntfy";
-                  path = "";
-                };
-
-                apprise-api = {
-                  path = "";
-                };
-
-                forgejo = {
-                  domain = "desertflood.com";
-                  hostName = "git";
-                  path = "";
-                };
-
-                attic = {
-                  domain = "desertflood.com";
-                  hostName = "attic";
-                  path = "/";
-                };
-
-                lubelogger = {
-                  domain = "thosemartins.family";
-                  hostName = "lubelogger";
-                  path = "/";
-                };
-
-                linkding = {
-                  domain = "desertflood.com";
-                  hostName = "linkding";
-                  path = "/";
-                };
-
-                bluesky-pds = {
-                  domain = "wordflood.net";
-                  hostName = "pds";
-                  path = "";
-                };
-
-                sftpgo = {
-                  domain = "df.fyi";
-                  path = "/sftpgo/";
-                };
-
-                linkwarden = {
-                  domain = "desertflood.com";
-                  hostName = "linkwarden";
-                  path = "/";
-                };
-
-                acme-dns = {
-                  domain = "desertflood.com";
-                  hostName = "auth";
-                  path = "";
-                };
-
-                kosync-dotnet = {
-                  domain = "desertflood.com";
-                  hostName = "kosync";
-                  path = "";
-                };
-
-                koreader-sync = {
-                  domain = "desertflood.com";
-                  hostName = "kosync";
-                  path = "";
-                };
-
-              };
-
-            };
-
-            step-ca.certs.${hostName}.availableTo = { };
+          networking = {
+            webDomain = "df.fyi";
 
             services = {
 
-              crowdsec.enable = false;
-
-              apprise-api = {
-                enable = true;
-                log-level = "INFO";
+              grafana = {
+                domain = "desertflood.com";
+                hostName = "monitor";
+                path = "/grafana/";
               };
 
-              ntfy.enable = true;
+              prometheus = {
+                domain = tailscaleDomain;
+                path = "/prometheus/";
+              };
+
+              ntfy = {
+                domain = "desertflood.com";
+                hostName = "ntfy";
+                path = "";
+              };
+
+              apprise-api = {
+                path = "";
+              };
 
               forgejo = {
-                enable = true;
-                user = "git";
-                mode = "prod";
+                domain = "desertflood.com";
+                hostName = "git";
+                path = "";
+              };
+
+              attic = {
+                domain = "desertflood.com";
+                hostName = "attic";
+                path = "/";
               };
 
               lubelogger = {
-                enable = true;
+                domain = "thosemartins.family";
+                hostName = "lubelogger";
+                path = "/";
               };
 
               linkding = {
-                enable = false;
+                domain = "desertflood.com";
+                hostName = "linkding";
+                path = "/";
               };
 
-              linkwarden.enable = true;
-
-              prometheus = {
-                inherit mTLS-required;
-
-                monitorHosts = [
-                  "firewalla.manticore-mark.ts.net"
-                  "hermes.manticore-mark.ts.net"
-                  "masto-es.manticore-mark.ts.net"
-                ];
-
-                monitorHostsSecure = [
-                ];
+              bluesky-pds = {
+                domain = "wordflood.net";
+                hostName = "pds";
+                path = "";
               };
 
-              step-ssh = {
-                principals = lib.mkOptionDefault [
-                  "git.desertflood.com"
-                ];
+              sftpgo = {
+                domain = "df.fyi";
+                path = "/sftpgo/";
               };
 
-              attic.enable = true;
+              linkwarden = {
+                domain = "desertflood.com";
+                hostName = "linkwarden";
+                path = "/";
+              };
 
-              bluesky-pds.enable = true;
+              acme-dns = {
+                domain = "desertflood.com";
+                hostName = "auth";
+                path = "";
+              };
 
-              # Implicitly enables SFTPGo
-              webserv.enable = true;
+              kosync-dotnet = {
+                domain = "desertflood.com";
+                hostName = "kosync";
+                path = "";
+              };
 
-              loki.enable = true;
-              loki.loglevel = "warn";
-
-              acme-dns.enable = true;
-
-              kosync-dotnet.enable = false;
-              kosync-dotnet.trustedProxies = [
-                "127.0.0.1"
-                "::1"
-              ];
-
-              koreader-sync.enable = true;
-              koreader-sync.disableRegistration = true;
-            };
-          };
-
-          networking = {
-            inherit (host) hostName domain;
-
-            enableIPv6 = true;
-
-            interfaces.enp1s0.ipv6 = {
-
-              addresses = [
-                {
-                  address = "2a01:4ff:1f0:a0b3::1";
-                  prefixLength = 64;
-                }
-              ];
-
-              routes = [
-                {
-                  address = "::";
-                  prefixLength = 0;
-                  via = "fe80::1";
-                }
-              ];
+              koreader-sync = {
+                domain = "desertflood.com";
+                hostName = "kosync";
+                path = "";
+              };
 
             };
+
           };
 
-          # Save port 22 for Endlessh?
-          services.openssh.ports = [
-            45897
-            22
-          ]; # from `uv run --with port4me python -m port4me --tool=ssh --user france`
+          step-ca.certs.${hostName}.availableTo = { };
 
-          services.taskchampion-sync-server = {
-            enable = true;
-            package = pkgs.taskchampion-sync-server;
-            allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
+          services = {
+
+            crowdsec.enable = false;
+
+            apprise-api = {
+              enable = true;
+              log-level = "INFO";
+            };
+
+            ntfy.enable = true;
+
+            forgejo = {
+              enable = true;
+              user = "git";
+              mode = "prod";
+            };
+
+            lubelogger = {
+              enable = true;
+            };
+
+            linkding = {
+              enable = false;
+            };
+
+            linkwarden.enable = true;
+
+            prometheus = {
+              inherit mTLS-required;
+
+              monitorHosts = [
+                "firewalla.manticore-mark.ts.net"
+                "hermes.manticore-mark.ts.net"
+                "masto-es.manticore-mark.ts.net"
+              ];
+
+              monitorHostsSecure = [
+              ];
+            };
+
+            step-ssh = {
+              principals = lib.mkOptionDefault [
+                "git.desertflood.com"
+              ];
+            };
+
+            attic.enable = true;
+
+            bluesky-pds.enable = true;
+
+            # Implicitly enables SFTPGo
+            webserv.enable = true;
+
+            loki.enable = true;
+            loki.loglevel = "warn";
+
+            acme-dns.enable = true;
+
+            kosync-dotnet.enable = false;
+            kosync-dotnet.trustedProxies = [
+              "127.0.0.1"
+              "::1"
+            ];
+
+            koreader-sync.enable = true;
+            koreader-sync.disableRegistration = true;
           };
-
-          # systemd.services.taskchampion-sync-server.environment = {
-          #   RUST_LOG = "debug";
-          # };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKWvOZ3zQ5zitwbtU1iTa5FjG/47yGqGVoZ7jUg6ouku";
         };
-    };
+
+        networking = {
+          inherit (host) hostName domain;
+
+          enableIPv6 = true;
+
+          interfaces.enp1s0.ipv6 = {
+
+            addresses = [
+              {
+                address = "2a01:4ff:1f0:a0b3::1";
+                prefixLength = 64;
+              }
+            ];
+
+            routes = [
+              {
+                address = "::";
+                prefixLength = 0;
+                via = "fe80::1";
+              }
+            ];
+
+          };
+        };
+
+        # Save port 22 for Endlessh?
+        services.openssh.ports = [
+          45897
+          22
+        ]; # from `uv run --with port4me python -m port4me --tool=ssh --user france`
+
+        services.taskchampion-sync-server = {
+          enable = true;
+          package = pkgs.taskchampion-sync-server;
+          allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
+        };
+
+        # systemd.services.taskchampion-sync-server.environment = {
+        #   RUST_LOG = "debug";
+        # };
+
+        age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKWvOZ3zQ5zitwbtU1iTa5FjG/47yGqGVoZ7jUg6ouku";
+      };
   };
+
 }

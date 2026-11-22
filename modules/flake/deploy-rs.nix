@@ -1,5 +1,4 @@
 {
-  config,
   den,
   lib,
   inputs,
@@ -8,32 +7,30 @@
 }:
 let
   inherit (inputs) deploy-rs;
-  flakeCfg = config;
+  hosts = builtins.head (builtins.attrValues den.hosts);
 in
 {
   config = {
 
-    flake =
-      { config, ... }:
-      {
-        deploy.nodes = lib.mapAttrs (host: options: {
-          hostname = options.fqdn;
-          profiles.system = {
-            user = "root";
-            sshUser = "nixos";
+    flake = {
+      deploy.nodes = lib.mapAttrs (host: options: {
+        hostname = options.fqdn;
+        profiles.system = {
+          user = "root";
+          sshUser = "nixos";
 
-            autoRollback = true;
-            magicRollback = true;
+          autoRollback = true;
+          magicRollback = true;
 
-            fastConnection = true;
+          fastConnection = true;
 
-            activationTimeout = 600; # 10 minutes
-            confirmTimeout = 120; # 2 minutes
+          activationTimeout = 600; # 10 minutes
+          confirmTimeout = 120; # 2 minutes
 
-            path = deploy-rs.lib.${options.system}.activate.nixos self.nixosConfigurations.${host};
-          };
-        }) flakeCfg.desertflood.hosts.hosts;
-      };
+          path = deploy-rs.lib.${options.system}.activate.nixos self.nixosConfigurations.${host};
+        };
+      }) hosts;
+    };
 
     perSystem =
       {

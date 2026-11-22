@@ -1,6 +1,7 @@
 _: {
   df.services.alloy.nixos =
     {
+      host,
       loki,
       prometheus,
       config,
@@ -11,7 +12,7 @@ _: {
       cfg = config;
       dfCfg = cfg.desertflood;
       alloyCfg = dfCfg.services.prometheus.alloy;
-      inherit (dfCfg.hostInfo) hostName;
+      inherit (host) hostName;
       ipAddress = dfCfg.globals.tailscaleIPs.${hostName};
     in
     {

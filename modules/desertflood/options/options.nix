@@ -7,9 +7,6 @@ let
   inherit (lib) types;
   flakeCfg = config;
 
-  hostMeta = import ./_meta-hosts.nix {
-    inherit lib;
-  };
   userMeta = import ./_meta-users.nix {
     inherit lib;
   };
@@ -163,12 +160,6 @@ let
       default = { };
       description = "The default user for this host, for flake-parts modules";
     };
-
-    hostInfo = lib.mkOption {
-      type = types.submodule hostMeta;
-      default = { };
-      description = "Basic facts about this host, for flake-parts modules";
-    };
   };
 
   users = {
@@ -176,14 +167,6 @@ let
       type = types.attrsOf (types.submodule userMeta);
       default = { };
       description = "Details of user accounts that can be shared across hosts.";
-    };
-  };
-
-  hosts = {
-    hosts = lib.mkOption {
-      type = types.attrsOf (types.submodule hostMeta);
-      default = { };
-      description = "Details of the various hosts that can be created.";
     };
   };
 
@@ -232,7 +215,6 @@ in
     inherit (dfOptions) defaultUser networking;
     inherit
       users
-      hosts
       builderKeys
       secrets
       step-ca
@@ -251,7 +233,7 @@ in
         options.desertflood = {
 
           globals = globalAttrSet;
-          inherit (dfOptions) defaultUser hostInfo;
+          inherit (dfOptions) defaultUser;
 
           networking = {
             inherit (dfOptions.networking)
@@ -313,10 +295,9 @@ in
       options.desertflood = {
 
         globals = globalAttrSet;
-        inherit (dfOptions) defaultUser hostInfo;
+        inherit (dfOptions) defaultUser;
         inherit
           users
-          hosts
           builderKeys
           secrets
           step-ca
@@ -341,7 +322,7 @@ in
       options.desertflood = {
 
         globals = globalAttrSet;
-        inherit (dfOptions) defaultUser hostInfo;
+        inherit (dfOptions) defaultUser;
 
         networking = {
           inherit (dfOptions.networking)
