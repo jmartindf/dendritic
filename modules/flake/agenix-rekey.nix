@@ -35,10 +35,7 @@
       agenix = {
         url = "github:ryantm/agenix";
         inputs = {
-          darwin.follows = "darwin";
-          home-manager.follows = "home-manager";
           nixpkgs.follows = "nixpkgs";
-          systems.follows = "systems";
         };
       };
 
@@ -50,6 +47,7 @@
           flake-parts.follows = "flake-parts";
           pre-commit-hooks.follows = "git-hooks-nix";
           treefmt-nix.follows = "treefmt-nix";
+          flake-compat.follows = "flake-compat";
         };
       };
 
