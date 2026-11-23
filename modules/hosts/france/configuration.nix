@@ -98,12 +98,6 @@ in
                 path = "/";
               };
 
-              linkding = {
-                domain = "desertflood.com";
-                hostName = "linkding";
-                path = "/";
-              };
-
               bluesky-pds = {
                 domain = "wordflood.net";
                 hostName = "pds";
@@ -124,12 +118,6 @@ in
               acme-dns = {
                 domain = "desertflood.com";
                 hostName = "auth";
-                path = "";
-              };
-
-              kosync-dotnet = {
-                domain = "desertflood.com";
-                hostName = "kosync";
                 path = "";
               };
 
@@ -164,10 +152,6 @@ in
 
             lubelogger = {
               enable = true;
-            };
-
-            linkding = {
-              enable = false;
             };
 
             linkwarden.enable = true;
