@@ -10,7 +10,7 @@
     capabilities.server.docker = true;
     system = "x86_64-linux";
     domain = "home.thosemartins.family";
-    live = false;
+    live = true;
     remote = false;
   };
 
