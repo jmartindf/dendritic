@@ -7,7 +7,9 @@
 }:
 let
   inherit (inputs) deploy-rs;
-  hosts = builtins.head (builtins.attrValues den.hosts);
+  hosts = lib.attrsets.filterAttrs (host: details: details.live == true) (
+    lib.mergeAttrsList (builtins.attrValues den.hosts)
+  );
 in
 {
   config = {
