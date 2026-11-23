@@ -3,8 +3,13 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.services =
-    { config, pkgs, ... }:
+  df.services.traefik.nixos =
+    {
+      host,
+      config,
+      pkgs,
+      ...
+    }:
     let
       cfg = config;
       myTraefikCfg = config.desertflood.services.traefik;
@@ -12,8 +17,6 @@ in
 
       traefikCfg = cfg.services.traefik;
       traefikUser = "traefik";
-
-      webHostTailscale = "${cfg.networking.hostName}.${cfg.desertflood.networking.tailscaleDomain}";
 
       toTOML = name: attrSet: (pkgs.formats.toml { }).generate "${name}.toml" attrSet;
 
@@ -62,8 +65,6 @@ in
       options.desertflood = {
 
         services.traefik = {
-          enable = lib.mkEnableOption "customized Traefik application router";
-
           letsencrypt = {
             enable = lib.mkEnableOption "using LetsEncrypt for SSL certificates";
 
@@ -163,7 +164,7 @@ in
               dashboard = {
                 http.routers.traefik-rtr = {
                   entrypoints = "websecure";
-                  rule = "Host(`${webHostTailscale}`) && (PathPrefix(`/traefik/api`) || PathPrefix(`/traefik/dashboard`))";
+                  rule = "Host(`${host.tsFQDN}`) && (PathPrefix(`/traefik/api`) || PathPrefix(`/traefik/dashboard`))";
                   service = "api@internal";
                   middlewares = "chain-no-auth@file";
                   tls.certResolver = "tailscale";
@@ -173,7 +174,7 @@ in
               metrics = {
                 http.routers.metrics-rtr = {
                   entrypoints = "websecure";
-                  rule = "Host(`${webHostTailscale}`) && PathPrefix(`/metrics`)";
+                  rule = "Host(`${host.tsFQDN}`) && PathPrefix(`/metrics`)";
                   service = "prometheus@internal";
                   middlewares = "chain-no-auth@file";
                   tls.certResolver = "tailscale";
@@ -194,8 +195,7 @@ in
             }
           ];
         })
-        (lib.mkIf myTraefikCfg.enable {
-
+        {
           age.secrets = {
             acme-dns-traefik-json = {
               rekeyFile = ../acme-dns.json.age;
@@ -499,10 +499,8 @@ in
           };
 
           environment.etc = generateRules myTraefikCfg.rules;
-        })
-
-        (lib.mkIf myTraefikCfg.enable {
-
+        }
+        {
           # environment.etc =
           #   generateDynFile "dashboard" {
           #     http.routers.traefik-rtr = {
@@ -520,7 +518,7 @@ in
           #       middlewares = "chain-no-auth@file";
           #     };
           #   };
-        })
+        }
       ];
     };
 }

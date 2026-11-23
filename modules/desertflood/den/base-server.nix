@@ -1,13 +1,9 @@
 {
-  config,
   df,
   inputs,
   lib,
   ...
 }:
-let
-  flakeCfg = config;
-in
 {
   den.schema.conf = {
     options.capabilities.server.enable = lib.mkEnableOption "Is host a server of any kind?";
@@ -35,24 +31,21 @@ in
   df.server = {
     description = "Common to all headless servers";
 
-    includes = [ df.services.alloy ];
+    includes = [
+      df.services.alloy
+      df.services.smallstep
+      df.services.step-ssh
+    ];
 
     nixos =
       {
         host,
-        config,
         lib,
         ...
       }:
-      let
-        nixOScfg = config;
-      in
       {
         imports = builtins.traceVerbose "df.server.nixos active" [
           inputs.self.modules.nixos.crowdsec
-          inputs.self.modules.nixos.services
-          inputs.self.modules.nixos.smallstep
-          inputs.self.modules.nixos.step-ssh
         ];
 
         config = {

@@ -2,7 +2,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.services =
+    df.services.koreader-sync.nixos =
       {
         config,
         lib,
@@ -17,8 +17,6 @@ _: {
         options = {
 
           desertflood.services.koreader-sync = {
-            enable = lib.mkEnableOption "serving koreader-sync, ";
-
             host = lib.mkOption {
               type = lib.types.str;
               default = "127.0.0.1";
@@ -54,7 +52,7 @@ _: {
             baseName = "koreader-sync";
             workDir = "/var/lib/${baseName}";
           in
-          lib.mkIf nixOScfg.desertflood.services.koreader-sync.enable {
+          {
 
             age.secrets.koreader-sync-env = {
               rekeyFile = ./koreader-sync.env.age;

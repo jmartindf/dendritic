@@ -1,105 +1,106 @@
-_: {
+{ df, ... }: {
 
   config = {
 
-    flake.modules.nixos.services =
-      {
-        config,
-        lib,
-        pkgs,
-        ...
-      }:
-      let
-        nixOScfg = config;
-        llCfg = nixOScfg.services.lubelogger;
-        svcsCfg = nixOScfg.desertflood.services;
-        llNetCfg = nixOScfg.desertflood.networking.services.lubelogger;
-      in
-      {
+    df.services.lubelogger = {
 
-        options = {
+      includes = [ df.services.postgresql ];
 
-          desertflood.services.lubelogger = {
-            enable = lib.mkEnableOption "LubeLogger, a self-hosted, open-source, web-based vehicle maintenance and fuel mileage tracker";
+      nixos =
+        {
+          config,
+          lib,
+          pkgs,
+          ...
+        }:
+        let
+          nixOScfg = config;
+          llCfg = nixOScfg.services.lubelogger;
+          llNetCfg = nixOScfg.desertflood.networking.services.lubelogger;
+        in
+        {
 
-            port = lib.mkOption {
-              type = lib.types.port;
-              description = "The TCP port LubeLogger will listen on.";
+          options = {
+
+            desertflood.services.lubelogger = {
+              port = lib.mkOption {
+                type = lib.types.port;
+                description = "The TCP port LubeLogger will listen on.";
+              };
             };
+
+          };
+
+          config = {
+
+            age.secrets.lubelogger-env = {
+              rekeyFile = ./lubelogger-secrets.env.age;
+              owner = llCfg.user;
+              inherit (llCfg) group;
+            };
+
+            desertflood = {
+              networking.services.lubelogger = { };
+
+              services = {
+                lubelogger.port = llCfg.port;
+              };
+            };
+
+            services.postgresql = {
+              ensureDatabases = [ llCfg.user ];
+              ensureUsers = [
+                {
+                  name = llCfg.user;
+                  ensureDBOwnership = true;
+                }
+              ];
+            };
+
+            services.lubelogger = {
+              enable = true;
+              # Pending [PR 453649](https://github.com/NixOS/nixpkgs/pull/453649)
+              package = pkgs.local.lubelogger;
+
+              environmentFile = nixOScfg.age.secrets.lubelogger-env.path;
+
+              settings = {
+                LC_ALL = "en_US.UTF-8";
+                LANG = "en_US.UTF-8";
+                POSTGRES_CONNECTION = "Host=/run/postgresql;Port=5432;Username=${llCfg.user};Database=${llCfg.user};";
+                EnableAuth = "true";
+                # DefaultReminderEmail = "joe@desertflood.com";
+                EnableRootUserOIDC = "false";
+                LUBELOGGER_OPEN_REGISTRATION = "false";
+                LUBELOGGER_DOMAIN = "${llNetCfg.fullURL}"; # - URL to Instance of LubeLogger used to generate email links
+                MailConfig__EmailFrom = "admin@thosemartins.family";
+                MailConfig__Port = "587";
+                OpenIDConfig__Name = "authentik Desertflood";
+                OpenIDConfig__ClientId = "BcWXIRxmmYyUfKbTOb871Eq2gYv05Ify3GQ7hgie";
+                OpenIDConfig__AuthURL = "https://sso.desertflood.link/application/o/authorize/";
+                OpenIDConfig__TokenURL = "https://sso.desertflood.link/application/o/token/";
+                OpenIDConfig__UserInfoURL = "https://sso.desertflood.link/application/o/userinfo/";
+                OpenIDConfig__LogOutURL = "https://sso.desertflood.link/application/o/lube-logger/end-session/";
+                OpenIDConfig__RedirectURL = "https://${llNetCfg.fqdn}/Login/RemoteAuth";
+                OpenIDConfig__Scope = "openid email";
+                OpenIDConfig__ValidateState = "false";
+                OpenIDConfig__UsePKCE = "true";
+                OpenIDConfig__DisableRegularLogin = "true"; # Disabled non-OIDC logins. Only needed for root user
+                OpenIDConfig__AutoGenerateTokens = "true"; # Automatically Generate Tokens for new OIDC Users
+                OpenIDConfig__DisableRegistration = "false"; # Enable Registration for new OIDC Users
+              };
+            };
+
+            systemd.services.lubelogger = {
+              requires = [ "postgresql.target" ];
+              after = [ "postgresql.target" ];
+            };
+
           };
 
         };
 
-        config = lib.mkIf svcsCfg.lubelogger.enable {
-
-          age.secrets.lubelogger-env = {
-            rekeyFile = ./lubelogger-secrets.env.age;
-            owner = llCfg.user;
-            inherit (llCfg) group;
-          };
-
-          desertflood = {
-            networking.services.lubelogger = { };
-
-            services = {
-              lubelogger.port = llCfg.port;
-              postgresql.enable = true;
-            };
-          };
-
-          services.postgresql = {
-            ensureDatabases = [ llCfg.user ];
-            ensureUsers = [
-              {
-                name = llCfg.user;
-                ensureDBOwnership = true;
-              }
-            ];
-          };
-
-          services.lubelogger = {
-            enable = true;
-            # Pending [PR 453649](https://github.com/NixOS/nixpkgs/pull/453649)
-            package = pkgs.local.lubelogger;
-
-            environmentFile = nixOScfg.age.secrets.lubelogger-env.path;
-
-            settings = {
-              LC_ALL = "en_US.UTF-8";
-              LANG = "en_US.UTF-8";
-              POSTGRES_CONNECTION = "Host=/run/postgresql;Port=5432;Username=${llCfg.user};Database=${llCfg.user};";
-              EnableAuth = "true";
-              # DefaultReminderEmail = "joe@desertflood.com";
-              EnableRootUserOIDC = "false";
-              LUBELOGGER_OPEN_REGISTRATION = "false";
-              LUBELOGGER_DOMAIN = "${llNetCfg.fullURL}"; # - URL to Instance of LubeLogger used to generate email links
-              MailConfig__EmailFrom = "admin@thosemartins.family";
-              MailConfig__Port = "587";
-              OpenIDConfig__Name = "authentik Desertflood";
-              OpenIDConfig__ClientId = "BcWXIRxmmYyUfKbTOb871Eq2gYv05Ify3GQ7hgie";
-              OpenIDConfig__AuthURL = "https://sso.desertflood.link/application/o/authorize/";
-              OpenIDConfig__TokenURL = "https://sso.desertflood.link/application/o/token/";
-              OpenIDConfig__UserInfoURL = "https://sso.desertflood.link/application/o/userinfo/";
-              OpenIDConfig__LogOutURL = "https://sso.desertflood.link/application/o/lube-logger/end-session/";
-              OpenIDConfig__RedirectURL = "https://${llNetCfg.fqdn}/Login/RemoteAuth";
-              OpenIDConfig__Scope = "openid email";
-              OpenIDConfig__ValidateState = "false";
-              OpenIDConfig__UsePKCE = "true";
-              OpenIDConfig__DisableRegularLogin = "true"; # Disabled non-OIDC logins. Only needed for root user
-              OpenIDConfig__AutoGenerateTokens = "true"; # Automatically Generate Tokens for new OIDC Users
-              OpenIDConfig__DisableRegistration = "false"; # Enable Registration for new OIDC Users
-            };
-          };
-
-          systemd.services.lubelogger = {
-            requires = [ "postgresql.target" ];
-            after = [ "postgresql.target" ];
-          };
-
-        };
-
-      };
-
+    };
   };
 
 }

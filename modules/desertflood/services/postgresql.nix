@@ -1,17 +1,9 @@
-{ lib, ... }:
-{
-  flake.modules.nixos.services =
-    { config, pkgs, ... }:
+_: {
+  df.services.postgresql.nixos =
+    { pkgs, ... }:
     {
 
-      imports = [
-      ];
-
-      options = {
-        desertflood.services.postgresql.enable = lib.mkEnableOption "PostgreSQL 17 database";
-      };
-
-      config = lib.mkIf config.desertflood.services.postgresql.enable {
+      config = {
 
         desertflood.networking.services.postgresql = { };
 

@@ -2,7 +2,7 @@ _: {
 
   config = {
 
-    flake.modules.nixos.services =
+    df.services.apprise.nixos =
       {
         config,
         lib,
@@ -17,8 +17,6 @@ _: {
         options = {
 
           desertflood.services.apprise-api = {
-            enable = lib.mkEnableOption "serving apprise-api, a lightweight REST framework that wraps the Apprise Notification Library";
-
             host = lib.mkOption {
               type = lib.types.str;
               default = "127.0.0.1";
@@ -52,7 +50,7 @@ _: {
             workDir = "/var/lib/${baseName}";
             webConfig = nixOScfg.desertflood.networking.services.apprise-api;
           in
-          lib.mkIf nixOScfg.desertflood.services.apprise-api.enable {
+          {
 
             # age.secrets.apprise-api-secrets = {
             #   rekeyFile = ./secrets.env.age;

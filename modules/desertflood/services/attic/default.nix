@@ -1,12 +1,13 @@
-_: {
+{ df, ... }: {
 
-  config = {
+  df.services.attic = {
 
-    flake.modules.nixos.services =
+    includes = [ df.services.postgresql ];
+
+    nixos =
       {
         config,
         lib,
-        pkgs,
         ...
       }:
       let
@@ -18,18 +19,11 @@ _: {
 
         options = {
           desertflood.services.attic = {
-
-            enable = lib.mkEnableOption {
-              default = false;
-              description = "Whether to enable the atticd, the Nix Binary Cache server.";
-            };
-
             port = lib.mkOption {
               type = lib.types.str;
               default = "7082";
               description = "Local port to listen on";
             };
-
           };
         }; # end NixOS module `options`
 
@@ -45,7 +39,7 @@ _: {
               if ((builtins.substring (len - 1) len u) != "/") then "${u}/" else "${u}";
             atticUser = nixOScfg.services.atticd.user;
           in
-          lib.mkIf nixOScfg.desertflood.services.attic.enable {
+          {
 
             age.secrets.atticd-env = {
               rekeyFile = ./atticd.env.age;
@@ -56,15 +50,12 @@ _: {
             desertflood.networking.services.attic = { };
 
             services.postgresql = {
-              enable = true;
-
               ensureUsers = [
                 {
                   name = atticUser;
                   ensureDBOwnership = true;
                 }
               ];
-
               ensureDatabases = [ atticUser ];
             }; # end services.postgresql
 
@@ -124,7 +115,5 @@ _: {
           }; # end NixOS module `config`
 
       }; # end NixOS `attic` module
-
-  }; # End flake-parts `config`
-
+  };
 }

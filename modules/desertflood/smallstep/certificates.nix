@@ -159,7 +159,7 @@ in
   # create the certs
   # {hostName}
   # {fqdn}
-  # {hostName}.{tailscaleDomain}
+  # {tsFQDN}
   # 127.0.0.1
   # any extra SANs provided by config
   #
@@ -174,8 +174,9 @@ in
   #     services = [ listOf str ];
   #   }
   # }
-  config.flake.modules.nixos.smallstep =
+  df.services.smallstep.nixos =
     {
+      host,
       config,
       lib,
       pkgs,
@@ -417,9 +418,9 @@ in
           ]
           ++ [
             "--san"
-            "${nixOScfg.networking.fqdn}"
+            host.fqdn
             "--san"
-            "${nixOScfg.networking.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}"
+            host.tsFQDN
             "--san"
             "127.0.0.1"
           ]
@@ -429,7 +430,7 @@ in
           ]) data.extraDomainNames;
 
           stepArgs = [
-            "${nixOScfg.networking.hostName}"
+            host.hostName
             certificate
             certKey
           ];

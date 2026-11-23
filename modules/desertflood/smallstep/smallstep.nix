@@ -3,7 +3,7 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.smallstep =
+  df.services.smallstep.nixos =
     { pkgs, ... }:
     let
       cacert = pkgs.fetchurl flakeCfg.desertflood.step-ca.rootCert;

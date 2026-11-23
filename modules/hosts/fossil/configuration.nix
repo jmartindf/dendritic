@@ -16,7 +16,10 @@
 
   den.aspects.fossil = {
 
-    includes = [ df.machines.qemu-guest ];
+    includes = [
+      df.machines.qemu-guest
+      df.services.forgejo-runner
+    ];
 
     nixos =
       {
@@ -26,15 +29,7 @@
       {
         desertflood = {
           inherit (host.desertflood) defaultUser;
-
           step-ca.certs.${host.hostName}.availableTo = { };
-
-          services = {
-
-            forgejo-runner.enable = true;
-
-          };
-
         };
 
         networking = {

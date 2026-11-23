@@ -3,8 +3,9 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.step-ssh =
+  df.services.step-ssh.nixos =
     {
+      host,
       config,
       lib,
       pkgs,
@@ -22,9 +23,9 @@ in
           principals = lib.mkOption {
             type = lib.types.listOf lib.types.str;
             default = [
-              nixOScfg.networking.hostName
-              nixOScfg.networking.fqdn
-              "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.tailscaleDomain}"
+              host.hostName
+              host.fqdn
+              host.tsFQDN
             ];
             description = "Principal (host) names to include on the certificate";
           };

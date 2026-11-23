@@ -1,23 +1,16 @@
+# SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
+# SPDX-License-Identifier: BlueOak-1.0.0
 {
-  inputs,
-  config,
-  lib,
+  df,
   ...
 }:
-let
-  flakeCfg = config;
-in
 {
-  # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
-  # SPDX-License-Identifier: BlueOak-1.0.0
 
-  imports = [ ];
+  df.services.sftpgo = {
 
-  options = { };
+    includes = [ df.services.postgresql ];
 
-  config = {
-
-    flake.modules.nixos.services =
+    nixos =
       {
         lib,
         pkgs,
@@ -41,12 +34,9 @@ in
       in
       {
 
-        imports = [ ];
-
         options = {
 
           desertflood.services.sftpgo = {
-            enable = lib.mkEnableOption "SFTPGo file uploads";
             port = lib.mkOption {
               type = lib.types.port;
               default = dfCfg.globals.ports.sftpgo-http;
@@ -60,14 +50,13 @@ in
           };
         };
 
-        config = lib.mkIf dfSvcsConfig.sftpgo.enable {
+        config = {
 
           # TODO: Configure scheduled job for updating quotas?
 
           desertflood.networking.services.sftpgo = { };
 
           services.postgresql = {
-            enable = true;
             ensureDatabases = [ sftpgoUser ];
             ensureUsers = [
               {

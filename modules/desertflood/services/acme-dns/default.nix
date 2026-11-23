@@ -1,106 +1,75 @@
-{
-  inputs,
-  config,
-  lib,
-  ...
-}:
-let
-  flakeCfg = config;
-in
-{
+_: {
   # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
   # SPDX-License-Identifier: BlueOak-1.0.0
 
-  imports = [ ];
+  df.services.acme-dns.nixos =
+    {
+      lib,
+      pkgs,
+      config,
+      ...
+    }:
+    let
+      nixOScfg = config;
+      dfCfg = nixOScfg.desertflood;
+      apiPort = dfCfg.globals.ports.acme-dns;
+      inherit (dfCfg.globals.publicIPs.france) ip4;
 
-  options = { };
+      baseDomain = "desertflood.com";
+    in
+    {
+      options.services.acme-dns.settings.database.engine = lib.mkOption {
+        type = lib.types.enum [
+          "sqlite"
+          "postgres"
+        ];
+      };
 
-  config = {
+      config = {
+        desertflood.networking.services.acme-dns = { };
 
-    flake.modules.nixos.services =
-      {
-        lib,
-        pkgs,
-        config,
-        ...
-      }:
-      let
-        nixOScfg = config;
-        dfCfg = nixOScfg.desertflood;
-        netCfg = dfCfg.networking;
-        svcsConfig = dfCfg.services;
-        svcsNetCfg = netCfg.services;
-        baseDomain = "desertflood.com";
-        apiPort = dfCfg.globals.ports.acme-dns;
-        inherit (dfCfg.globals.publicIPs.france) ip4 ip6;
-      in
-      {
+        services.acme-dns = {
 
-        imports = [ ];
+          enable = true;
+          package = pkgs.local.acme-dns;
 
-        options = {
+          settings = {
 
-          desertflood.services.acme-dns = {
-            enable = lib.mkEnableOption "Limited DNS server with RESTful HTTP API to handle ACME DNS challenges easily and securely";
-          };
+            general = {
 
-          services.acme-dns.settings.database.engine = lib.mkOption {
-            type = lib.types.enum [
-              "sqlite"
-              "postgres"
-            ];
+              records = [
+                "auth.${baseDomain}. A ${ip4}"
+                # "auth.${baseDomain}. AAAA ${ip6}"
+                "auth.${baseDomain}. NS auth.${baseDomain}."
+                "auth.${baseDomain}. CAA 0 issue \"letsencrypt.org\""
+                "auth.${baseDomain}. CAA 0 issuewild \"letsencrypt.org\""
+              ];
+
+              protocol = "both";
+              nsname = "auth.${baseDomain}";
+              nsadmin = "admin.${baseDomain}";
+              listen = "${ip4}:53";
+              domain = "auth.${baseDomain}";
+            };
+
+            database.engine = "sqlite";
+
+            api = {
+              tls = "none";
+              ip = "127.0.0.1";
+              port = apiPort;
+            };
           };
         };
 
-        config = lib.mkIf svcsConfig.acme-dns.enable {
-
-          desertflood.networking.services.acme-dns = { };
-
-          services.acme-dns = {
-
-            enable = true;
-            package = pkgs.local.acme-dns;
-
-            settings = {
-
-              general = {
-
-                records = [
-                  "auth.${baseDomain}. A ${ip4}"
-                  # "auth.${baseDomain}. AAAA ${ip6}"
-                  "auth.${baseDomain}. NS auth.${baseDomain}."
-                  "auth.${baseDomain}. CAA 0 issue \"letsencrypt.org\""
-                  "auth.${baseDomain}. CAA 0 issuewild \"letsencrypt.org\""
-                ];
-
-                protocol = "both";
-                nsname = "auth.${baseDomain}";
-                nsadmin = "admin.${baseDomain}";
-                listen = "${ip4}:53";
-                domain = "auth.${baseDomain}";
-              };
-
-              database.engine = "sqlite";
-
-              api = {
-                tls = "none";
-                ip = "127.0.0.1";
-                port = apiPort;
-              };
-            };
-          };
-
-          networking.firewall = {
-            allowedTCPPorts = [
-              53
-            ];
-            allowedUDPPorts = [ 53 ];
-          };
-
+        networking.firewall = {
+          allowedTCPPorts = [
+            53
+          ];
+          allowedUDPPorts = [ 53 ];
         };
 
       };
 
-  };
-
+    };
 }

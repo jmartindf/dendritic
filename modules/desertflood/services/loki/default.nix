@@ -48,8 +48,6 @@
         options = {
 
           desertflood.services.loki = {
-            enable = lib.mkEnableOption "Whether to enable Grafana Loki - like Prometheus, but for logs.";
-
             port = lib.mkOption {
               type = lib.types.port;
               description = "Local port Loki listens on for HTTP connections";
@@ -69,7 +67,7 @@
           };
         };
 
-        config = lib.mkIf svcsConfig.loki.enable {
+        config = {
 
           desertflood.networking.services.loki = { };
 

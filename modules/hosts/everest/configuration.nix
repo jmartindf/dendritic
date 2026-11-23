@@ -18,16 +18,16 @@
     includes = [
       df.machines.hetzner-cloud
       df.services.step-ca
+      df.services.traefik
+      df.services.authentik
     ];
 
     nixos =
       {
         host,
-        config,
         ...
       }:
       let
-        nixOScfg = config;
         inherit (host) hostName;
       in
       {
@@ -51,11 +51,7 @@
               fqdns = [ "pki.desertflood.link" ];
             };
 
-            authentik.enable = true;
-
             traefik = {
-              enable = true;
-
               domain = host.tsFQDN;
 
               letsencrypt = {

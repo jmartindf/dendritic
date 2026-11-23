@@ -23,6 +23,17 @@ in
       df.services.prometheus
       df.services.loki
       df.services.grafana
+      df.services.traefik
+      df.services.acme-dns
+      df.services.apprise
+      df.services.bluesky-pds
+      df.services.forgejo
+      df.services.lubelogger
+      df.services.linkwarden
+      df.services.attic
+      df.services.koreader-sync
+      df.services.webserv
+      df.services.ntfy
     ];
 
     nixos =
@@ -138,23 +149,13 @@ in
             crowdsec.enable = false;
 
             apprise-api = {
-              enable = true;
               log-level = "INFO";
             };
 
-            ntfy.enable = true;
-
             forgejo = {
-              enable = true;
               user = "git";
               mode = "prod";
             };
-
-            lubelogger = {
-              enable = true;
-            };
-
-            linkwarden.enable = true;
 
             prometheus = {
               inherit mTLS-required;
@@ -175,25 +176,8 @@ in
               ];
             };
 
-            attic.enable = true;
-
-            bluesky-pds.enable = true;
-
-            # Implicitly enables SFTPGo
-            webserv.enable = true;
-
-            loki.enable = true;
             loki.loglevel = "warn";
 
-            acme-dns.enable = true;
-
-            kosync-dotnet.enable = false;
-            kosync-dotnet.trustedProxies = [
-              "127.0.0.1"
-              "::1"
-            ];
-
-            koreader-sync.enable = true;
             koreader-sync.disableRegistration = true;
           };
         };

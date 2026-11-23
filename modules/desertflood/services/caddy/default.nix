@@ -3,7 +3,7 @@ let
   flakeCfg = config;
 in
 {
-  flake.modules.nixos.services =
+  df.services.caddy.nixos =
     { config, pkgs, ... }:
     let
       cfg = config;
@@ -54,13 +54,9 @@ in
 
     in
     {
-      imports = [ ];
-
       options.desertflood = {
 
         services.caddy = {
-          enable = lib.mkEnableOption "customized Caddy application server";
-
           letsencrypt = {
             enable = lib.mkEnableOption "using LetsEncrypt for SSL certificates";
 
@@ -123,71 +119,69 @@ in
 
       };
 
-      config = lib.mkMerge [
-        {
-          desertflood.services.caddy = {
+      config = {
+        desertflood.services.caddy = {
 
-            letsencrypt = {
-              enable = lib.mkDefault false;
-              acme-dns = lib.mkDefault false;
-              production = lib.mkDefault false;
-            };
-
-            settings = {
-
-              global = # caddy
-              ''
-                admin unix//run/caddy/caddy-admin.sock
-
-                ${lib.optionalString caddyCfg.settings.debug "debug"}
-
-                log default {
-                  output stderr
-                  level ${if caddyCfg.settings.debug then "DEBUG" else "WARN"}
-                  ${if caddyCfg.settings.debug then "" else "include http.log.access admin.api"}
-                }
-
-                servers {
-                  trusted_proxies static 127.0.0.1/8 fd00::/8 ::1
-                  client_ip_headers X-Forwarded-For X-Real-IP
-                  ${lib.optionalString caddyCfg.settings.debug "trace"}
-                }
-
-              ''
-              + (
-                if leCfg.enable then # caddy
-                  ''
-                    email ${flakeCfg.desertflood.defaultUser.emails.desertflood.email}
-                    acme_ca ${
-                      if leCfg.production then
-                        "https://acme-v02.api.letsencrypt.org/directory"
-                      else
-                        "https://acme-staging-v02.api.letsencrypt.org/directory"
-                    }
-
-                  ''
-                else if caddyCfg.settings.disableSSL then
-                  "auto_https off"
-                else
-                  "local_certs"
-              );
-
-              snippets = "";
-
-              site-blocks = "";
-            };
-
-          };
-        }
-        (lib.mkIf caddyCfg.enable {
-
-          age.secrets.acme-dns-caddy-json = {
-            rekeyFile = ../acme-dns.json.age;
-            owner = caddyUser;
-            group = caddyGroup;
+          letsencrypt = {
+            enable = lib.mkDefault false;
+            acme-dns = lib.mkDefault false;
+            production = lib.mkDefault false;
           };
 
-          desertflood.services.caddy.settings = {
+          settings = {
+
+            global = # caddy
+            ''
+              admin unix//run/caddy/caddy-admin.sock
+
+              ${lib.optionalString caddyCfg.settings.debug "debug"}
+
+              log default {
+                output stderr
+                level ${if caddyCfg.settings.debug then "DEBUG" else "WARN"}
+                ${if caddyCfg.settings.debug then "" else "include http.log.access admin.api"}
+              }
+
+              servers {
+                trusted_proxies static 127.0.0.1/8 fd00::/8 ::1
+                client_ip_headers X-Forwarded-For X-Real-IP
+                ${lib.optionalString caddyCfg.settings.debug "trace"}
+              }
+
+              order s3proxy before reverse_proxy
+              order cache before s3proxy
+
+              cache {
+                nuts {
+                  path /tmp/nuts/default
+                }
+
+                storers nuts
+
+                ttl 1h
+                stale 3h
+                headers Authorization
+                default_cache_control "public, max-age=3600"
+              }
+
+            ''
+            + (
+              if leCfg.enable then # caddy
+                ''
+                  email ${flakeCfg.desertflood.defaultUser.emails.desertflood.email}
+                  acme_ca ${
+                    if leCfg.production then
+                      "https://acme-v02.api.letsencrypt.org/directory"
+                    else
+                      "https://acme-staging-v02.api.letsencrypt.org/directory"
+                  }
+
+                ''
+              else if caddyCfg.settings.disableSSL then
+                "auto_https off"
+              else
+                "local_certs"
+            );
 
             snippets =
               lib.optionalString (leCfg.enable && leCfg.acme-dns) # caddy
@@ -200,109 +194,118 @@ in
                     }
                   }
                 '';
+
+            site-blocks = "";
           };
 
-          # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
-          boot.kernel.sysctl."net.core.rmem_max" = lib.mkDefault 2500000;
-          boot.kernel.sysctl."net.core.wmem_max" = lib.mkDefault 2500000;
+        };
 
-          networking.firewall.allowedTCPPorts = [
-            80
-            443
+        age.secrets.acme-dns-caddy-json = {
+          rekeyFile = ../acme-dns.json.age;
+          owner = caddyUser;
+          group = caddyGroup;
+        };
+
+        # https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+        boot.kernel.sysctl."net.core.rmem_max" = lib.mkDefault 2500000;
+        boot.kernel.sysctl."net.core.wmem_max" = lib.mkDefault 2500000;
+
+        networking.firewall.allowedTCPPorts = [
+          80
+          443
+        ];
+
+        environment = {
+
+          systemPackages = [ caddyWithPlugins ];
+          etc."caddy/Caddyfile".source = configFile;
+
+        };
+
+        users.users.${caddyUser} = {
+          createHome = true;
+          description = "Caddy web server";
+          group = caddyGroup;
+          home = "/var/lib/caddy";
+          isSystemUser = true;
+          shell = null;
+          uid = cfg.ids.uids.caddy;
+        };
+
+        users.groups.${caddyGroup} = {
+          gid = cfg.ids.gids.caddy;
+        };
+
+        services = {
+          tailscale.permitCertUid = lib.mkIf leCfg.tailscaleCerts caddyUser;
+        };
+
+        systemd.services.caddy = {
+
+          description = "Caddy";
+          documentation = [ "https://caddyserver.com/docs/" ];
+
+          wantedBy = [ "multi-user.target" ];
+
+          after = [
+            "network.target"
           ];
+          requires = [ "network.target" ];
 
-          environment = {
+          startLimitIntervalSec = 14400;
+          startLimitBurst = 10;
 
-            systemPackages = [ caddyWithPlugins ];
-            etc."caddy/Caddyfile".source = configFile;
+          reloadTriggers = [ configFile ];
 
-          };
+          serviceConfig = {
+            User = caddyUser;
+            Group = caddyGroup;
+            Type = "notify";
 
-          users.users.${caddyUser} = {
-            createHome = true;
-            description = "Caddy web server";
-            group = caddyGroup;
-            home = "/var/lib/caddy";
-            isSystemUser = true;
-            shell = null;
-            uid = cfg.ids.uids.caddy;
-          };
+            ReadWritePaths = "/var/lib/caddy";
+            StateDirectory = "caddy";
+            LogsDirectory = "caddy";
+            RuntimeDirectory = "caddy";
+            ConfigurationDirectory = "caddy";
+            Environment = [ "HOME=/var/lib/caddy" ];
 
-          users.groups.${caddyGroup} = {
-            gid = cfg.ids.gids.caddy;
-          };
-
-          services = {
-            tailscale.permitCertUid = lib.mkIf leCfg.tailscaleCerts caddyUser;
-          };
-
-          systemd.services.caddy = {
-
-            description = "Caddy";
-            documentation = [ "https://caddyserver.com/docs/" ];
-
-            wantedBy = [ "multi-user.target" ];
-
-            after = [
-              "network.target"
+            ExecStart = lib.concatStringsSep " " [
+              "${caddyWithPlugins}/bin/caddy"
+              "run"
+              (lib.optionalString caddyCfg.settings.debug "--environ") # log environment at startup
+              "--config"
+              "/etc/caddy/Caddyfile"
             ];
-            requires = [ "network.target" ];
 
-            startLimitIntervalSec = 14400;
-            startLimitBurst = 10;
+            ExecReload = lib.concatStringsSep " " [
+              "${caddyWithPlugins}/bin/caddy"
+              "reload"
+              "--config"
+              "/etc/caddy/Caddyfile"
+              "--force"
+            ];
 
-            reloadTriggers = [ configFile ];
+            Restart = "on-failure";
+            RestartPreventExitStatus = 1;
+            RestartSec = "5s";
 
-            serviceConfig = {
-              User = caddyUser;
-              Group = caddyGroup;
-              Type = "notify";
+            TimeoutStopSec = "5s";
 
-              ReadWritePaths = "/var/lib/caddy";
-              StateDirectory = "caddy";
-              LogsDirectory = "caddy";
-              RuntimeDirectory = "caddy";
-              ConfigurationDirectory = "caddy";
-              Environment = [ "HOME=/var/lib/caddy" ];
+            LimitNOFILE = 1048576;
 
-              ExecStart = lib.concatStringsSep " " [
-                "${caddyWithPlugins}/bin/caddy"
-                "run"
-                (lib.optionalString caddyCfg.settings.debug "--environ") # log environment at startup
-                "--config"
-                "/etc/caddy/Caddyfile"
-              ];
+            PrivateTmp = true;
 
-              ExecReload = lib.concatStringsSep " " [
-                "${caddyWithPlugins}/bin/caddy"
-                "reload"
-                "--config"
-                "/etc/caddy/Caddyfile"
-                "--force"
-              ];
+            ProtectSystem = "full";
+            ProtectHome = true;
 
-              Restart = "on-failure";
-              RestartPreventExitStatus = 1;
-              RestartSec = "5s";
-
-              TimeoutStopSec = "5s";
-
-              LimitNOFILE = 1048576;
-
-              PrivateTmp = true;
-
-              ProtectSystem = "full";
-              ProtectHome = true;
-
-              AmbientCapabilities = [
-                "CAP_NET_ADMIN"
-                "CAP_NET_BIND_SERVICE"
-              ];
-            };
-
+            AmbientCapabilities = [
+              "CAP_NET_ADMIN"
+              "CAP_NET_BIND_SERVICE"
+            ];
           };
 
-        })
-      ];
+        };
+
+      };
     };
 }
