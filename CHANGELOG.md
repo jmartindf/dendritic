@@ -12,6 +12,10 @@ configurations).
 ### Changes
 
 - chore: update dependencies
+- refactor: remove unused node_exporter
+- refactor: remove hostInfo options
+- fix(deploy-rs): deploy all systems, but only the live ones
+- feat(richard): mark as live
 
 
 ## [0.7.9] - 2026-11-21
