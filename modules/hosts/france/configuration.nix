@@ -28,15 +28,12 @@ in
     nixos =
       {
         host,
-        config,
         lib,
         pkgs,
         ...
       }:
       let
-        nixOScfg = config;
         inherit (host) hostName;
-        inherit (nixOScfg.desertflood.networking) tailscaleDomain;
       in
       {
         imports = [
@@ -60,7 +57,7 @@ in
           inherit (host.desertflood) defaultUser;
 
           networking = {
-            webDomain = "df.fyi";
+            webDomain = host.domain;
 
             services = {
 
@@ -71,7 +68,7 @@ in
               };
 
               prometheus = {
-                domain = tailscaleDomain;
+                domain = host.tsdomain;
                 path = "/prometheus/";
               };
 

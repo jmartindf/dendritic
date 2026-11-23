@@ -5,6 +5,9 @@ let
     adminUsername = "nixos";
     adminAspect = "admin";
 
+    domain = "df.fyi";
+    tailscaleDomain = "manticore-mark.ts.net";
+
     tailscaleIPs = {
       everest = "100.79.239.108";
       firewalla = "100.125.134.86";

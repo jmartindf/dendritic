@@ -39,7 +39,7 @@
           inherit (host.desertflood) defaultUser;
 
           networking = {
-            webDomain = "df.fyi";
+            webDomain = host.domain;
           };
 
           step-ca = {
@@ -60,7 +60,7 @@
             traefik = {
               enable = true;
 
-              domain = nixOScfg.desertflood.networking.tsFQDN;
+              domain = host.tsFQDN;
 
               letsencrypt = {
                 enable = true;

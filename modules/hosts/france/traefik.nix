@@ -2,12 +2,11 @@ _: {
   den.aspects.france.includes = [
     {
       nixos =
-        { config, ... }:
+        { host, config, ... }:
         let
           nixOScfg = config;
           svcConfig = nixOScfg.services;
           dfCfg = nixOScfg.desertflood;
-          webHostTailscale = "${nixOScfg.networking.hostName}.${dfCfg.networking.tailscaleDomain}";
         in
         {
           desertflood = {
@@ -50,7 +49,7 @@ _: {
                     http = {
                       routers.prometheus-rtr = {
                         entrypoints = "websecure";
-                        rule = "Host(`${webHostTailscale}`) && PathPrefix(`/prometheus`)";
+                        rule = "Host(`${host.tsFQDN}`) && PathPrefix(`/prometheus`)";
                         service = "prometheus-svc";
                         middlewares = "chain-no-auth@file";
                         tls.certresolver = "tailscale";

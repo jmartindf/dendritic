@@ -61,18 +61,13 @@ in
 
           desertflood.services.prometheus.alloy.enable = true;
 
-          desertflood.networking =
-            let
-              tsDomain = "${flakeCfg.desertflood.networking.tailscaleDomain}";
-              defaultFQDN = "${nixOScfg.networking.hostName}.${nixOScfg.desertflood.networking.webDomain}";
-            in
-            {
-              webDomain = lib.mkDefault tsDomain;
-              webHost = lib.mkDefault defaultFQDN;
-              tailscaleDomain = lib.mkDefault tsDomain;
-              FQDN = lib.mkDefault defaultFQDN;
-              tsFQDN = lib.mkDefault "${nixOScfg.networking.hostName}.${flakeCfg.desertflood.networking.tailscaleDomain}";
-            };
+          desertflood.networking = {
+            webDomain = lib.mkDefault host.webDomain;
+            webHost = lib.mkDefault host.webFQDN;
+            tailscaleDomain = lib.mkDefault host.tsdomain;
+            FQDN = lib.mkDefault host.fqdn;
+            tsFQDN = lib.mkDefault host.tsFQDN;
+          };
 
           networking.firewall.allowPing = true;
 

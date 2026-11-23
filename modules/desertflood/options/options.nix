@@ -260,12 +260,39 @@ in
           description = "The domain";
         };
 
+        tsdomain = lib.mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "random-word.ts.net";
+          description = "The shared tailscale domain name";
+        };
+
         fqdn = lib.mkOption {
           type = types.nullOr types.str;
           default = null;
           description = ''
             The fully qualified domain name (FQDN) of this host. By default, it is the result of combining `{{host}}.hostName` and `{{host}}.domain`.
           '';
+        };
+
+        tsFQDN = lib.mkOption {
+          type = lib.types.str;
+          description = ''
+            The fully qualified domain name (FQDN) of this host. By default, it is the result of combining `{{host}}.hostName` and `{{host}}.tsdomain`.
+          '';
+        };
+
+        webFQDN = lib.mkOption {
+          type = lib.types.str;
+          description = ''
+            The fully qualified domain name (FQDN) of this host for websites. By default, it is the same as `{{host}}.fqdn`.
+          '';
+        };
+
+        extraFQDNs = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          description = "Any additional FQDNs that should/could be used";
+          default = [ ];
         };
 
         live = lib.mkOption {
@@ -282,9 +309,20 @@ in
       };
 
       config = {
+        domain = lib.mkDefault host.desertflood.globals.domain;
+        tsdomain = lib.mkDefault host.desertflood.globals.tailscaleDomain;
+
         fqdn =
           if (host.hostName != "" && host.domain != "") then
             lib.mkDefault "${host.hostName}.${host.domain}"
+          else
+            lib.mkDefault null;
+
+        webFQDN = lib.mkDefault host.fqdn;
+
+        tsFQDN =
+          if (host.hostName != "" && host.tsdomain != "") then
+            lib.mkDefault "${host.hostName}.${host.tsdomain}"
           else
             lib.mkDefault null;
       };

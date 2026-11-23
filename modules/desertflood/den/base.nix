@@ -111,7 +111,7 @@ in
                   "home.thosemartins.family"
                   "desertflood.com"
                   "df.fyi"
-                  dfCfg.networking.tailscaleDomain
+                  host.tsdomain
                 ];
 
                 FallbackDNS = [
