@@ -41,11 +41,6 @@ let
         description = "The shared tailscale domain name";
       };
 
-      webDomain = lib.mkOption {
-        type = lib.types.str;
-        description = "the default public web domain for nginx and whatnot";
-      };
-
       webHost = lib.mkOption {
         type = lib.types.str;
         description = "the default public web domain (FQDN) for nginx and whatnot";
@@ -237,7 +232,6 @@ in
 
           networking = {
             inherit (dfOptions.networking)
-              webDomain
               webHost
               tailscaleDomain
               FQDN
@@ -343,7 +337,6 @@ in
 
         networking = {
           inherit (dfOptions.networking)
-            webDomain
             webHost
             tailscaleDomain
             FQDN
@@ -364,7 +357,6 @@ in
 
         networking = {
           inherit (dfOptions.networking)
-            webDomain
             webHost
             tailscaleDomain
             FQDN

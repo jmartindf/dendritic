@@ -57,8 +57,6 @@ in
           inherit (host.desertflood) defaultUser;
 
           networking = {
-            webDomain = host.domain;
-
             services = {
 
               grafana = {

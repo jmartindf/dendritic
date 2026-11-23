@@ -38,10 +38,6 @@
         desertflood = {
           inherit (host.desertflood) defaultUser;
 
-          networking = {
-            webDomain = host.domain;
-          };
-
           step-ca = {
             # configure client certificates
             certs.${hostName}.availableTo = { };

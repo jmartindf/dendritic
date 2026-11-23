@@ -62,7 +62,6 @@ in
           desertflood.services.prometheus.alloy.enable = true;
 
           desertflood.networking = {
-            webDomain = lib.mkDefault host.webDomain;
             webHost = lib.mkDefault host.webFQDN;
             tailscaleDomain = lib.mkDefault host.tsdomain;
             FQDN = lib.mkDefault host.fqdn;
