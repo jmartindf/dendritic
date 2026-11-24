@@ -1,50 +1,39 @@
 { df, ... }: {
 
-  config = {
+  config =
+    let
+      lubeHost = "lubelogger.thosemartins.family";
+    in
+    {
 
-    df.services.lubelogger = {
+      df.services.lubelogger = {
 
-      includes = [ df.services.postgresql ];
+        includes = [ df.services.postgresql ];
 
-      nixos =
-        {
-          config,
-          lib,
-          pkgs,
-          ...
-        }:
-        let
-          nixOScfg = config;
-          llCfg = nixOScfg.services.lubelogger;
-          llNetCfg = nixOScfg.desertflood.networking.services.lubelogger;
-        in
-        {
-
-          options = {
-
-            desertflood.services.lubelogger = {
-              port = lib.mkOption {
-                type = lib.types.port;
-                description = "The TCP port LubeLogger will listen on.";
-              };
-            };
-
+        traefik-apps = { config, ... }: {
+          lubelogger = {
+            rule = "Host(`${lubeHost}`)";
+            url = "http://127.0.0.1:${toString config.services.lubelogger.port}";
+            middlewares = "chain-no-auth@file";
           };
+        };
 
-          config = {
+        nixos =
+          {
+            config,
+            pkgs,
+            ...
+          }:
+          let
+            nixOScfg = config;
+            llCfg = nixOScfg.services.lubelogger;
+          in
+          {
 
             age.secrets.lubelogger-env = {
               rekeyFile = ./lubelogger-secrets.env.age;
               owner = llCfg.user;
               inherit (llCfg) group;
-            };
-
-            desertflood = {
-              networking.services.lubelogger = { };
-
-              services = {
-                lubelogger.port = llCfg.port;
-              };
             };
 
             services.postgresql = {
@@ -72,7 +61,7 @@
                 # DefaultReminderEmail = "joe@desertflood.com";
                 EnableRootUserOIDC = "false";
                 LUBELOGGER_OPEN_REGISTRATION = "false";
-                LUBELOGGER_DOMAIN = "${llNetCfg.fullURL}"; # - URL to Instance of LubeLogger used to generate email links
+                LUBELOGGER_DOMAIN = "https://${lubeHost}/"; # - URL to Instance of LubeLogger used to generate email links
                 MailConfig__EmailFrom = "admin@thosemartins.family";
                 MailConfig__Port = "587";
                 OpenIDConfig__Name = "authentik Desertflood";
@@ -81,7 +70,7 @@
                 OpenIDConfig__TokenURL = "https://sso.desertflood.link/application/o/token/";
                 OpenIDConfig__UserInfoURL = "https://sso.desertflood.link/application/o/userinfo/";
                 OpenIDConfig__LogOutURL = "https://sso.desertflood.link/application/o/lube-logger/end-session/";
-                OpenIDConfig__RedirectURL = "https://${llNetCfg.fqdn}/Login/RemoteAuth";
+                OpenIDConfig__RedirectURL = "https://${lubeHost}/Login/RemoteAuth";
                 OpenIDConfig__Scope = "openid email";
                 OpenIDConfig__ValidateState = "false";
                 OpenIDConfig__UsePKCE = "true";
@@ -98,9 +87,8 @@
 
           };
 
-        };
+      };
 
     };
-  };
 
 }

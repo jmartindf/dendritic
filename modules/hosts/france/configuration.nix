@@ -66,85 +66,9 @@ in
         desertflood = {
           inherit (host.desertflood) defaultUser;
 
-          networking = {
-            services = {
-
-              grafana = {
-                domain = "desertflood.com";
-                hostName = "monitor";
-                path = "/grafana/";
-              };
-
-              prometheus = {
-                domain = host.tsdomain;
-                path = "/prometheus/";
-              };
-
-              ntfy = {
-                domain = "desertflood.com";
-                hostName = "ntfy";
-                path = "";
-              };
-
-              apprise-api = {
-                path = "";
-              };
-
-              forgejo = {
-                domain = "desertflood.com";
-                hostName = "git";
-                path = "";
-              };
-
-              attic = {
-                domain = "desertflood.com";
-                hostName = "attic";
-                path = "/";
-              };
-
-              lubelogger = {
-                domain = "thosemartins.family";
-                hostName = "lubelogger";
-                path = "/";
-              };
-
-              bluesky-pds = {
-                domain = "wordflood.net";
-                hostName = "pds";
-                path = "";
-              };
-
-              sftpgo = {
-                domain = "df.fyi";
-                path = "/sftpgo/";
-              };
-
-              linkwarden = {
-                domain = "desertflood.com";
-                hostName = "linkwarden";
-                path = "/";
-              };
-
-              acme-dns = {
-                domain = "desertflood.com";
-                hostName = "auth";
-                path = "";
-              };
-
-              koreader-sync = {
-                domain = "desertflood.com";
-                hostName = "kosync";
-                path = "";
-              };
-
-            };
-
-          };
-
           step-ca.certs.${hostName}.availableTo = { };
 
           services = {
-
             crowdsec.enable = false;
 
             apprise-api = {

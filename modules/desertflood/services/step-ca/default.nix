@@ -9,208 +9,217 @@ let
     });
 in
 {
+  df.services.step-ca = {
 
-  df.services.step-ca.nixos =
-    {
-      config,
-      lib,
-      # pkgs,
-      ...
-    }:
-    let
-      nixOScfg = config;
-      stepUser = "step-ca";
+    traefik-tcp-apps = {
+      smallstep = {
+        rule = "HostSNI(`pki.desertflood.link`)";
+        address = "127.0.0.1:8443";
+        passthrough = true;
+      };
+    };
 
-      # settingsFormat = (pkgs.formats.json { });
+    nixos =
+      {
+        config,
+        lib,
+        # pkgs,
+        ...
+      }:
+      let
+        nixOScfg = config;
+        stepUser = "step-ca";
 
-      svcsConfig = nixOScfg.desertflood.services;
-      netConfig = nixOScfg.desertflood.networking;
-    in
-    {
+        # settingsFormat = (pkgs.formats.json { });
 
-      imports = [ ];
+        svcsConfig = nixOScfg.desertflood.services;
+        netConfig = nixOScfg.desertflood.networking;
+      in
+      {
 
-      options = {
-        desertflood.services.step-ca = {
+        imports = [ ];
 
-          enable = lib.mkEnableOption {
-            default = false;
-            description = "Whether to enable step-ca, an open source certificate management toolchain";
+        options = {
+          desertflood.services.step-ca = {
+
+            enable = lib.mkEnableOption {
+              default = false;
+              description = "Whether to enable step-ca, an open source certificate management toolchain";
+            };
+
+            # setting for dns names
+            fqdns = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              description = "The FQDNs for accessing the Smallstep PKI";
+            };
+
+            address = lib.mkOption {
+              type = lib.types.str;
+              example = "127.0.0.1";
+              description = ''
+                The address (without port) the certificate authority should listen at.
+                This combined with {option}`desertflood.services.step-ca.port` overrides {option}`services.step-ca.settings.address`.
+              '';
+              default = "127.0.0.1";
+            };
+
+            port = lib.mkOption {
+              type = lib.types.port;
+              example = 8443;
+              description = ''
+                The port the certificate authority should listen on.
+                This combined with {option}`desertflood.services.step-ca.address` overrides {option}`services.step-ca.settings.address`.
+              '';
+              default = 8443;
+            };
+
           };
+        }; # end NixOS module `options`
 
-          # setting for dns names
-          fqdns = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
-            description = "The FQDNs for accessing the Smallstep PKI";
-          };
+        config = lib.mkIf svcsConfig.step-ca.enable {
 
-          address = lib.mkOption {
-            type = lib.types.str;
-            example = "127.0.0.1";
-            description = ''
-              The address (without port) the certificate authority should listen at.
-              This combined with {option}`desertflood.services.step-ca.port` overrides {option}`services.step-ca.settings.address`.
-            '';
-            default = "127.0.0.1";
-          };
-
-          port = lib.mkOption {
-            type = lib.types.port;
-            example = 8443;
-            description = ''
-              The port the certificate authority should listen on.
-              This combined with {option}`desertflood.services.step-ca.address` overrides {option}`services.step-ca.settings.address`.
-            '';
-            default = 8443;
-          };
-
-        };
-      }; # end NixOS module `options`
-
-      config = lib.mkIf svcsConfig.step-ca.enable {
-
-        age.secrets = mkServiceSecrets stepUser [
-          "step-ca-intermediate_ca_key"
-          "step-ca-ssh_host_ca_key"
-          "step-ca-ssh_user_ca_key"
-          "step-ca-intermediate_password"
-        ];
-
-        desertflood.networking.services.step-ca = { };
-
-        desertflood.services.step-ca = {
-          fqdns = [
-            netConfig.FQDN
-            netConfig.tsFQDN
-            "127.0.0.1"
+          age.secrets = mkServiceSecrets stepUser [
+            "step-ca-intermediate_ca_key"
+            "step-ca-ssh_host_ca_key"
+            "step-ca-ssh_user_ca_key"
+            "step-ca-intermediate_password"
           ];
-        };
 
-        services.step-ca = {
-          enable = true;
+          desertflood.networking.services.step-ca = { };
 
-          intermediatePasswordFile = nixOScfg.age.secrets.step-ca-intermediate_password.path;
+          desertflood.services.step-ca = {
+            fqdns = [
+              netConfig.FQDN
+              netConfig.tsFQDN
+              "127.0.0.1"
+            ];
+          };
 
-          inherit (svcsConfig.step-ca) address port;
+          services.step-ca = {
+            enable = true;
 
-          settings =
-            let
-              rootPath = "/var/lib/step-ca";
-            in
-            {
-              root = ./certs/step-ca-root_ca.crt;
-              # federatedRoots = null;
+            intermediatePasswordFile = nixOScfg.age.secrets.step-ca-intermediate_password.path;
 
-              crt = ./certs/step-ca-intermediate_ca.crt;
-              key = nixOScfg.age.secrets.step-ca-intermediate_ca_key.path;
+            inherit (svcsConfig.step-ca) address port;
 
-              dnsNames = svcsConfig.step-ca.fqdns;
+            settings =
+              let
+                rootPath = "/var/lib/step-ca";
+              in
+              {
+                root = ./certs/step-ca-root_ca.crt;
+                # federatedRoots = null;
 
-              ssh = {
-                hostKey = nixOScfg.age.secrets.step-ca-ssh_host_ca_key.path;
-                userKey = nixOScfg.age.secrets.step-ca-ssh_user_ca_key.path;
-              };
+                crt = ./certs/step-ca-intermediate_ca.crt;
+                key = nixOScfg.age.secrets.step-ca-intermediate_ca_key.path;
 
-              logger.format = "text";
-
-              db = {
-                type = "badgerv2";
-                dataSource = "${rootPath}/db";
-                badgerFileLoadingMode = "MemoryMap";
-              };
-
-              authority.enableAdmin = true;
-
-              tls = {
-
-                cipherSuites = [
-                  "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
-                  "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-                ];
-
-                minVersion = 1.2;
-                maxVersion = 1.3;
-                renegotiation = false;
-              };
-
-              templates = {
+                dnsNames = svcsConfig.step-ca.fqdns;
 
                 ssh = {
+                  hostKey = nixOScfg.age.secrets.step-ca-ssh_host_ca_key.path;
+                  userKey = nixOScfg.age.secrets.step-ca-ssh_user_ca_key.path;
+                };
 
-                  user = [
-                    {
-                      name = "config.tpl";
-                      type = "snippet";
-                      template = ./templates/ssh/config.tpl;
-                      path = "~/.ssh/config";
-                      comment = "#";
-                    }
-                    {
-                      name = "step_includes.tpl";
-                      type = "prepend-line";
-                      template = ./templates/ssh/step_includes.tpl;
-                      path = "\${STEPPATH}/ssh/includes";
-                      comment = "#";
-                    }
-                    {
-                      name = "step_config.tpl";
-                      type = "file";
-                      template = ./templates/ssh/step_config.tpl;
-                      path = "ssh/config";
-                      comment = "#";
-                    }
-                    {
-                      name = "known_hosts.tpl";
-                      type = "file";
-                      template = ./templates/ssh/known_hosts.tpl;
-                      path = "ssh/known_hosts";
-                      comment = "#";
-                    }
-                  ]; # end `templates.ssh.user`
+                logger.format = "text";
 
-                  host = [
-                    {
-                      name = "sshd_config.tpl";
-                      type = "snippet";
-                      template = ./templates/ssh/sshd_config.tpl;
-                      path = "/etc/ssh/sshd_config";
-                      comment = "#";
-                      requires = [
-                        "Certificate"
-                        "Key"
-                      ];
-                    }
-                    {
-                      name = "ca.tpl";
-                      type = "snippet";
-                      template = ./templates/ssh/ca.tpl;
-                      path = "/etc/ssh/ca.pub";
-                      comment = "#";
-                    }
-                  ]; # end `templates.ssh.host`
+                db = {
+                  type = "badgerv2";
+                  dataSource = "${rootPath}/db";
+                  badgerFileLoadingMode = "MemoryMap";
+                };
 
-                }; # end `templates.ssh`
-              }; # end `templates`
+                authority.enableAdmin = true;
 
-            }; # end services.step-ca.settings
+                tls = {
 
-        }; # end services.step-ca
+                  cipherSuites = [
+                    "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
+                    "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+                  ];
 
-        environment.etc = {
-          "step-ca/certs/ssh_host_ca_key.pub".source = ./certs/ssh_host_ca_key.pub;
-          "step-ca/certs/ssh_user_ca_key.pub".source = ./certs/ssh_user_ca_key.pub;
+                  minVersion = 1.2;
+                  maxVersion = 1.3;
+                  renegotiation = false;
+                };
 
-          # `step` CLI default configuration
-          #  "smallstep/defaults.json".source = settingsFormat.generate "defaults.json" {
-          #    ca-url = "https://pki.desertflood.link";
-          #    ca-config = "/etc/smallstep/ca.json";
-          #    fingerprint = "be95020a50bc30002b6f5a2ea3cd827b169412235192adeb3296a827d0036e00";
-          #    root = nixOScfg.age.secrets.step-ca-root_ca_crt.path;
-          #  };
-        };
+                templates = {
 
-      }; # end NixOS module `config`
+                  ssh = {
 
-    }; # end NixOS module for `df.services.step-ca` aspect
+                    user = [
+                      {
+                        name = "config.tpl";
+                        type = "snippet";
+                        template = ./templates/ssh/config.tpl;
+                        path = "~/.ssh/config";
+                        comment = "#";
+                      }
+                      {
+                        name = "step_includes.tpl";
+                        type = "prepend-line";
+                        template = ./templates/ssh/step_includes.tpl;
+                        path = "\${STEPPATH}/ssh/includes";
+                        comment = "#";
+                      }
+                      {
+                        name = "step_config.tpl";
+                        type = "file";
+                        template = ./templates/ssh/step_config.tpl;
+                        path = "ssh/config";
+                        comment = "#";
+                      }
+                      {
+                        name = "known_hosts.tpl";
+                        type = "file";
+                        template = ./templates/ssh/known_hosts.tpl;
+                        path = "ssh/known_hosts";
+                        comment = "#";
+                      }
+                    ]; # end `templates.ssh.user`
 
+                    host = [
+                      {
+                        name = "sshd_config.tpl";
+                        type = "snippet";
+                        template = ./templates/ssh/sshd_config.tpl;
+                        path = "/etc/ssh/sshd_config";
+                        comment = "#";
+                        requires = [
+                          "Certificate"
+                          "Key"
+                        ];
+                      }
+                      {
+                        name = "ca.tpl";
+                        type = "snippet";
+                        template = ./templates/ssh/ca.tpl;
+                        path = "/etc/ssh/ca.pub";
+                        comment = "#";
+                      }
+                    ]; # end `templates.ssh.host`
+
+                  }; # end `templates.ssh`
+                }; # end `templates`
+
+              }; # end services.step-ca.settings
+
+          }; # end services.step-ca
+
+          environment.etc = {
+            "step-ca/certs/ssh_host_ca_key.pub".source = ./certs/ssh_host_ca_key.pub;
+            "step-ca/certs/ssh_user_ca_key.pub".source = ./certs/ssh_user_ca_key.pub;
+
+            # `step` CLI default configuration
+            #  "smallstep/defaults.json".source = settingsFormat.generate "defaults.json" {
+            #    ca-url = "https://pki.desertflood.link";
+            #    ca-config = "/etc/smallstep/ca.json";
+            #    fingerprint = "be95020a50bc30002b6f5a2ea3cd827b169412235192adeb3296a827d0036e00";
+            #    root = nixOScfg.age.secrets.step-ca-root_ca_crt.path;
+            #  };
+          };
+
+        }; # end NixOS module `config`
+
+      }; # end NixOS module for `df.services.step-ca` aspect
+  };
 }

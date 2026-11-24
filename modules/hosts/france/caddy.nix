@@ -54,17 +54,6 @@
 
                 site-blocks = # caddy
                   ''
-                    http://apprise.desertflood.com:${caddyPort} {
-                      bind 127.0.0.1
-                      log
-                      cache
-
-                      handle_path /s/* {
-                        root ${pkgs.local.apprise-api}/webapp/static
-                        file_server
-                      }
-                    }
-
                     import local-static voxduo.com voxduo
                     import local-static files.voxduo.com voxduo-files
                     import local-static pluribus.voxduo.com voxduo-pluribus

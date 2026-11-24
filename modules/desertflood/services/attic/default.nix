@@ -1,119 +1,99 @@
-{ df, ... }: {
+{ df, ... }:
+let
+  atticPort = 7082;
+  atticHost = "attic.desertflood.com";
+in
+{
 
   df.services.attic = {
 
     includes = [ df.services.postgresql ];
 
+    traefik-apps = {
+      attic = {
+        rule = "Host(`${atticHost}`)";
+        url = "http://127.0.0.1:${toString atticPort}";
+      };
+    };
+
     nixos =
-      {
-        config,
-        lib,
-        ...
-      }:
+      { config, ... }:
       let
         nixOScfg = config;
+        atticUser = nixOScfg.services.atticd.user;
       in
       {
 
-        imports = [ ];
+        age.secrets.atticd-env = {
+          rekeyFile = ./atticd.env.age;
+          # owner = atticUser;
+          # group = atticUser;
+        };
 
-        options = {
-          desertflood.services.attic = {
-            port = lib.mkOption {
-              type = lib.types.str;
-              default = "7082";
-              description = "Local port to listen on";
-            };
-          };
-        }; # end NixOS module `options`
+        services.postgresql = {
+          ensureUsers = [
+            {
+              name = atticUser;
+              ensureDBOwnership = true;
+            }
+          ];
+          ensureDatabases = [ atticUser ];
+        }; # end services.postgresql
 
-        config =
-          let
-            svcsConfig = nixOScfg.desertflood.services;
-            netConfig = nixOScfg.desertflood.networking;
-            url =
-              let
-                u = netConfig.services.attic.fullURL;
-                len = builtins.stringLength u;
-              in
-              if ((builtins.substring (len - 1) len u) != "/") then "${u}/" else "${u}";
-            atticUser = nixOScfg.services.atticd.user;
-          in
-          {
+        # users.users.${atticUser} = {
+        #   home = "/var/lib/${atticUser}";
+        #   useDefaultShell = true;
+        #   group = atticUser;
+        #   isSystemUser = true;
+        # };
+        # users.groups.${atticUser} = { };
 
-            age.secrets.atticd-env = {
-              rekeyFile = ./atticd.env.age;
-              # owner = atticUser;
-              # group = atticUser;
-            };
+        services.atticd = {
+          enable = true;
+          mode = "monolithic";
 
-            desertflood.networking.services.attic = { };
+          environmentFile = nixOScfg.age.secrets.atticd-env.path;
 
-            services.postgresql = {
-              ensureUsers = [
-                {
-                  name = atticUser;
-                  ensureDBOwnership = true;
-                }
-              ];
-              ensureDatabases = [ atticUser ];
-            }; # end services.postgresql
+          settings = {
+            listen = "127.0.0.1:${toString atticPort}";
+            allowed-hosts = [ atticHost ];
+            api-endpoint = "https://${atticHost}/";
 
-            # users.users.${atticUser} = {
-            #   home = "/var/lib/${atticUser}";
-            #   useDefaultShell = true;
-            #   group = atticUser;
-            #   isSystemUser = true;
-            # };
-            # users.groups.${atticUser} = { };
+            require-proof-of-possession = true;
 
-            services.atticd = {
-              enable = true;
-              mode = "monolithic";
-
-              environmentFile = nixOScfg.age.secrets.atticd-env.path;
-
-              settings = {
-                listen = "127.0.0.1:${svcsConfig.attic.port}";
-                allowed-hosts = [ netConfig.services.attic.fqdn ];
-                api-endpoint = "${url}";
-
-                require-proof-of-possession = true;
-
-                chunking = {
-                  avg-size = 196608;
-                  max-size = 786432;
-                  min-size = 49152;
-                  nar-size-threshold = 196608;
-                };
-
-                database = {
-                  url = "postgres://${atticUser}/${atticUser}?host=/run/postgresql";
-                };
-
-                storage = {
-                  bucket = "nix-attic";
-                  endpoint = "https://s3.us-west-001.backblazeb2.com";
-                  region = "us-west-001";
-                  type = "s3";
-                };
-
-                garbage-collection = {
-                  interval = "12 hours"; # Default
-                  default-retention-period = "6 months"; # Default, can be changed on a per cache basis
-                };
-
-              }; # end services.atticd.settings
-
-            }; # end services.atticd
-
-            systemd.services.atticd = {
-              after = [ "postgresql.target" ];
-              requires = [ "postgresql.target" ];
+            chunking = {
+              avg-size = 196608;
+              max-size = 786432;
+              min-size = 49152;
+              nar-size-threshold = 196608;
             };
 
-          }; # end NixOS module `config`
+            database = {
+              url = "postgres://${atticUser}/${atticUser}?host=/run/postgresql";
+            };
 
-      }; # end NixOS `attic` module
-  };
+            storage = {
+              bucket = "nix-attic";
+              endpoint = "https://s3.us-west-001.backblazeb2.com";
+              region = "us-west-001";
+              type = "s3";
+            };
+
+            garbage-collection = {
+              interval = "12 hours"; # Default
+              default-retention-period = "6 months"; # Default, can be changed on a per cache basis
+            };
+
+          }; # end services.atticd.settings
+
+        }; # end services.atticd
+
+        systemd.services.atticd = {
+          after = [ "postgresql.target" ];
+          requires = [ "postgresql.target" ];
+        };
+
+      }; # end NixOS module `config`
+
+  }; # end NixOS `attic` module
 }

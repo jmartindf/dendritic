@@ -20,6 +20,7 @@
       df.services.step-ca
       df.services.traefik
       df.services.authentik
+      df.services.smallstep
     ];
 
     nixos =
@@ -61,41 +62,8 @@
                 defaultResolver = "tailscale";
                 acme-dns = true;
               };
-
-              rules = {
-
-                smallstep.tcp = {
-                  routers.smallstep-rtr = {
-                    entrypoints = "websecure";
-                    service = "smallstep-svc";
-                    tls.passthrough = true;
-                    rule = "HostSNI(`pki.desertflood.link`)";
-                  };
-
-                  services.smallstep-svc.loadbalancer.servers = [ { address = "127.0.0.1:8443"; } ];
-                };
-
-                authentik.http = {
-
-                  routers.authentik-rtr = {
-                    entrypoints = "websecure";
-                    tls.certresolver = "web";
-                    rule = "Host(`authentik.desertflood.link`) || Host(`sso.desertflood.link`)";
-                    middlewares = "chain-no-auth@file";
-                    service = "authentik-svc";
-                  };
-
-                  services.authentik-svc.loadbalancer = {
-
-                    serversTransport = "skipVerify@file";
-                    servers = [ { url = "https://127.0.0.1:9443"; } ];
-
-                  };
-
-                };
-              };
-
             };
+
           };
         };
 

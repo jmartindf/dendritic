@@ -1,8 +1,30 @@
-_: {
+_:
+let
+  apprisePort = 8000;
+  appriseAddr = "127.0.0.1";
+  appriseHost = "apprise.desertflood.com";
+in
+{
 
-  config = {
+  df.services.apprise = { host, ... }: {
 
-    df.services.apprise.nixos =
+    traefik-apps = {
+      apprise = {
+        rule = "Host(`${appriseHost}`)";
+        url = "http://${appriseAddr}:${toString apprisePort}";
+        middlewares = "chain-basic-auth@file";
+      };
+    };
+
+    traefik-routers = {
+      apprise-static = {
+        rule = "Host(`${appriseHost}`) && PathPrefix(`/s/`)";
+        middlewares = "chain-basic-auth@file";
+        service = "sites-static-svc@file";
+      };
+    };
+
+    nixos =
       {
         config,
         lib,
@@ -10,25 +32,15 @@ _: {
         ...
       }:
       let
-        nixOScfg = config;
+        baseName = "apprise-api";
+        workDir = "/var/lib/${baseName}";
+        logLevel = config.desertflood.services.apprise-api.log-level;
       in
       {
 
         options = {
 
           desertflood.services.apprise-api = {
-            host = lib.mkOption {
-              type = lib.types.str;
-              default = "127.0.0.1";
-              description = "Bind to which interface";
-            };
-
-            port = lib.mkOption {
-              type = lib.types.int;
-              default = 8000;
-              description = "Bind to which local port";
-            };
-
             log-level = lib.mkOption {
               type = lib.types.enum [
                 "CRITICAL"
@@ -45,20 +57,29 @@ _: {
 
         config =
           let
-            svcConfig = nixOScfg.desertflood.services.apprise-api;
-            baseName = "apprise-api";
-            workDir = "/var/lib/${baseName}";
-            webConfig = nixOScfg.desertflood.networking.services.apprise-api;
+            caddyPort = host.desertflood.globals.ports.caddy-static;
           in
           {
+
+            desertflood.services.caddy.settings.site-blocks = # caddy
+              ''
+                http://apprise.desertflood.com:${toString caddyPort} {
+                  bind 127.0.0.1
+                  log
+                  cache
+
+                  handle_path /s/* {
+                    root ${pkgs.local.apprise-api}/webapp/static
+                    file_server
+                  }
+                }
+              '';
 
             # age.secrets.apprise-api-secrets = {
             #   rekeyFile = ./secrets.env.age;
             #   owner = "apprise-api";
             #   group = "apprise-api";
             # };
-
-            desertflood.networking.services.apprise-api = { };
 
             environment.systemPackages = [ pkgs.local.apprise-api ];
 
@@ -91,9 +112,9 @@ _: {
                 APPRISE_CONFIG_DIR = "${workDir}";
                 APPRISE_STORAGE_DIR = "${workDir}/store";
                 APPRISE_ATTACH_DIR = "${workDir}/attach";
-                LOG_LEVEL = "${svcConfig.log-level}";
+                LOG_LEVEL = "${logLevel}";
                 APPRISE_CONFIG_LOCK = "no";
-                BASE_URL = lib.optionalString (webConfig.path != "") webConfig.path;
+                BASE_URL = "";
               };
 
               serviceConfig = {
@@ -111,7 +132,7 @@ _: {
                 ExecStart = lib.concatStringsSep " " [
                   "${pkgs.local.apprise-api}/bin/apprise-api"
                   "--bind"
-                  "127.0.0.1:${toString svcConfig.port}"
+                  "${appriseAddr}:${toString apprisePort}"
                 ];
 
                 Restart = "on-failure";

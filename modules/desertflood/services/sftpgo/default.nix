@@ -6,55 +6,50 @@
 }:
 {
 
-  df.services.sftpgo = {
+  df.services.sftpgo =
+    { host, ... }:
+    let
+      sftpgoHost = host.fqdn;
+      sftpgoPath = "/sftpgo/";
+      inherit (host.desertflood.globals) ports;
+    in
+    {
 
-    includes = [ df.services.postgresql ];
+      includes = [ df.services.postgresql ];
 
-    nixos =
-      {
-        lib,
-        pkgs,
-        config,
-        ...
-      }:
-      let
-        nixOScfg = config;
-        dfCfg = nixOScfg.desertflood;
-        dfSvcsConfig = dfCfg.services;
-        netCfg = dfCfg.networking;
-        dfSvcsNetCfg = netCfg.services;
-        sftpCfg = nixOScfg.services.sftpgo;
-        sftpgoUser = sftpCfg.user;
-        sftpgoGroup = sftpCfg.group;
+      traefik-apps = {
 
-        certFolder = "/etc/ssh";
-        keyFile = "ssh_host_ed25519_key";
-        certFile = "ssh_host_ed25519_key-cert.pub";
-        svcFolder = "/var/lib/sftpgo";
-      in
-      {
-
-        options = {
-
-          desertflood.services.sftpgo = {
-            port = lib.mkOption {
-              type = lib.types.port;
-              default = dfCfg.globals.ports.sftpgo-http;
-              description = "The port for serving HTTP(S) requests";
-            };
-            davPort = lib.mkOption {
-              type = lib.types.port;
-              default = dfCfg.globals.ports.sftpgo-webdav;
-              description = "The port for serving WebDAV(S) requests";
-            };
-          };
+        sftpgo = {
+          rule = "Host(`${sftpgoHost}`) && PathPrefix(`${sftpgoPath}`)";
+          url = "http://127.0.0.1:${toString ports.sftpgo-http}";
         };
 
-        config = {
+        sftpgo-webdav = {
+          rule = "Host(`${sftpgoHost}`) && PathPrefix(`/dav`)";
+          url = "http://127.0.0.1:${toString ports.sftpgo-webdav}";
+        };
+      };
 
+      nixos =
+        {
+          lib,
+          pkgs,
+          config,
+          ...
+        }:
+        let
+          nixOScfg = config;
+          sftpCfg = nixOScfg.services.sftpgo;
+          sftpgoUser = sftpCfg.user;
+          sftpgoGroup = sftpCfg.group;
+
+          certFolder = "/etc/ssh";
+          keyFile = "ssh_host_ed25519_key";
+          certFile = "ssh_host_ed25519_key-cert.pub";
+          svcFolder = "/var/lib/sftpgo";
+        in
+        {
           # TODO: Configure scheduled job for updating quotas?
-
-          desertflood.networking.services.sftpgo = { };
 
           services.postgresql = {
             ensureDatabases = [ sftpgoUser ];
@@ -122,12 +117,12 @@
                     enable_web_client = true;
                     enable_web_admin = true;
                     address = "127.0.0.1"; # localhost only, proxy through Traefik
-                    inherit (dfSvcsConfig.sftpgo) port;
+                    port = ports.sftpgo-http;
                     proxy_allowed = "127.0.0.1";
                     client_ip_proxy_header = "X-Real-IP";
                   }
                 ];
-                web_root = "${dfSvcsNetCfg.sftpgo.path}";
+                web_root = "${sftpgoPath}";
                 cookie_lifetime = 720; # valid for 12 hours
               };
 
@@ -135,7 +130,7 @@
                 bindings = [
                   {
                     address = "127.0.0.1"; # localhost only, proxy through Traefik
-                    port = dfSvcsConfig.sftpgo.davPort;
+                    port = ports.sftpgo-webdav;
                     prefix = "/dav";
                     proxy_allowed = "127.0.0.1";
                     client_ip_proxy_header = "X-Real-IP";
@@ -244,6 +239,5 @@
           };
 
         };
-      };
-  };
+    };
 }

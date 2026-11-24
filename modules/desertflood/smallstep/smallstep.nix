@@ -3,40 +3,43 @@ let
   flakeCfg = config;
 in
 {
-  df.services.smallstep.nixos =
-    { pkgs, ... }:
-    let
-      cacert = pkgs.fetchurl flakeCfg.desertflood.step-ca.rootCert;
+  df.services.smallstep = {
 
-      step-defaults = pkgs.writeText "step-ca-defaults.json" (
-        builtins.toJSON {
-          ca-url = flakeCfg.desertflood.step-ca.url;
-          inherit (flakeCfg.desertflood.step-ca) fingerprint;
-          root = "${cacert}";
-        }
-      );
-    in
-    {
+    nixos =
+      { pkgs, ... }:
+      let
+        cacert = pkgs.fetchurl flakeCfg.desertflood.step-ca.rootCert;
 
-      security.pki.certificateFiles = [ cacert ];
+        step-defaults = pkgs.writeText "step-ca-defaults.json" (
+          builtins.toJSON {
+            ca-url = flakeCfg.desertflood.step-ca.url;
+            inherit (flakeCfg.desertflood.step-ca) fingerprint;
+            root = "${cacert}";
+          }
+        );
+      in
+      {
 
-      environment =
-        let
-          steppath = "step-ca";
-        in
-        {
-          systemPackages = [
-            pkgs.step-cli
-          ];
+        security.pki.certificateFiles = [ cacert ];
 
-          etc = {
-            "${steppath}/certs/root_ca.crt".source = cacert;
-            "${steppath}/config/defaults.json".source = step-defaults;
+        environment =
+          let
+            steppath = "step-ca";
+          in
+          {
+            systemPackages = [
+              pkgs.step-cli
+            ];
+
+            etc = {
+              "${steppath}/certs/root_ca.crt".source = cacert;
+              "${steppath}/config/defaults.json".source = step-defaults;
+            };
+
+            variables = {
+              STEPPATH = "/etc/${steppath}";
+            };
           };
-
-          variables = {
-            STEPPATH = "/etc/${steppath}";
-          };
-        };
-    };
+      };
+  };
 }
