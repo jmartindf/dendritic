@@ -64,11 +64,15 @@ in
             customUser = svcsConfig.forgejo.user != "forgejo";
             dbName = "forgejo";
             dbUser = "forgejo";
+            gitHost = "git.desertflood.com";
           in
           {
 
             desertflood = {
 
+              services.step-ssh.principals = lib.mkOptionDefault [
+                gitHost
+              ];
               services.forgejo = { };
               networking.services.forgejo = { };
             };

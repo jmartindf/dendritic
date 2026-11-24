@@ -39,7 +39,6 @@ in
     nixos =
       {
         host,
-        lib,
         pkgs,
         ...
       }:
@@ -159,21 +158,6 @@ in
 
             prometheus = {
               inherit mTLS-required;
-
-              monitorHosts = [
-                "firewalla.manticore-mark.ts.net"
-                "hermes.manticore-mark.ts.net"
-                "masto-es.manticore-mark.ts.net"
-              ];
-
-              monitorHostsSecure = [
-              ];
-            };
-
-            step-ssh = {
-              principals = lib.mkOptionDefault [
-                "git.desertflood.com"
-              ];
             };
 
             loki.loglevel = "warn";

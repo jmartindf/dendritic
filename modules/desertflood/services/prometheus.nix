@@ -92,13 +92,22 @@
           in
           {
 
-            desertflood.networking.services.prometheus = { };
+            desertflood = {
+              networking.services.prometheus = { };
 
-            desertflood.step-ca.certs.${hostName}.availableTo = {
-              prometheus = {
-                group = "prometheus";
-                reloadServices = [ "prometheus" ];
+              step-ca.certs.${hostName}.availableTo = {
+                prometheus = {
+                  group = "prometheus";
+                  reloadServices = [ "prometheus" ];
+                };
               };
+
+              services.prometheus.monitorHosts = [
+                "firewalla.manticore-mark.ts.net"
+                "hermes.manticore-mark.ts.net"
+                "masto-es.manticore-mark.ts.net"
+              ];
+
             };
 
             services = {
