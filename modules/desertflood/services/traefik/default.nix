@@ -3,9 +3,14 @@ let
   flakeCfg = config;
 in
 {
+  den.quirks.traefik-apps = {
+    description = "Traefik 'rule' for a service";
+  };
+
   df.services.traefik.nixos =
     {
       host,
+      traefik-apps,
       config,
       pkgs,
       ...
@@ -31,6 +36,27 @@ in
           };
         }
       );
+
+      buildAppRule = app: details: {
+        "app-${app}" = {
+          http = {
+            routers."${app}-rtr" = {
+              entrypoints = "websecure";
+              inherit (details) rule;
+              service = "${app}-svc";
+              ${if details ? certresolver then "tls" else null} = {
+                inherit (details) certresolver;
+              };
+              ${if details ? middlewares then "middlewares" else null} = details.middlewares;
+            };
+            services."${app}-svc".loadBalancer.servers = [
+              {
+                inherit (details) url;
+              }
+            ];
+          };
+        };
+      };
 
       cloudflareIPs = [
         "173.245.48.0/20"
@@ -181,7 +207,8 @@ in
                 };
               };
 
-            };
+            }
+            // (lib.attrsets.concatMapAttrs buildAppRule (lib.mergeAttrsList traefik-apps));
           };
         }
         (lib.mkIf (myTraefikCfg.domains != [ ]) {
