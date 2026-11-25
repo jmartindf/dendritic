@@ -5,7 +5,7 @@
   ...
 }:
 {
-  df.services.webserv = {
+  df.services.webserv = { host, ... }: {
 
     # Enable SFTPGo for file management
     includes = [
@@ -13,14 +13,16 @@
       df.services.sftpgo
     ];
 
+    traefik-services = {
+      sites-static = {
+        url = "http://127.0.0.1:${toString host.desertflood.globals.ports.caddy-static}";
+      };
+    };
+
     nixos =
-      {
-        config,
-        ...
-      }:
       let
         groupName = "webserv";
-        webFolder = config.desertflood.globals.paths.staticHTML;
+        webFolder = host.desertflood.globals.paths.staticHTML;
       in
       {
 

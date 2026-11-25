@@ -133,14 +133,6 @@ _: {
             };
           };
 
-          service-caddy = {
-            http.services.sites-static-svc.loadBalancer.servers = [
-              {
-                url = "http://127.0.0.1:${toString dfCfg.globals.ports.caddy-static}";
-              }
-            ];
-          };
-
           app-apprise = {
             http = {
               routers.apprise-rtr = {
