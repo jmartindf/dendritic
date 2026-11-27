@@ -34,6 +34,7 @@ in
       df.services.koreader-sync
       df.services.webserv
       df.services.ntfy
+      df.services.static-sites
     ];
 
     nixos =

@@ -35,48 +35,34 @@
 
         desertflood.services = {
 
-          caddy =
-            let
-              caddyPort = toString nixOScfg.desertflood.globals.ports.caddy-static;
-            in
-            {
-              letsencrypt = {
-                enable = false;
-                acme-dns = false;
-                tailscaleCerts = false;
-                production = true;
-              };
+          caddy = {
+            letsencrypt = {
+              enable = false;
+              acme-dns = false;
+              tailscaleCerts = false;
+              production = true;
+            };
+
+            settings = {
+              debug = false;
+              disableSSL = true;
+            };
+
+            html-cache = {
+              enable = true;
 
               settings = {
+                dataDir = "${cacheHTMLDir}";
+                remote = "b2-static:desertflood-all-static-sites";
+                rcloneConfFile = nixOScfg.age.secrets.b2StaticHTML.path;
 
-                debug = false;
-                disableSSL = true;
-
-                site-blocks = # caddy
-                  ''
-                    import local-static voxduo.com voxduo
-                    import local-static files.voxduo.com voxduo-files
-                    import local-static pluribus.voxduo.com voxduo-pluribus
-                    import local-static jmartindf.com jmartindf
-                  '';
-
-              };
-
-              html-cache = {
-                enable = true;
-
-                settings = {
-                  dataDir = "${cacheHTMLDir}";
-                  remote = "b2-static:desertflood-all-static-sites";
-                  rcloneConfFile = nixOScfg.age.secrets.b2StaticHTML.path;
-
-                  extraRcloneArgs = [
-                    # "--max-size=325K" # download everything for now
-                    "--fast-list"
-                  ];
-                };
+                extraRcloneArgs = [
+                  # "--max-size=325K" # download everything for now
+                  "--fast-list"
+                ];
               };
             };
+          };
 
         };
       };
