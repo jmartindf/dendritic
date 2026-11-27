@@ -120,6 +120,10 @@ in
       };
 
       config = {
+        age.secrets = {
+          basic_auth.rekeyFile = ./basic_auth.age;
+        };
+
         desertflood.services.caddy = {
 
           letsencrypt = {
@@ -268,6 +272,7 @@ in
             RuntimeDirectory = "caddy";
             ConfigurationDirectory = "caddy";
             Environment = [ "HOME=/var/lib/caddy" ];
+            EnvironmentFile = cfg.age.secrets.basic_auth.path;
 
             ExecStart = lib.concatStringsSep " " [
               "${caddyWithPlugins}/bin/caddy"
