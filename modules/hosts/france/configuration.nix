@@ -35,15 +35,12 @@ in
       df.services.webserv
       df.services.ntfy
       df.services.static-sites
+      df.services.taskchampion-sync
       df.services.homeassistant-remote
     ];
 
     nixos =
-      {
-        host,
-        pkgs,
-        ...
-      }:
+      { host, ... }:
       let
         inherit (host) hostName;
       in
@@ -122,16 +119,6 @@ in
           45897
           22
         ]; # from `uv run --with port4me python -m port4me --tool=ssh --user france`
-
-        services.taskchampion-sync-server = {
-          enable = true;
-          package = pkgs.taskchampion-sync-server;
-          allowClientIds = [ "5D51EACB-0887-4258-8D84-12B0239E280C" ];
-        };
-
-        # systemd.services.taskchampion-sync-server.environment = {
-        #   RUST_LOG = "debug";
-        # };
 
         age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKWvOZ3zQ5zitwbtU1iTa5FjG/47yGqGVoZ7jUg6ouku";
       };
