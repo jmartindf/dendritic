@@ -85,8 +85,6 @@ in
             "step-ca-intermediate_password"
           ];
 
-          desertflood.networking.services.step-ca = { };
-
           desertflood.services.step-ca = {
             fqdns = [
               netConfig.FQDN

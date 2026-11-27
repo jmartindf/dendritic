@@ -5,8 +5,6 @@ _: {
 
       config = {
 
-        desertflood.networking.services.postgresql = { };
-
         services = {
 
           postgresql = {

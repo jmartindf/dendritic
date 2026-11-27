@@ -14,8 +14,6 @@ _: {
     in
     {
 
-      desertflood.networking.services.forgejo-runner = { };
-
       age.secrets.forgejo-runner-token = {
         rekeyFile = ./forgejo-runner-token.env.age;
       };

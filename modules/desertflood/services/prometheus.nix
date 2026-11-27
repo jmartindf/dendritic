@@ -108,8 +108,6 @@
             {
 
               desertflood = {
-                networking.services.prometheus = { };
-
                 step-ca.certs.${hostName}.availableTo = {
                   ${user} = {
                     inherit group;

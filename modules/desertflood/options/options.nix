@@ -1,11 +1,9 @@
 {
-  config,
   lib,
   ...
 }:
 let
   inherit (lib) types;
-  flakeCfg = config;
 
   userMeta = import ./_meta-users.nix {
     inherit lib;
@@ -62,92 +60,6 @@ let
         default = [ ];
       };
 
-      services =
-        nixOScfg:
-        lib.mkOption {
-          description = "Describe the URLs for hosted services";
-          default = { };
-          type = lib.types.attrsOf (
-            lib.types.submodule (
-              { name, config, ... }:
-              {
-
-                options = {
-
-                  protocol = lib.mkOption {
-                    type = lib.types.str;
-                    default = "https";
-                    example = "http";
-                    description = "The protocol to serve from";
-                  };
-
-                  domain = lib.mkOption {
-                    type = lib.types.str;
-                    description = "the default public web domain for nginx and whatnot";
-                    default = flakeCfg.desertflood.networking.tailscaleDomain;
-                  };
-
-                  hostName = lib.mkOption {
-                    type = lib.types.str;
-                    description = "the default public web hostname for nginx and whatnot";
-                    default = nixOScfg.desertflood.networking.hostName;
-                  };
-
-                  fqdn = lib.mkOption {
-                    type = lib.types.str;
-                    description = "the public FQDN for nginx and whatnot";
-                    default = "${config.hostName}.${config.domain}";
-                  };
-
-                  path = lib.mkOption {
-                    type = lib.types.str;
-                    description = "The subpath (if any) that the service is served from";
-                    default = "/${name}/";
-                  };
-
-                  fullURL = lib.mkOption {
-                    type = lib.types.str;
-                    default = "";
-                    description = "FQDN + path";
-                  };
-
-                };
-
-                config = {
-
-                  path = lib.mkDefault "/${name}/";
-
-                  hostName = lib.mkDefault (
-                    lib.optionalString (nixOScfg.networking.hostName != "") nixOScfg.networking.hostName
-                  );
-
-                  domain = lib.mkDefault (
-                    lib.optionalString (
-                      flakeCfg.desertflood.networking.tailscaleDomain != ""
-                    ) flakeCfg.desertflood.networking.tailscaleDomain
-                  );
-
-                  fqdn = lib.mkDefault (
-                    if config.hostName != "" && config.domain != "" then
-                      "${config.hostName}.${config.domain}"
-                    else
-                      "${config.hostName}"
-                  );
-
-                  fullURL = lib.mkDefault (
-                    if config.fqdn != "" && config.path != "" then
-                      "${config.protocol}://${config.fqdn}${config.path}"
-                    else if config.fqdn != "" then
-                      "${config.protocol}://${config.fqdn}"
-                    else
-                      "${config.protocol}://${config.hostName}"
-                  );
-
-                };
-              }
-            )
-          );
-        };
     };
 
     defaultUser = lib.mkOption {
@@ -218,31 +130,25 @@ in
 
   config = {
 
-    flake.modules.nixos.nixos =
-      { config, ... }:
-      let
-        nixOScfg = config;
-      in
-      {
+    flake.modules.nixos.nixos = {
 
-        options.desertflood = {
+      options.desertflood = {
 
-          globals = globalAttrSet;
-          inherit (dfOptions) defaultUser;
+        globals = globalAttrSet;
+        inherit (dfOptions) defaultUser;
 
-          networking = {
-            inherit (dfOptions.networking)
-              webHost
-              tailscaleDomain
-              FQDN
-              tsFQDN
-              extraFQDNs
-              ;
-            services = dfOptions.networking.services nixOScfg;
-          };
+        networking = {
+          inherit (dfOptions.networking)
+            webHost
+            tailscaleDomain
+            FQDN
+            tsFQDN
+            extraFQDNs
+            ;
         };
-
       };
+
+    };
 
     den.schema.host = { host, lib, ... }: {
       options = {
@@ -323,7 +229,7 @@ in
 
     };
 
-    den.schema.conf = { config, ... }: {
+    den.schema.conf = {
       options.desertflood = {
 
         globals = globalAttrSet;
@@ -343,7 +249,6 @@ in
             tsFQDN
             extraFQDNs
             ;
-          services = dfOptions.networking.services config;
         };
       };
     };
