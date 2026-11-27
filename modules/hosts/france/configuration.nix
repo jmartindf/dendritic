@@ -35,6 +35,7 @@ in
       df.services.webserv
       df.services.ntfy
       df.services.static-sites
+      df.services.homeassistant-remote
     ];
 
     nixos =
