@@ -1,12 +1,12 @@
 { inputs, ... }:
 {
-  flake.modules.nixos.agenix =
+  df.agenix.nixos =
     { config, ... }:
     let
       cfg = config;
     in
     {
-      imports = builtins.traceVerbose "flake.modules.nixos.agenix active" [
+      imports = builtins.traceVerbose "df.agenix.nixos active" [
         inputs.agenix.nixosModules.default
         inputs.agenix-rekey.nixosModules.default
       ];

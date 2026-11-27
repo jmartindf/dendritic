@@ -25,7 +25,7 @@ in
         };
       };
 
-    flake.modules.nixos.nixos = {
+    df.nixpkgs.nixos = {
       nixpkgs.overlays = [
         overlay
         inputs.bun2nix.overlays.default

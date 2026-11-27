@@ -1,6 +1,5 @@
 {
   df,
-  inputs,
   lib,
   ...
 }:
@@ -33,8 +32,10 @@
 
     includes = [
       df.services.alloy
+      df.services.crowdsec
       df.services.smallstep
       df.services.step-ssh
+      df.shared-secrets
     ];
 
     nixos =
@@ -44,11 +45,7 @@
         ...
       }:
       {
-        imports = builtins.traceVerbose "df.server.nixos active" [
-          inputs.self.modules.nixos.crowdsec
-        ];
-
-        config = {
+        config = builtins.traceVerbose "df.server.nixos active" {
 
           users.users.root.openssh.authorizedKeys.keys = host.desertflood.defaultUser.authorizedKeys;
 

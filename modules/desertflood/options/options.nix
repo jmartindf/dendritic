@@ -130,7 +130,7 @@ in
 
   config = {
 
-    flake.modules.nixos.nixos = {
+    df.df-options.nixos = {
 
       options.desertflood = {
 
@@ -252,27 +252,5 @@ in
         };
       };
     };
-
-    flake.modules.darwin.darwin = {
-
-      options.desertflood = {
-
-        globals = globalAttrSet;
-        inherit (dfOptions) defaultUser;
-
-        networking = {
-          inherit (dfOptions.networking)
-            webHost
-            tailscaleDomain
-            FQDN
-            tsFQDN
-            extraFQDNs
-            services
-            ;
-        };
-      };
-
-    };
-
   };
 }

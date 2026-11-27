@@ -2,13 +2,10 @@
 # SPDX-License-Identifier: BlueOak-1.0.0
 _: {
   df.services.webserv.nixos =
-    {
-      config,
-      ...
-    }:
+    { host, ... }:
     let
-      webFolder = config.desertflood.globals.paths.staticHTML;
-      caddyPort = toString config.desertflood.globals.ports.caddy-static;
+      webFolder = host.desertflood.globals.paths.staticHTML;
+      caddyPort = toString host.desertflood.globals.ports.caddy-static;
     in
     {
       # Create a template for caddy, pointing to the folder

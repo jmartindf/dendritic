@@ -53,25 +53,17 @@ in
 
     includes = [
       df.cli
+      df.df-options
     ];
 
     nixos =
       { host }:
       {
-        config,
         pkgs,
         ...
       }:
-      let
-        dfCfg = config.desertflood;
-      in
       {
         # builtins.break, to inspect `host` in the REPL
-        imports = [
-          inputs.self.modules.nixos.nixos # While migrating to Den from plain Dendritic
-          inputs.self.modules.nixos.agenix
-        ];
-
         config = {
 
           environment = {
@@ -231,16 +223,11 @@ in
       };
 
     darwin =
-      { host }:
       {
         pkgs,
         ...
       }:
       {
-        imports = [
-          inputs.self.modules.darwin.darwin # While migrating to Den from plain Dendritic
-        ];
-
         config = {
           environment = {
             shellAliases = {

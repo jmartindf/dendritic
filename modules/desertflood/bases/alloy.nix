@@ -13,7 +13,7 @@ _: {
       dfCfg = cfg.desertflood;
       alloyCfg = dfCfg.services.prometheus.alloy;
       inherit (host) hostName;
-      ipAddress = dfCfg.globals.tailscaleIPs.${hostName};
+      ipAddress = host.desertflood.globals.tailscaleIPs.${hostName};
     in
     {
       options = {
@@ -73,7 +73,7 @@ _: {
               alloy = {
                 enable = true;
                 extraFlags = [
-                  "--server.http.listen-addr=${ipAddress}:${builtins.toString dfCfg.globals.ports.alloy}"
+                  "--server.http.listen-addr=${ipAddress}:${toString host.desertflood.globals.ports.alloy}"
                 ];
               };
 

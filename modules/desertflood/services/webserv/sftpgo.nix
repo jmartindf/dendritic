@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
 # SPDX-License-Identifier: BlueOak-1.0.0
 _: {
-  df.services.webserv = {
+  df.services.webserv = { host, ... }: {
 
     nixos =
       {
@@ -12,7 +12,7 @@ _: {
       let
         groupName = "webserv";
         userName = config.services.sftpgo.user;
-        webFolder = config.desertflood.globals.paths.staticHTML;
+        webFolder = host.desertflood.globals.paths.staticHTML;
       in
       {
 

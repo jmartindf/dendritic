@@ -11,24 +11,12 @@ let
   };
 in
 {
-  config = {
-
-    flake.modules.nixos.nixos =
-      { pkgs, ... }:
-      {
-
-        # imports = [
-        #   inputs.lix-module.nixosModules.default
-        # ];
-
-        config = {
-          nixpkgs.overlays = [
-            overlay
-          ];
-          nix.package = pkgs.lixPackageSets.latest.lix;
-        };
-
-      };
-
-  };
+  df.lix.nixos =
+    { pkgs, ... }:
+    {
+      nixpkgs.overlays = [
+        overlay
+      ];
+      nix.package = pkgs.lixPackageSets.latest.lix;
+    };
 }

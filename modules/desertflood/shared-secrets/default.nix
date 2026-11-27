@@ -1,12 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
+# SPDX-License-Identifier: BlueOak-1.0.0
 _: {
-  # SPDX-FileCopyrightText: 2025 Joe Martin <joe@desertflood.com>
-  # SPDX-License-Identifier: BlueOak-1.0.0
-
-  flake.modules.nixos.nixos =
+  df.shared-secrets.nixos =
     {
       config,
       lib,
-      pkgs,
       ...
     }:
     let

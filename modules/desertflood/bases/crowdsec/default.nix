@@ -1,6 +1,6 @@
 _: {
 
-  flake.modules.nixos.crowdsec =
+  df.services.crowdsec.nixos =
     {
       config,
       lib,

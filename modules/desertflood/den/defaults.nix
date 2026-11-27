@@ -18,6 +18,9 @@ in
   den.default = {
 
     includes = [
+      df.lix
+      df.nixpkgs
+      df.agenix
       # define users at OS and Home levels.
       den.batteries.define-user
       # enable specific unfree packages

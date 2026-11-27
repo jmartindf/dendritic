@@ -92,22 +92,22 @@
             };
           };
 
-        }; # end `flake.modules.nixos.authentik.config`
+        }; # end `df.services.authentik.nixos.config`
 
-      }; # end `flake.modules.nixos.authentik`
+      }; # end `df.services.authentik.nixos`
 
-    flake-file.inputs.authentik-nix = {
-      # url = "github:MarcelCoding/authentik-nix/ak-update";
-      url = "github:nix-community/authentik-nix/version/2026.8.6";
-      # url = "github:jmartindf/authentik-nix/version/2026.2.3";
-      inputs = {
-        # nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
-        flake-compat.follows = "flake-compat";
-        flake-utils.follows = "flake-utils";
-        systems.follows = "systems";
-      };
+  }; # end aspect definition
+
+  flake-file.inputs.authentik-nix = {
+    # url = "github:MarcelCoding/authentik-nix/ak-update";
+    url = "github:nix-community/authentik-nix/version/2026.8.6";
+    # url = "github:jmartindf/authentik-nix/version/2026.2.3";
+    inputs = {
+      # nixpkgs.follows = "nixpkgs";
+      flake-parts.follows = "flake-parts";
+      flake-compat.follows = "flake-compat";
+      flake-utils.follows = "flake-utils";
+      systems.follows = "systems";
     };
-
-  }; # end flake-parts module config
+  };
 }

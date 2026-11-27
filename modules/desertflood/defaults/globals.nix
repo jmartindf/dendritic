@@ -51,12 +51,5 @@ let
   };
 in
 {
-
-  flake.modules.nixos.nixos = {
-
-    config.desertflood.globals = globals;
-
-  };
-
   den.schema.conf.desertflood.globals = globals;
 }
