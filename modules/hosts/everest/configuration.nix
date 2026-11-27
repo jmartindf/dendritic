@@ -28,22 +28,12 @@
         host,
         ...
       }:
-      let
-        inherit (host) hostName;
-      in
       {
         imports = [
           { config.facter.reportPath = ./facter.json; }
         ];
 
         desertflood = {
-          inherit (host.desertflood) defaultUser;
-
-          step-ca = {
-            # configure client certificates
-            certs.${hostName}.availableTo = { };
-          };
-
           services = {
 
             step-ca = {
@@ -68,8 +58,6 @@
         };
 
         networking = {
-          inherit (host) hostName domain;
-
           enableIPv6 = true;
 
           interfaces.enp1s0.ipv6 = {

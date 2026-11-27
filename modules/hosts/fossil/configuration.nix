@@ -21,22 +21,7 @@
       df.services.forgejo-runner
     ];
 
-    nixos =
-      {
-        host,
-        ...
-      }:
-      {
-        desertflood = {
-          inherit (host.desertflood) defaultUser;
-          step-ca.certs.${host.hostName}.availableTo = { };
-        };
+    nixos.age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
 
-        networking = {
-          inherit (host) hostName domain;
-        };
-
-        age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIqJzn5aPtpuRRe3Ywo3usTUP4H9oEHsKYK6k/xqo2D";
-      };
   };
 }

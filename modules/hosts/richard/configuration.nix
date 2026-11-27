@@ -25,22 +25,8 @@
       key = host.desertflood.builderKeys.builderKeys.psyche.publicKey;
     };
 
-    nixos =
-      { host, ... }:
-      {
-        imports = builtins.traceVerbose "den.aspects.richard.nixos active" [
-        ];
+    nixos.age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
 
-        desertflood = {
-          inherit (host.desertflood) defaultUser;
-          step-ca.certs.${host.hostName}.availableTo = { };
-        };
-
-        networking = {
-          inherit (host) hostName domain;
-        };
-        age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf0pQkV2GuvDHvX0OFyVKDDmizEbW5nfJJz7Xms2KYr";
-      };
   };
 
 }

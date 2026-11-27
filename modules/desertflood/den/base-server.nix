@@ -49,6 +49,15 @@
 
           users.users.root.openssh.authorizedKeys.keys = host.desertflood.defaultUser.authorizedKeys;
 
+          desertflood = {
+            inherit (host.desertflood) defaultUser;
+            step-ca.certs.${host.hostName}.availableTo = { };
+          };
+
+          networking = {
+            inherit (host) hostName domain;
+          };
+
           desertflood.services.prometheus.alloy.enable = true;
 
           desertflood.networking = {

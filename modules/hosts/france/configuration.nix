@@ -63,10 +63,6 @@ in
         };
 
         desertflood = {
-          inherit (host.desertflood) defaultUser;
-
-          step-ca.certs.${hostName}.availableTo = { };
-
           services = {
             crowdsec.enable = false;
 
@@ -90,8 +86,6 @@ in
         };
 
         networking = {
-          inherit (host) hostName domain;
-
           enableIPv6 = true;
 
           interfaces.enp1s0.ipv6 = {
