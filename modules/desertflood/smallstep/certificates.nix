@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   ...
 }:
@@ -13,7 +12,6 @@
 # https://nixos.org/manual/nixos/stable/#ch-running
 # https://nixos.org/manual/nixos/stable/#module-security-acme
 let
-  flakeCfg = config;
   svcFolder = "/var/lib/smallstep";
 
   certForServiceModule =
@@ -406,7 +404,7 @@ in
 
           stepOpts = [
             "--provisioner"
-            "${flakeCfg.desertflood.step-ca.provisioner}"
+            "${host.desertflood.step-ca.provisioner}"
           ]
           ++ [
             "--provisioner-password-file"

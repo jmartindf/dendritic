@@ -1,19 +1,15 @@
-{ config, ... }:
-let
-  flakeCfg = config;
-in
-{
+_: {
   df.services.smallstep = {
 
     nixos =
-      { pkgs, ... }:
+      { host, pkgs, ... }:
       let
-        cacert = pkgs.fetchurl flakeCfg.desertflood.step-ca.rootCert;
+        cacert = pkgs.fetchurl host.desertflood.step-ca.rootCert;
 
         step-defaults = pkgs.writeText "step-ca-defaults.json" (
           builtins.toJSON {
-            ca-url = flakeCfg.desertflood.step-ca.url;
-            inherit (flakeCfg.desertflood.step-ca) fingerprint;
+            ca-url = host.desertflood.step-ca.url;
+            inherit (host.desertflood.step-ca) fingerprint;
             root = "${cacert}";
           }
         );

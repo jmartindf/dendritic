@@ -3,7 +3,7 @@ let
   url = "https://pki.desertflood.link";
 in
 {
-  config.desertflood.step-ca = {
+  den.schema.conf.desertflood.step-ca = {
     provisioner = "joe@desertflood.com";
     inherit url;
     fingerprint = "be95020a50bc30002b6f5a2ea3cd827b169412235192adeb3296a827d0036e00";

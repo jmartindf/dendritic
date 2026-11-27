@@ -1,14 +1,8 @@
-{ config, ... }:
-let
-  flakeCfg = config;
-in
-{
-  flake.modules.nixos.letsencrypt = _: {
-
-    security.acme = {
+_: {
+  df.services.letsencrypt = { host, ... }: {
+    nixos.security.acme = {
       acceptTerms = true;
-      defaults.email = flakeCfg.desertflood.defaultUser.emails.desertflood.email;
+      defaults.email = host.desertflood.defaultUser.emails.desertflood.email;
     };
-
   };
 }

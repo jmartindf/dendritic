@@ -1,10 +1,12 @@
-{ config, lib, ... }:
-let
-  flakeCfg = config;
-in
-{
+_: {
   df.services.caddy.nixos =
-    { config, pkgs, ... }:
+    {
+      host,
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       cfg = config;
       caddyCfg = cfg.desertflood.services.caddy;
@@ -172,7 +174,7 @@ in
             + (
               if leCfg.enable then # caddy
                 ''
-                  email ${flakeCfg.desertflood.defaultUser.emails.desertflood.email}
+                  email ${host.desertflood.defaultUser.emails.desertflood.email}
                   acme_ca ${
                     if leCfg.production then
                       "https://acme-v02.api.letsencrypt.org/directory"

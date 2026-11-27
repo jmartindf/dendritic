@@ -1,8 +1,4 @@
-{ config, ... }:
-let
-  flakeCfg = config;
-in
-{
+_: {
   df.services.step-ssh.nixos =
     {
       host,
@@ -76,7 +72,7 @@ in
                     function sign {
                       step ssh certificate \
                         --sign \
-                        --provisioner '${flakeCfg.desertflood.step-ca.provisioner}' \
+                        --provisioner '${host.desertflood.step-ca.provisioner}' \
                         --provisioner-password-file="${config.age.secrets.provisioner-password.path}" \
                         --host --host-id machine ${principalString} \
                         "$(cat /etc/fqdn)" \

@@ -1,12 +1,8 @@
 {
   df,
-  config,
   lib,
   ...
 }:
-let
-  flakeCfg = config;
-in
 {
   den.schema.conf = {
     options.capabilities.server.docker = lib.mkEnableOption "Does host provide docker containers?";
