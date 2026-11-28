@@ -39,35 +39,21 @@
     ];
 
     nixos =
-      {
-        host,
-        lib,
-        ...
-      }:
+      { host, ... }:
       {
         config = builtins.traceVerbose "df.server.nixos active" {
 
           users.users.root.openssh.authorizedKeys.keys = host.desertflood.defaultUser.authorizedKeys;
 
           desertflood = {
-            inherit (host.desertflood) defaultUser;
+            services.prometheus.alloy.enable = true;
             step-ca.certs.${host.hostName}.availableTo = { };
           };
 
           networking = {
             inherit (host) hostName domain;
+            firewall.allowPing = true;
           };
-
-          desertflood.services.prometheus.alloy.enable = true;
-
-          desertflood.networking = {
-            webHost = lib.mkDefault host.webFQDN;
-            tailscaleDomain = lib.mkDefault host.tsdomain;
-            FQDN = lib.mkDefault host.fqdn;
-            tsFQDN = lib.mkDefault host.tsFQDN;
-          };
-
-          networking.firewall.allowPing = true;
 
           # Remote terminal application that allows roaming, supports intermittent
           # connectivity, and provides intelligent local echo and line editing of user keystrokes.

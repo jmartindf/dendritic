@@ -14,9 +14,9 @@ in
 
   df.docker-server = {
     nixos =
-      { config, ... }:
+      { host, ... }:
       let
-        inherit (config.desertflood) defaultUser;
+        inherit (host.desertflood) defaultUser;
       in
       builtins.traceVerbose "implicit nixos module for configuring ${username} user" {
         users.users.${username} =

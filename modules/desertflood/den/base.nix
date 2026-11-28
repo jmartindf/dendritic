@@ -53,7 +53,6 @@ in
 
     includes = [
       df.cli
-      df.df-options
     ];
 
     nixos =

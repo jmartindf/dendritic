@@ -21,6 +21,7 @@ in
 
     nixos =
       {
+        host,
         config,
         lib,
         # pkgs,
@@ -33,7 +34,6 @@ in
         # settingsFormat = (pkgs.formats.json { });
 
         svcsConfig = nixOScfg.desertflood.services;
-        netConfig = nixOScfg.desertflood.networking;
       in
       {
 
@@ -87,8 +87,8 @@ in
 
           desertflood.services.step-ca = {
             fqdns = [
-              netConfig.FQDN
-              netConfig.tsFQDN
+              host.fqdn
+              host.tsFQDN
               "127.0.0.1"
             ];
           };

@@ -5,6 +5,5 @@ let
   };
 in
 {
-  desertflood.builderKeys = { inherit builderKeys; };
   den.schema.conf.desertflood.builderKeys = { inherit builderKeys; };
 }

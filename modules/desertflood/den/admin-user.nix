@@ -1,9 +1,9 @@
 _: {
   df.server = { host, ... }: {
     nixos =
-      { config, ... }:
+      _:
       let
-        inherit (config.desertflood) defaultUser;
+        inherit (host.desertflood) defaultUser;
       in
       {
         users.users.${host.desertflood.globals.adminUsername} = {

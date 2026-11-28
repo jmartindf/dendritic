@@ -115,40 +115,7 @@ let
   };
 in
 {
-  options.desertflood = {
-
-    globals = globalAttrSet;
-
-    inherit (dfOptions) defaultUser networking;
-    inherit
-      users
-      builderKeys
-      secrets
-      step-ca
-      ;
-  };
-
   config = {
-
-    df.df-options.nixos = {
-
-      options.desertflood = {
-
-        globals = globalAttrSet;
-        inherit (dfOptions) defaultUser;
-
-        networking = {
-          inherit (dfOptions.networking)
-            webHost
-            tailscaleDomain
-            FQDN
-            tsFQDN
-            extraFQDNs
-            ;
-        };
-      };
-
-    };
 
     den.schema.host = { host, lib, ... }: {
       options = {
@@ -240,16 +207,6 @@ in
           secrets
           step-ca
           ;
-
-        networking = {
-          inherit (dfOptions.networking)
-            webHost
-            tailscaleDomain
-            FQDN
-            tsFQDN
-            extraFQDNs
-            ;
-        };
       };
     };
   };

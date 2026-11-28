@@ -34,7 +34,5 @@ in
     den.schema.conf = {
       inherit desertflood;
     };
-
-    inherit desertflood;
   };
 }
