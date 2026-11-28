@@ -37,15 +37,8 @@ in
       in
       {
 
-        imports = [ ];
-
         options = {
           desertflood.services.step-ca = {
-
-            enable = lib.mkEnableOption {
-              default = false;
-              description = "Whether to enable step-ca, an open source certificate management toolchain";
-            };
 
             # setting for dns names
             fqdns = lib.mkOption {
@@ -76,7 +69,7 @@ in
           };
         }; # end NixOS module `options`
 
-        config = lib.mkIf svcsConfig.step-ca.enable {
+        config = {
 
           age.secrets = mkServiceSecrets stepUser [
             "step-ca-intermediate_ca_key"

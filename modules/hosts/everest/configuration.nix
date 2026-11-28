@@ -36,11 +36,8 @@
         desertflood = {
           services = {
 
-            step-ca = {
-              # run ca-server
-              enable = true;
-              fqdns = [ "pki.desertflood.link" ];
-            };
+            # configure ca-server
+            step-ca.fqdns = [ "pki.desertflood.link" ];
 
             traefik = {
               domain = host.tsFQDN;

@@ -32,7 +32,7 @@
 
     includes = [
       df.services.alloy
-      df.services.crowdsec
+      # df.services.crowdsec # Disable until I've fixed it
       df.services.smallstep
       df.services.step-ssh
       df.shared-secrets
@@ -45,10 +45,7 @@
 
           users.users.root.openssh.authorizedKeys.keys = host.desertflood.defaultUser.authorizedKeys;
 
-          desertflood = {
-            services.prometheus.alloy.enable = true;
-            step-ca.certs.${host.hostName}.availableTo = { };
-          };
+          desertflood.step-ca.certs.${host.hostName}.availableTo = { };
 
           networking = {
             inherit (host) hostName domain;

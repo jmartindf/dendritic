@@ -19,10 +19,6 @@ _: {
       options = {
         desertflood.services.prometheus.alloy = {
 
-          enable = lib.mkEnableOption {
-            description = "Use Grafana Alloy to report system metrics";
-          };
-
           loglevel = lib.mkOption {
             type = lib.types.enum [
               "warn"
@@ -67,7 +63,7 @@ _: {
             desertflood.services.prometheus.alloy.loki_endpoint =
               lib.mkDefault dfCfg.globals.endpoints.loki_write;
           }
-          (lib.mkIf alloyCfg.enable {
+          {
 
             services = {
               alloy = {
@@ -215,8 +211,8 @@ _: {
                   }
                 '';
             };
-          })
-          (lib.mkIf (alloyCfg.enable && cfg.virtualisation.docker.enable) {
+          }
+          (lib.mkIf cfg.virtualisation.docker.enable {
             systemd.services.alloy.serviceConfig.SupplementaryGroups = [ "docker" ];
 
             environment.etc =
