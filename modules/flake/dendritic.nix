@@ -9,21 +9,6 @@
 
   config = {
 
-    flake.modules = {
-
-      nixos = {
-        x86_64-linux = { };
-        aarch64-linux = { };
-        nixos = { };
-      };
-
-      darwin = {
-        aarch64-darwin = { };
-        darwin = { };
-      };
-
-    };
-
     flake-file.inputs = {
       den.url = "github:denful/den/v0.20.0";
 
